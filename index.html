@@ -10,16 +10,11 @@
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
             background-color: var(--tg-theme-bg-color, #ffffff);
             color: var(--tg-theme-text-color, #000000);
-            margin: 0;
-            padding: 20px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
+            margin: 0; padding: 20px; display: flex; flex-direction: column; align-items: center;
         }
         .header { text-align: center; margin-bottom: 30px; }
         .header h1 { font-size: 24px; margin: 10px 0; }
         .header p { color: var(--tg-theme-hint-color, #999999); font-size: 14px; }
-        
         .menu-btn {
             width: 100%; max-width: 320px; padding: 15px; margin-bottom: 15px;
             border: none; border-radius: 12px; font-size: 16px; font-weight: bold;
@@ -29,8 +24,6 @@
         .btn-primary { background-color: var(--tg-theme-button-color, #3390ec); color: var(--tg-theme-button-text-color, #ffffff); }
         .btn-secondary { background-color: var(--tg-theme-secondary-bg-color, #f4f4f5); color: var(--tg-theme-text-color, #000000); }
         .btn-danger { background-color: #e53935; color: white; margin-top: 20px; }
-        
-        /* Стилі для режиму питань */
         #quizContainer { display: none; width: 100%; max-width: 320px; text-align: center; }
         #questionText { font-size: 18px; font-weight: bold; margin-bottom: 20px; }
         .progress { color: var(--tg-theme-hint-color, #999999); font-size: 14px; margin-bottom: 15px; }
@@ -59,11 +52,10 @@
         let tg = window.Telegram.WebApp;
         tg.expand();
 
-        if (tg.initDataUnsafe && tg.initDataUnsafe.user) {
-            document.getElementById('userName').innerText = "Привіт, " + tg.initDataUnsafe.user.first_name + "!";
-        }
+        let userName = tg.initDataUnsafe?.user?.first_name || "Гість";
+        let userId = tg.initDataUnsafe?.user?.id || "000000";
+        document.getElementById('userName').innerText = "Привіт, " + userName + "!";
 
-        // ВАШЕ ПОСИЛАННЯ НА GOOGLE ТАБЛИЦЮ
         const API_URL = "https://script.google.com/macros/s/AKfycbxwXzgTnt_i5oQgmgU7zwwkbGmKDmCPG0QqFWddh3mWSv-PvzxtRns5eF78hEZllhAy/exec";
         
         let questions = [];
@@ -78,10 +70,7 @@
                 let response = await fetch(API_URL);
                 let data = await response.json();
                 questions = data.questions;
-                
-                // Перемішуємо питання випадковим чином
                 questions.sort(() => Math.random() - 0.5);
-                
                 currentIndex = 0;
                 score = 0;
                 showQuestion();
@@ -103,26 +92,37 @@
             let optionsHtml = "";
             q.options.forEach((opt, index) => {
                 let optNum = index + 1;
-                // Створюємо кнопку для кожного варіанту
                 optionsHtml += `<button class="menu-btn btn-secondary" onclick="checkAnswer(${optNum}, ${q.correct_answer})">${opt}</button>`;
             });
             document.getElementById('optionsContainer').innerHTML = optionsHtml;
         }
 
         function checkAnswer(selected, correct) {
-            if (selected === correct) {
-                score++;
-                tg.HapticFeedback.notificationOccurred('success'); // Вібрація при правильній відповіді
-            } else {
-                tg.HapticFeedback.notificationOccurred('error'); // Вібрація при помилці
-            }
+            if (selected === correct) score++;
             currentIndex++;
             showQuestion();
         }
 
-        function showResult() {
-            document.getElementById('progressText').innerText = "Тест завершено!";
+        async function showResult() {
+            document.getElementById('progressText').innerText = "Відправляємо результати в базу...";
             document.getElementById('questionText').innerText = `Твій результат: ${score} правильних відповідей з ${questions.length}`;
+            document.getElementById('optionsContainer').innerHTML = "";
+
+            // Збираємо дані для відправки
+            let userData = { tg_id: userId, name: userName, score: score };
+
+            try {
+                // Відправляємо дані в Google Таблицю
+                await fetch(API_URL, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'text/plain' },
+                    body: JSON.stringify(userData)
+                });
+                document.getElementById('progressText').innerText = "Результат успішно збережено! ✅";
+            } catch (error) {
+                document.getElementById('progressText').innerText = "Помилка збереження ❌";
+            }
+
             document.getElementById('optionsContainer').innerHTML = `<button class="menu-btn btn-primary" onclick="location.reload()">Повернутися в меню</button>`;
         }
     </script>
