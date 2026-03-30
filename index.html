@@ -6,27 +6,19 @@
     <title>Атестація Персоналу</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-            background-color: var(--tg-theme-bg-color, #ffffff);
-            color: var(--tg-theme-text-color, #000000);
-            margin: 0; padding: 20px; display: flex; flex-direction: column; align-items: center;
-        }
+        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; background-color: var(--tg-theme-bg-color, #ffffff); color: var(--tg-theme-text-color, #000000); margin: 0; padding: 20px; display: flex; flex-direction: column; align-items: center; }
         .header { text-align: center; margin-bottom: 30px; }
         .header h1 { font-size: 24px; margin: 10px 0; }
         .header p { color: var(--tg-theme-hint-color, #999999); font-size: 14px; }
-        .menu-btn {
-            width: 100%; max-width: 320px; padding: 15px; margin-bottom: 15px;
-            border: none; border-radius: 12px; font-size: 16px; font-weight: bold;
-            cursor: pointer; transition: transform 0.1s;
-        }
+        .menu-btn { width: 100%; max-width: 320px; padding: 15px; margin-bottom: 15px; border: none; border-radius: 12px; font-size: 16px; font-weight: bold; cursor: pointer; transition: transform 0.1s; }
         .menu-btn:active { transform: scale(0.96); }
         .btn-primary { background-color: var(--tg-theme-button-color, #3390ec); color: var(--tg-theme-button-text-color, #ffffff); }
         .btn-secondary { background-color: var(--tg-theme-secondary-bg-color, #f4f4f5); color: var(--tg-theme-text-color, #000000); }
         .btn-danger { background-color: #e53935; color: white; margin-top: 20px; }
-        #quizContainer { display: none; width: 100%; max-width: 320px; text-align: center; }
+        #quizContainer, #timeSetup { display: none; width: 100%; max-width: 320px; text-align: center; }
         #questionText { font-size: 18px; font-weight: bold; margin-bottom: 20px; }
         .progress { color: var(--tg-theme-hint-color, #999999); font-size: 14px; margin-bottom: 15px; }
+        #timerDisplay { color: #e53935; font-size: 18px; font-weight: bold; margin-top: 15px; }
     </style>
 </head>
 <body>
@@ -37,15 +29,27 @@
             <p>Обери режим тренування або атестації</p>
         </div>
         <button class="menu-btn btn-primary" onclick="startFreeMode()">Вільний режим (Тренування)</button>
-        <button class="menu-btn btn-secondary" onclick="tg.showAlert('Функція в розробці!')">Режим на час (Спринт)</button>
+        <button class="menu-btn btn-secondary" onclick="openTimeSetup()">Режим на час (Спринт)</button>
         <button class="menu-btn btn-secondary" onclick="tg.showAlert('Функція в розробці!')">🏆 Таблиця лідерів</button>
         <button class="menu-btn btn-danger" onclick="tg.showAlert('Функція в розробці!')">АТЕСТАЦІЯ</button>
+    </div>
+
+    <div id="timeSetup">
+        <div class="header">
+            <h1>Режим на час</h1>
+            <p>На кожне питання буде 15 секунд. Обери кількість питань:</p>
+        </div>
+        <button class="menu-btn btn-primary" onclick="startTimedQuiz(10)">10 питань</button>
+        <button class="menu-btn btn-primary" onclick="startTimedQuiz(20)">20 питань</button>
+        <button class="menu-btn btn-primary" onclick="startTimedQuiz(30)">30 питань</button>
+        <button class="menu-btn btn-secondary" onclick="location.reload()">🔙 Назад</button>
     </div>
 
     <div id="quizContainer">
         <div class="progress" id="progressText">Завантаження...</div>
         <div id="questionText">З'єднуємось з базою знань...</div>
         <div id="optionsContainer"></div>
+        <div id="timerDisplay"></div>
     </div>
 
     <script>
@@ -61,15 +65,23 @@
         let questions = [];
         let currentIndex = 0;
         let score = 0;
+        let isTimedMode = false;
+        let timerInterval;
+        let timeLeft = 15;
+
+        async function fetchQuestions() {
+            let response = await fetch(API_URL);
+            let data = await response.json();
+            return data.questions;
+        }
 
         async function startFreeMode() {
             document.getElementById('mainMenu').style.display = 'none';
             document.getElementById('quizContainer').style.display = 'block';
+            isTimedMode = false;
 
             try {
-                let response = await fetch(API_URL);
-                let data = await response.json();
-                questions = data.questions;
+                questions = await fetchQuestions();
                 questions.sort(() => Math.random() - 0.5);
                 currentIndex = 0;
                 score = 0;
@@ -79,7 +91,34 @@
             }
         }
 
+        function openTimeSetup() {
+            document.getElementById('mainMenu').style.display = 'none';
+            document.getElementById('timeSetup').style.display = 'block';
+        }
+
+        async function startTimedQuiz(count) {
+            document.getElementById('timeSetup').style.display = 'none';
+            document.getElementById('quizContainer').style.display = 'block';
+            isTimedMode = true;
+
+            try {
+                document.getElementById('questionText').innerText = "З'єднуємось з базою знань...";
+                let allQuestions = await fetchQuestions();
+                allQuestions.sort(() => Math.random() - 0.5);
+                questions = allQuestions.slice(0, count); // Беремо обрану кількість питань
+                
+                currentIndex = 0;
+                score = 0;
+                showQuestion();
+            } catch (error) {
+                document.getElementById('questionText').innerText = "Помилка! Перевірте базу даних.";
+            }
+        }
+
         function showQuestion() {
+            clearInterval(timerInterval);
+            document.getElementById('timerDisplay').innerText = "";
+
             if (currentIndex >= questions.length) {
                 showResult();
                 return;
@@ -95,9 +134,25 @@
                 optionsHtml += `<button class="menu-btn btn-secondary" onclick="checkAnswer(${optNum}, ${q.correct_answer})">${opt}</button>`;
             });
             document.getElementById('optionsContainer').innerHTML = optionsHtml;
+
+            if (isTimedMode) {
+                timeLeft = 15;
+                document.getElementById('timerDisplay').innerText = `⏱ Залишилось: ${timeLeft} сек`;
+                timerInterval = setInterval(() => {
+                    timeLeft--;
+                    document.getElementById('timerDisplay').innerText = `⏱ Залишилось: ${timeLeft} сек`;
+                    if (timeLeft <= 0) {
+                        clearInterval(timerInterval);
+                        tg.HapticFeedback.notificationOccurred('warning');
+                        currentIndex++;
+                        showQuestion(); // Йдемо далі, якщо не встиг
+                    }
+                }, 1000);
+            }
         }
 
         function checkAnswer(selected, correct) {
+            clearInterval(timerInterval);
             if (selected === correct) score++;
             currentIndex++;
             showQuestion();
@@ -107,12 +162,11 @@
             document.getElementById('progressText').innerText = "Відправляємо результати в базу...";
             document.getElementById('questionText').innerText = `Твій результат: ${score} правильних відповідей з ${questions.length}`;
             document.getElementById('optionsContainer').innerHTML = "";
+            document.getElementById('timerDisplay').innerText = "";
 
-            // Збираємо дані для відправки
             let userData = { tg_id: userId, name: userName, score: score };
 
             try {
-                // Відправляємо дані в Google Таблицю
                 await fetch(API_URL, {
                     method: 'POST',
                     headers: { 'Content-Type': 'text/plain' },
