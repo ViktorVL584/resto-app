@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Атестація Персоналу</title>
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--tg-theme-bg-color, #ffffff);
+            color: var(--tg-theme-text-color, #000000);
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .header h1 {
+            font-size: 24px;
+            margin: 10px 0;
+        }
+        .header p {
+            color: var(--tg-theme-hint-color, #999999);
+            font-size: 14px;
+        }
+        .menu-btn {
+            width: 100%;
+            max-width: 300px;
+            padding: 15px;
+            margin-bottom: 15px;
+            border: none;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: transform 0.1s;
+        }
+        .menu-btn:active {
+            transform: scale(0.96);
+        }
+        .btn-primary {
+            background-color: var(--tg-theme-button-color, #3390ec);
+            color: var(--tg-theme-button-text-color, #ffffff);
+        }
+        .btn-secondary {
+            background-color: var(--tg-theme-secondary-bg-color, #f4f4f5);
+            color: var(--tg-theme-text-color, #000000);
+        }
+        .btn-danger {
+            background-color: #e53935;
+            color: white;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="header">
+        <h1 id="userName">Привіт, Колего!</h1>
+        <p>Обери режим тренування або атестації</p>
+    </div>
+
+    <button class="menu-btn btn-primary" onclick="startFreeMode()">Вільний режим (Тренування)</button>
+    <button class="menu-btn btn-secondary" onclick="startTimedMode()">Режим на час (Спринт)</button>
+    <button class="menu-btn btn-secondary" onclick="showLeaderboard()">🏆 Таблиця лідерів</button>
+    
+    <button class="menu-btn btn-danger" onclick="startAssessment()">АТЕСТАЦІЯ</button>
+
+    <script>
+        // Ініціалізація Telegram Mini App
+        let tg = window.Telegram.WebApp;
+        tg.expand(); // Розгортаємо на весь екран
+
+        // Підставляємо ім'я користувача з Telegram
+        if (tg.initDataUnsafe && tg.initDataUnsafe.user) {
+            document.getElementById('userName').innerText = "Привіт, " + tg.initDataUnsafe.user.first_name + "!";
+        }
+
+        // Функції для кнопок (поки що просто показують сповіщення)
+        function startFreeMode() {
+            tg.showAlert("Запускаємо Вільний режим... Тут будуть питання з бази!");
+        }
+        function startTimedMode() {
+            tg.showAlert("Оберіть час! (Функція в розробці)");
+        }
+        function showLeaderboard() {
+            tg.showAlert("Топ співробітників завантажується...");
+        }
+        function startAssessment() {
+            tg.showAlert("Увага! Починається офіційна атестація.");
+        }
+    </script>
+</body>
+</html>
