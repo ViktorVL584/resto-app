@@ -16,83 +16,114 @@
             flex-direction: column;
             align-items: center;
         }
-        .header {
-            text-align: center;
-            margin-bottom: 30px;
-        }
-        .header h1 {
-            font-size: 24px;
-            margin: 10px 0;
-        }
-        .header p {
-            color: var(--tg-theme-hint-color, #999999);
-            font-size: 14px;
-        }
+        .header { text-align: center; margin-bottom: 30px; }
+        .header h1 { font-size: 24px; margin: 10px 0; }
+        .header p { color: var(--tg-theme-hint-color, #999999); font-size: 14px; }
+        
         .menu-btn {
-            width: 100%;
-            max-width: 300px;
-            padding: 15px;
-            margin-bottom: 15px;
-            border: none;
-            border-radius: 12px;
-            font-size: 16px;
-            font-weight: bold;
-            cursor: pointer;
-            transition: transform 0.1s;
+            width: 100%; max-width: 320px; padding: 15px; margin-bottom: 15px;
+            border: none; border-radius: 12px; font-size: 16px; font-weight: bold;
+            cursor: pointer; transition: transform 0.1s;
         }
-        .menu-btn:active {
-            transform: scale(0.96);
-        }
-        .btn-primary {
-            background-color: var(--tg-theme-button-color, #3390ec);
-            color: var(--tg-theme-button-text-color, #ffffff);
-        }
-        .btn-secondary {
-            background-color: var(--tg-theme-secondary-bg-color, #f4f4f5);
-            color: var(--tg-theme-text-color, #000000);
-        }
-        .btn-danger {
-            background-color: #e53935;
-            color: white;
-            margin-top: 20px;
-        }
+        .menu-btn:active { transform: scale(0.96); }
+        .btn-primary { background-color: var(--tg-theme-button-color, #3390ec); color: var(--tg-theme-button-text-color, #ffffff); }
+        .btn-secondary { background-color: var(--tg-theme-secondary-bg-color, #f4f4f5); color: var(--tg-theme-text-color, #000000); }
+        .btn-danger { background-color: #e53935; color: white; margin-top: 20px; }
+        
+        /* Стилі для режиму питань */
+        #quizContainer { display: none; width: 100%; max-width: 320px; text-align: center; }
+        #questionText { font-size: 18px; font-weight: bold; margin-bottom: 20px; }
+        .progress { color: var(--tg-theme-hint-color, #999999); font-size: 14px; margin-bottom: 15px; }
     </style>
 </head>
 <body>
 
-    <div class="header">
-        <h1 id="userName">Привіт, Колего!</h1>
-        <p>Обери режим тренування або атестації</p>
+    <div id="mainMenu">
+        <div class="header">
+            <h1 id="userName">Привіт, Колего!</h1>
+            <p>Обери режим тренування або атестації</p>
+        </div>
+        <button class="menu-btn btn-primary" onclick="startFreeMode()">Вільний режим (Тренування)</button>
+        <button class="menu-btn btn-secondary" onclick="tg.showAlert('Функція в розробці!')">Режим на час (Спринт)</button>
+        <button class="menu-btn btn-secondary" onclick="tg.showAlert('Функція в розробці!')">🏆 Таблиця лідерів</button>
+        <button class="menu-btn btn-danger" onclick="tg.showAlert('Функція в розробці!')">АТЕСТАЦІЯ</button>
     </div>
 
-    <button class="menu-btn btn-primary" onclick="startFreeMode()">Вільний режим (Тренування)</button>
-    <button class="menu-btn btn-secondary" onclick="startTimedMode()">Режим на час (Спринт)</button>
-    <button class="menu-btn btn-secondary" onclick="showLeaderboard()">🏆 Таблиця лідерів</button>
-    
-    <button class="menu-btn btn-danger" onclick="startAssessment()">АТЕСТАЦІЯ</button>
+    <div id="quizContainer">
+        <div class="progress" id="progressText">Завантаження...</div>
+        <div id="questionText">З'єднуємось з базою знань...</div>
+        <div id="optionsContainer"></div>
+    </div>
 
     <script>
-        // Ініціалізація Telegram Mini App
         let tg = window.Telegram.WebApp;
-        tg.expand(); // Розгортаємо на весь екран
+        tg.expand();
 
-        // Підставляємо ім'я користувача з Telegram
         if (tg.initDataUnsafe && tg.initDataUnsafe.user) {
             document.getElementById('userName').innerText = "Привіт, " + tg.initDataUnsafe.user.first_name + "!";
         }
 
-        // Функції для кнопок (поки що просто показують сповіщення)
-        function startFreeMode() {
-            tg.showAlert("Запускаємо Вільний режим... Тут будуть питання з бази!");
+        // ВАШЕ ПОСИЛАННЯ НА GOOGLE ТАБЛИЦЮ
+        const API_URL = "https://script.google.com/macros/s/AKfycbxwXzgTnt_i5oQgmgU7zwwkbGmKDmCPG0QqFWddh3mWSv-PvzxtRns5eF78hEZllhAy/exec";
+        
+        let questions = [];
+        let currentIndex = 0;
+        let score = 0;
+
+        async function startFreeMode() {
+            document.getElementById('mainMenu').style.display = 'none';
+            document.getElementById('quizContainer').style.display = 'block';
+
+            try {
+                let response = await fetch(API_URL);
+                let data = await response.json();
+                questions = data.questions;
+                
+                // Перемішуємо питання випадковим чином
+                questions.sort(() => Math.random() - 0.5);
+                
+                currentIndex = 0;
+                score = 0;
+                showQuestion();
+            } catch (error) {
+                document.getElementById('questionText').innerText = "Помилка! Перевірте базу даних.";
+            }
         }
-        function startTimedMode() {
-            tg.showAlert("Оберіть час! (Функція в розробці)");
+
+        function showQuestion() {
+            if (currentIndex >= questions.length) {
+                showResult();
+                return;
+            }
+
+            let q = questions[currentIndex];
+            document.getElementById('progressText').innerText = `Питання ${currentIndex + 1} з ${questions.length}`;
+            document.getElementById('questionText').innerText = q.question;
+
+            let optionsHtml = "";
+            q.options.forEach((opt, index) => {
+                let optNum = index + 1;
+                // Створюємо кнопку для кожного варіанту
+                optionsHtml += `<button class="menu-btn btn-secondary" onclick="checkAnswer(${optNum}, ${q.correct_answer})">${opt}</button>`;
+            });
+            document.getElementById('optionsContainer').innerHTML = optionsHtml;
         }
-        function showLeaderboard() {
-            tg.showAlert("Топ співробітників завантажується...");
+
+        function checkAnswer(selected, correct) {
+            if (selected === correct) {
+                score++;
+                tg.HapticFeedback.notificationOccurred('success'); // Вібрація при правильній відповіді
+            } else {
+                tg.HapticFeedback.notificationOccurred('error'); // Вібрація при помилці
+            }
+            currentIndex++;
+            showQuestion();
         }
-        function startAssessment() {
-            tg.showAlert("Увага! Починається офіційна атестація.");
+
+        function showResult() {
+            document.getElementById('progressText').innerText = "Тест завершено!";
+            document.getElementById('questionText').innerText = `Твій результат: ${score} правильних відповідей з ${questions.length}`;
+            document.getElementById('optionsContainer').innerHTML = `<button class="menu-btn btn-primary" onclick="location.reload()">Повернутися в меню</button>`;
         }
     </script>
 </body>
