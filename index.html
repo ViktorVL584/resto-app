@@ -3,164 +3,43 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Атестація - Emily</title>
+    <title>Emily Brooklyn Pizza - Training</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@700&family=Montserrat:wght@500;700&display=swap" rel="stylesheet">
     <style>
-        :root {
-            --brand-red: #E21836;
-            --brand-dark: #0f0f0f;
-            --text-main: #ffffff;
-            --text-muted: #888888;
-        }
-
-        body {
-            font-family: 'Montserrat', sans-serif;
-            background: radial-gradient(circle at top, #3a0d14 0%, var(--brand-dark) 80%);
-            background-color: var(--brand-dark);
-            color: var(--text-main);
-            margin: 0;
-            padding: 0;
-            min-height: 100vh;
-            min-height: 100dvh; 
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
-
-        .main-container {
-            width: 90%;
-            max-width: 340px;
-            background: rgba(15, 15, 15, 0.6);
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(226, 24, 54, 0.2);
-            border-radius: 24px;
-            padding: 30px 20px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
-            text-align: center;
-        }
-
-        .neon-logo {
-            font-family: 'Caveat', cursive;
-            font-size: 54px;
-            color: #fff;
-            text-shadow: 
-                0 0 5px #fff,
-                0 0 10px #fff,
-                0 0 20px var(--brand-red),
-                0 0 40px var(--brand-red);
-            margin: 0;
-            line-height: 1;
-            transform: rotate(-3deg);
-        }
-        
-        .logo-sub {
-            font-size: 11px;
-            letter-spacing: 3px;
-            color: var(--text-muted);
-            text-transform: uppercase;
-            margin-top: 5px;
-            margin-bottom: 25px;
-        }
-
-        h1 {
-            font-size: 18px;
-            margin: 0 0 5px 0;
-        }
-
-        p {
-            font-size: 13px;
-            color: var(--text-muted);
-            margin: 0 0 20px 0;
-        }
-
-        .menu-btn {
-            width: 100%;
-            padding: 16px;
-            margin-bottom: 12px;
-            border-radius: 14px;
-            font-family: 'Montserrat', sans-serif;
-            font-size: 14px;
-            font-weight: 700;
-            cursor: pointer;
-            transition: transform 0.1s, box-shadow 0.1s;
-            border: none;
-            outline: none;
-        }
-
-        .menu-btn:active {
-            transform: scale(0.96);
-        }
-
-        .btn-primary {
-            background-color: var(--brand-red);
-            color: white;
-            box-shadow: 0 4px 15px rgba(226, 24, 54, 0.4);
-        }
-
-        .btn-secondary {
-            background-color: #1e1e1e;
-            color: white;
-            border: 1px solid #333;
-        }
-
-        .btn-danger {
-            background-color: transparent;
-            color: var(--brand-red);
-            border: 1px solid var(--brand-red);
-            margin-top: 10px;
-        }
-
-        #quizContainer, #setupScreen, #leaderboardContainer {
-            display: none;
-        }
-
-        #timerDisplay {
-            color: var(--brand-red);
-            font-size: 18px;
-            font-weight: 700;
-            margin-top: 15px;
-            text-shadow: 0 0 8px rgba(226, 24, 54, 0.5);
-        }
-
-        #questionText {
-            font-size: 16px;
-            line-height: 1.4;
-            margin-bottom: 25px;
-        }
-
-        .leader-item {
-            display: flex;
-            justify-content: space-between;
-            padding: 12px;
-            border-bottom: 1px solid #2a2a2a;
-            font-size: 13px;
-        }
-        .leader-item b {
-            color: var(--brand-red);
-        }
+        :root { --brand-red: #E21836; --brand-dark: #0f0f0f; --text-main: #ffffff; --text-muted: #888888; }
+        body { font-family: 'Montserrat', sans-serif; background: radial-gradient(circle at top, #3a0d14 0%, var(--brand-dark) 80%); background-color: var(--brand-dark); color: var(--text-main); margin: 0; padding: 0; min-height: 100vh; display: flex; justify-content: center; align-items: center; }
+        .main-container { width: 90%; max-width: 340px; background: rgba(15, 15, 15, 0.7); backdrop-filter: blur(10px); border: 1px solid rgba(226, 24, 54, 0.2); border-radius: 24px; padding: 25px 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); text-align: center; }
+        .neon-logo { font-family: 'Caveat', cursive; font-size: 50px; color: #fff; text-shadow: 0 0 5px #fff, 0 0 10px #fff, 0 0 20px var(--brand-red), 0 0 40px var(--brand-red); margin: 0; line-height: 1; transform: rotate(-2deg); }
+        .logo-sub { font-size: 10px; letter-spacing: 3px; color: var(--text-muted); text-transform: uppercase; margin-top: 5px; margin-bottom: 20px; }
+        .menu-btn { width: 100%; padding: 15px; margin-bottom: 10px; border-radius: 14px; font-family: 'Montserrat', sans-serif; font-size: 14px; font-weight: 700; cursor: pointer; border: none; transition: transform 0.1s; }
+        .menu-btn:active { transform: scale(0.97); }
+        .btn-primary { background-color: var(--brand-red); color: white; box-shadow: 0 4px 15px rgba(226, 24, 54, 0.4); }
+        .btn-secondary { background-color: #1e1e1e; color: white; border: 1px solid #333; }
+        .btn-danger { background-color: transparent; color: var(--brand-red); border: 1px solid var(--brand-red); margin-top: 10px; }
+        #quizContainer, #setupScreen, #leaderboardContainer { display: none; }
+        .tabs { display: flex; gap: 5px; margin-bottom: 15px; background: #1a1a1a; padding: 5px; border-radius: 10px; }
+        .tab { flex: 1; font-size: 10px; padding: 8px 2px; border-radius: 8px; cursor: pointer; color: var(--text-muted); }
+        .tab.active { background: var(--brand-red); color: white; }
+        .leader-item { display: flex; justify-content: space-between; padding: 10px 5px; border-bottom: 1px solid #2a2a2a; font-size: 13px; }
+        .leader-item b { color: var(--brand-red); }
     </style>
 </head>
 <body>
-
     <div class="main-container">
-
         <div id="mainMenu">
             <div class="neon-logo">Emily</div>
             <div class="logo-sub">Brooklyn Pizza</div>
-            
-            <h1 id="userName">Привіт!</h1>
-            <p>Обери режим навчання або іспиту</p>
-            
-            <button class="menu-btn btn-primary" onclick="openSetup('free')">Вільний режим</button>
-            <button class="menu-btn btn-primary" onclick="openSetup('timed')">Режим на час (Спринт)</button>
-            <button class="menu-btn btn-secondary" onclick="showLeaderboard()">🏆 Рейтинг</button>
+            <h1 id="userName" style="font-size: 18px;">Вітаємо!</h1>
+            <p style="font-size: 12px; color: var(--text-muted); margin-bottom: 20px;">Оберіть режим тренування</p>
+            <button class="menu-btn btn-primary" onclick="openSetup('free')">📚 Навчання</button>
+            <button class="menu-btn btn-primary" onclick="openSetup('timed')">⏱ Спринт (15с)</button>
+            <button class="menu-btn btn-secondary" onclick="showLeaderboard()">🏆 Рейтинги</button>
             <button class="menu-btn btn-danger" onclick="startAssessment()">🔥 АТЕСТАЦІЯ</button>
         </div>
 
         <div id="setupScreen">
-            <h1>Налаштування</h1>
-            <p>Обери кількість питань:</p>
+            <h1>Кількість питань</h1>
             <button class="menu-btn btn-secondary" onclick="prepareQuiz(20)">20 питань</button>
             <button class="menu-btn btn-secondary" onclick="prepareQuiz(40)">40 питань</button>
             <button class="menu-btn btn-secondary" onclick="prepareQuiz(60)">60 питань</button>
@@ -168,19 +47,22 @@
         </div>
 
         <div id="quizContainer">
-            <p id="progressText" style="color: var(--brand-red); font-weight: bold;">...</p>
-            <div id="questionText">Завантаження...</div>
+            <p id="progressText" style="color: var(--brand-red); font-weight: bold; font-size: 12px;"></p>
+            <div id="questionText" style="font-weight: 700; margin-bottom: 20px;"></div>
             <div id="optionsContainer"></div>
-            <div id="timerDisplay"></div>
+            <div id="timerDisplay" style="color: var(--brand-red); font-weight: bold; margin-top: 15px;"></div>
         </div>
 
         <div id="leaderboardContainer">
-            <h1>🏆 ТОП-10</h1>
-            <p>Найкращі результати</p>
-            <div id="leaderboardList" style="margin-bottom: 20px;"></div>
-            <button class="menu-btn btn-danger" onclick="location.reload()">В меню</button>
+            <h1 style="font-size: 18px; margin-bottom: 15px;">🏆 Рейтинги</h1>
+            <div class="tabs">
+                <div class="tab active" onclick="changeTab('exam', this)">Іспит</div>
+                <div class="tab" onclick="changeTab('free', this)">Навчання</div>
+                <div class="tab" onclick="changeTab('timed', this)">Спринт</div>
+            </div>
+            <div id="leaderboardList"></div>
+            <button class="menu-btn btn-danger" onclick="location.reload()" style="margin-top: 15px;">В меню</button>
         </div>
-
     </div>
 
     <script>
@@ -189,99 +71,61 @@
         tg.ready();
 
         const API_URL = "https://script.google.com/macros/s/AKfycbxwXzgTnt_i5oQgmgU7zwwkbGmKDmCPG0QqFWddh3mWSv-PvzxtRns5eF78hEZllhAy/exec";
-        
-        let userName = "Колега";
-        let userId = "0";
-        if (tg.initDataUnsafe && tg.initDataUnsafe.user) {
-            userName = tg.initDataUnsafe.user.first_name || "Колега";
-            userId = tg.initDataUnsafe.user.id || "0";
-        }
-        document.getElementById('userName').innerText = "Привіт, " + userName + "!";
+        let userData = tg.initDataUnsafe && tg.initDataUnsafe.user ? tg.initDataUnsafe.user : {first_name: "Колега", id: "0"};
+        document.getElementById('userName').innerText = "Привіт, " + userData.first_name + "!";
 
-        let questions = [], currentIndex = 0, score = 0, mode = '', timerInterval;
+        let questions = [], currentIndex = 0, score = 0, mode = '', timerInterval, allLeaders = [];
 
-        function openSetup(m) {
-            mode = m;
-            document.getElementById('mainMenu').style.display = 'none';
-            document.getElementById('setupScreen').style.display = 'block';
-        }
+        function openSetup(m) { mode = m; document.getElementById('mainMenu').style.display = 'none'; document.getElementById('setupScreen').style.display = 'block'; }
 
         async function prepareQuiz(count) {
             document.getElementById('setupScreen').style.display = 'none';
             document.getElementById('quizContainer').style.display = 'block';
-            document.getElementById('questionText').innerText = "Завантаження питань...";
-            try {
-                let response = await fetch(API_URL);
-                let data = await response.json();
-                questions = data.questions.sort(() => Math.random() - 0.5).slice(0, count);
-                startQuiz();
-            } catch (e) { document.getElementById('questionText').innerText = "Помилка завантаження."; }
+            document.getElementById('questionText').innerText = "Завантаження...";
+            let data = await fetch(API_URL).then(r => r.json());
+            questions = data.questions.sort(() => Math.random() - 0.5).slice(0, count);
+            startQuiz();
         }
 
         async function startAssessment() {
-            if(!confirm("Це офіційна атестація. Результат буде записано. Починаємо?")) return;
+            if(!confirm("Це офіційний іспит. Результат буде збережено!")) return;
             mode = 'exam';
             document.getElementById('mainMenu').style.display = 'none';
             document.getElementById('quizContainer').style.display = 'block';
-            document.getElementById('questionText').innerText = "Завантаження іспиту...";
-            try {
-                let response = await fetch(API_URL);
-                let data = await response.json();
-                questions = data.questions.sort(() => Math.random() - 0.5);
-                startQuiz();
-            } catch (e) { document.getElementById('questionText').innerText = "Помилка завантаження."; }
+            let data = await fetch(API_URL).then(r => r.json());
+            questions = data.questions.sort(() => Math.random() - 0.5);
+            startQuiz();
         }
 
-        function startQuiz() {
-            currentIndex = 0; score = 0;
-            showQuestion();
-        }
+        function startQuiz() { currentIndex = 0; score = 0; showQuestion(); }
 
         function showQuestion() {
             clearInterval(timerInterval);
             if (currentIndex >= questions.length) { finishQuiz(); return; }
-            
             let q = questions[currentIndex];
             document.getElementById('progressText').innerText = (currentIndex + 1) + " / " + questions.length;
             document.getElementById('questionText').innerText = q.question;
-            
             let html = "";
-            q.options.forEach((opt, i) => {
-                html += `<button class="menu-btn btn-secondary" onclick="checkAnswer(${i+1}, ${q.correct_answer})">${opt}</button>`;
-            });
+            q.options.forEach((opt, i) => { html += `<button class="menu-btn btn-secondary" onclick="checkAnswer(${i+1}, ${q.correct_answer})">${opt}</button>`; });
             document.getElementById('optionsContainer').innerHTML = html;
-
             if (mode === 'timed') {
                 let left = 15;
                 document.getElementById('timerDisplay').innerText = "⏱ " + left;
-                timerInterval = setInterval(() => {
-                    left--;
-                    document.getElementById('timerDisplay').innerText = "⏱ " + left;
-                    if (left <= 0) { clearInterval(timerInterval); currentIndex++; showQuestion(); }
-                }, 1000);
+                timerInterval = setInterval(() => { left--; document.getElementById('timerDisplay').innerText = "⏱ " + left; if (left <= 0) { clearInterval(timerInterval); currentIndex++; showQuestion(); } }, 1000);
             }
         }
 
         function checkAnswer(sel, corr) {
             if (sel === corr) { score++; tg.HapticFeedback.notificationOccurred('success'); }
             else { tg.HapticFeedback.notificationOccurred('error'); }
-            currentIndex++;
-            showQuestion();
+            currentIndex++; showQuestion();
         }
 
         async function finishQuiz() {
-            document.getElementById('progressText').innerText = "Готово!";
-            let finalValue = (mode === 'exam') ? Math.round((score/questions.length)*100) : score;
-            
-            fetch(API_URL, {
-                method: 'POST',
-                body: JSON.stringify({ tg_id: userId, name: userName, score: finalValue, type: mode })
-            });
-
-            document.getElementById('questionText').innerText = (mode === 'exam') 
-                ? "Атестація завершена!\nРезультат: " + finalValue + "%"
-                : "Тренування завершено!\nРезультат: " + score + " з " + questions.length;
-            
+            let percent = Math.round((score / questions.length) * 100);
+            document.getElementById('progressText').innerText = "Збереження...";
+            await fetch(API_URL, { method: 'POST', body: JSON.stringify({ tg_id: userData.id, name: userData.first_name, score: percent, type: mode }) });
+            document.getElementById('questionText').innerText = mode === 'exam' ? "Атестація: " + percent + "%" : "Результат: " + percent + "% (" + score + "/" + questions.length + ")";
             document.getElementById('optionsContainer').innerHTML = `<button class="menu-btn btn-primary" onclick="location.reload()">В меню</button>`;
             document.getElementById('timerDisplay').innerText = "";
         }
@@ -290,15 +134,16 @@
             document.getElementById('mainMenu').style.display = 'none';
             document.getElementById('leaderboardContainer').style.display = 'block';
             document.getElementById('leaderboardList').innerText = "Завантаження...";
-            try {
-                let response = await fetch(API_URL + "?action=leaderboard");
-                let leaders = await response.json();
-                let html = "";
-                leaders.forEach((l, i) => {
-                    html += `<div class="leader-item"><span>${i+1}. ${l.name}</span><b>${l.score}б. ${l.status ? '('+l.status+')' : ''}</b></div>`;
-                });
-                document.getElementById('leaderboardList').innerHTML = html || "Пусто";
-            } catch (e) { document.getElementById('leaderboardList').innerText = "Помилка"; }
+            allLeaders = await fetch(API_URL + "?action=leaderboard").then(r => r.json());
+            changeTab('exam', document.querySelector('.tab.active'));
+        }
+
+        function changeTab(type, el) {
+            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+            el.classList.add('active');
+            let filtered = allLeaders.filter(l => l[type] > 0).sort((a, b) => b[type] - a[type]);
+            let html = filtered.map((l, i) => `<div class="leader-item"><span>${i+1}. ${l.name}</span><b>${l[type]}%</b></div>`).join('');
+            document.getElementById('leaderboardList').innerHTML = html || "Поки немає результатів";
         }
     </script>
 </body>
