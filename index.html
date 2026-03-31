@@ -186,11 +186,16 @@
     <script>
         let tg = window.Telegram.WebApp;
         tg.expand();
-        // Прибрано проблемні команди зміни кольору шапки Telegram
+        tg.ready();
 
         const API_URL = "https://script.google.com/macros/s/AKfycbxwXzgTnt_i5oQgmgU7zwwkbGmKDmCPG0QqFWddh3mWSv-PvzxtRns5eF78hEZllhAy/exec";
-        let userName = tg.initDataUnsafe?.user?.first_name || "Колега";
-        let userId = tg.initDataUnsafe?.user?.id || "0";
+        
+        let userName = "Колега";
+        let userId = "0";
+        if (tg.initDataUnsafe && tg.initDataUnsafe.user) {
+            userName = tg.initDataUnsafe.user.first_name || "Колега";
+            userId = tg.initDataUnsafe.user.id || "0";
+        }
         document.getElementById('userName').innerText = "Привіт, " + userName + "!";
 
         let questions = [], currentIndex = 0, score = 0, mode = '', timerInterval;
@@ -237,7 +242,7 @@
             if (currentIndex >= questions.length) { finishQuiz(); return; }
             
             let q = questions[currentIndex];
-            document.getElementById('progressText').innerText = `${currentIndex + 1} / ${questions.length}`;
+            document.getElementById('progressText').innerText = (currentIndex + 1) + " / " + questions.length;
             document.getElementById('questionText').innerText = q.question;
             
             let html = "";
@@ -248,10 +253,10 @@
 
             if (mode === 'timed') {
                 let left = 15;
-                document.getElementById('timerDisplay').innerText = `⏱ ${left}`;
+                document.getElementById('timerDisplay').innerText = "⏱ " + left;
                 timerInterval = setInterval(() => {
                     left--;
-                    document.getElementById('timerDisplay').innerText = `⏱ ${left}`;
+                    document.getElementById('timerDisplay').innerText = "⏱ " + left;
                     if (left <= 0) { clearInterval(timerInterval); currentIndex++; showQuestion(); }
                 }, 1000);
             }
@@ -274,8 +279,8 @@
             });
 
             document.getElementById('questionText').innerText = (mode === 'exam') 
-                ? `Атестація завершена!\nРезультат: ${finalValue}%`
-                : `Тренування завершено!\nРезультат: ${score} з ${questions.length}`;
+                ? "Атестація завершена!\nРезультат: " + finalValue + "%"
+                : "Тренування завершено!\nРезультат: " + score + " з " + questions.length;
             
             document.getElementById('optionsContainer').innerHTML = `<button class="menu-btn btn-primary" onclick="location.reload()">В меню</button>`;
             document.getElementById('timerDisplay').innerText = "";
@@ -286,8 +291,12 @@
             document.getElementById('leaderboardContainer').style.display = 'block';
             document.getElementById('leaderboardList').innerText = "Завантаження...";
             try {
-                let leaders = await fetch(API_URL + "?action=leaderboard").then(r => r.json());
-                let html = leaders.map((l, i) => `<div class="leader-item"><span>${i+1}. ${l.name}</span><b>${l.score}б. ${l.status ? '('+l.status+')' : ''}</b></div>`).join('');
+                let response = await fetch(API_URL + "?action=leaderboard");
+                let leaders = await response.json();
+                let html = "";
+                leaders.forEach((l, i) => {
+                    html += `<div class="leader-item"><span>${i+1}. ${l.name}</span><b>${l.score}б. ${l.status ? '('+l.status+')' : ''}</b></div>`;
+                });
                 document.getElementById('leaderboardList').innerHTML = html || "Пусто";
             } catch (e) { document.getElementById('leaderboardList').innerText = "Помилка"; }
         }
