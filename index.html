@@ -7,177 +7,152 @@
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
         body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; background-color: var(--tg-theme-bg-color, #ffffff); color: var(--tg-theme-text-color, #000000); margin: 0; padding: 20px; display: flex; flex-direction: column; align-items: center; }
-        .header { text-align: center; margin-bottom: 30px; }
-        .header h1 { font-size: 24px; margin: 10px 0; }
+        .header { text-align: center; margin-bottom: 25px; }
+        .header h1 { font-size: 22px; margin: 5px 0; }
         .header p { color: var(--tg-theme-hint-color, #999999); font-size: 14px; }
-        .menu-btn { width: 100%; max-width: 320px; padding: 15px; margin-bottom: 15px; border: none; border-radius: 12px; font-size: 16px; font-weight: bold; cursor: pointer; transition: transform 0.1s; }
-        .menu-btn:active { transform: scale(0.96); }
+        .menu-btn { width: 100%; max-width: 320px; padding: 15px; margin-bottom: 12px; border: none; border-radius: 12px; font-size: 16px; font-weight: bold; cursor: pointer; transition: transform 0.1s; }
+        .menu-btn:active { transform: scale(0.97); }
         .btn-primary { background-color: var(--tg-theme-button-color, #3390ec); color: var(--tg-theme-button-text-color, #ffffff); }
         .btn-secondary { background-color: var(--tg-theme-secondary-bg-color, #f4f4f5); color: var(--tg-theme-text-color, #000000); }
-        .btn-danger { background-color: #e53935; color: white; margin-top: 20px; }
-        #quizContainer, #timeSetup { display: none; width: 100%; max-width: 320px; text-align: center; }
+        .btn-danger { background-color: #e53935; color: white; margin-top: 15px; }
+        #quizContainer, #setupScreen, #leaderboardContainer { display: none; width: 100%; max-width: 320px; text-align: center; }
         #questionText { font-size: 18px; font-weight: bold; margin-bottom: 20px; }
-        .progress { color: var(--tg-theme-hint-color, #999999); font-size: 14px; margin-bottom: 15px; }
-        #timerDisplay { color: #e53935; font-size: 18px; font-weight: bold; margin-top: 15px; }
+        .progress { color: var(--tg-theme-hint-color, #999999); font-size: 13px; margin-bottom: 10px; }
+        #timerDisplay { color: #e53935; font-size: 16px; font-weight: bold; margin-top: 10px; }
+        .leader-item { display: flex; justify-content: space-between; padding: 10px; border-bottom: 1px solid var(--tg-theme-secondary-bg-color); font-size: 14px; }
     </style>
 </head>
 <body>
 
     <div id="mainMenu">
         <div class="header">
-            <h1 id="userName">Привіт, Колего!</h1>
-            <p>Обери режим тренування або атестації</p>
+            <h1 id="userName">Привіт!</h1>
+            <p>Обери режим навчання або іспиту</p>
         </div>
-        <button class="menu-btn btn-primary" onclick="startFreeMode()">Вільний режим (Тренування)</button>
-        <button class="menu-btn btn-secondary" onclick="openTimeSetup()">Режим на час (Спринт)</button>
-        <button class="menu-btn btn-secondary" onclick="tg.showAlert('Функція в розробці!')">🏆 Таблиця лідерів</button>
-        <button class="menu-btn btn-danger" onclick="tg.showAlert('Функція в розробці!')">АТЕСТАЦІЯ</button>
+        <button class="menu-btn btn-primary" onclick="openSetup('free')">Вільний режим</button>
+        <button class="menu-btn btn-primary" onclick="openSetup('timed')">Режим на час (Спринт)</button>
+        <button class="menu-btn btn-secondary" onclick="showLeaderboard()">🏆 Рейтинг</button>
+        <button class="menu-btn btn-danger" onclick="startAssessment()">🔥 АТЕСТАЦІЯ</button>
     </div>
 
-    <div id="timeSetup">
-        <div class="header">
-            <h1>Режим на час</h1>
-            <p>На кожне питання буде 15 секунд. Обери кількість питань:</p>
-        </div>
-        <button class="menu-btn btn-primary" onclick="startTimedQuiz(10)">10 питань</button>
-        <button class="menu-btn btn-primary" onclick="startTimedQuiz(20)">20 питань</button>
-        <button class="menu-btn btn-primary" onclick="startTimedQuiz(30)">30 питань</button>
-        <button class="menu-btn btn-secondary" onclick="location.reload()">🔙 Назад</button>
+    <div id="setupScreen">
+        <div class="header"><h1 id="setupTitle">Налаштування</h1><p>Обери кількість питань:</p></div>
+        <button class="menu-btn btn-secondary" onclick="prepareQuiz(20)">20 питань</button>
+        <button class="menu-btn btn-secondary" onclick="prepareQuiz(40)">40 питань</button>
+        <button class="menu-btn btn-secondary" onclick="prepareQuiz(60)">60 питань</button>
+        <button class="menu-btn btn-primary" onclick="location.reload()">🔙 Назад</button>
     </div>
 
     <div id="quizContainer">
-        <div class="progress" id="progressText">Завантаження...</div>
-        <div id="questionText">З'єднуємось з базою знань...</div>
+        <div class="progress" id="progressText">...</div>
+        <div id="questionText">...</div>
         <div id="optionsContainer"></div>
         <div id="timerDisplay"></div>
+    </div>
+
+    <div id="leaderboardContainer">
+        <div class="header"><h1>🏆 ТОП-10</h1></div>
+        <div id="leaderboardList"></div>
+        <button class="menu-btn btn-primary" onclick="location.reload()" style="margin-top: 15px;">🔙 В меню</button>
     </div>
 
     <script>
         let tg = window.Telegram.WebApp;
         tg.expand();
-
-        let userName = tg.initDataUnsafe?.user?.first_name || "Гість";
-        let userId = tg.initDataUnsafe?.user?.id || "000000";
+        
+        const API_URL = "https://script.google.com/macros/s/AKfycbxwXzgTnt_i5oQgmgU7zwwkbGmKDmCPG0QqFWddh3mWSv-PvzxtRns5eF78hEZllhAy/exec";
+        let userName = tg.initDataUnsafe?.user?.first_name || "Колега";
+        let userId = tg.initDataUnsafe?.user?.id || "0";
         document.getElementById('userName').innerText = "Привіт, " + userName + "!";
 
-        const API_URL = "https://script.google.com/macros/s/AKfycbxwXzgTnt_i5oQgmgU7zwwkbGmKDmCPG0QqFWddh3mWSv-PvzxtRns5eF78hEZllhAy/exec";
-        
-        let questions = [];
-        let currentIndex = 0;
-        let score = 0;
-        let isTimedMode = false;
-        let timerInterval;
-        let timeLeft = 15;
+        let questions = [], currentIndex = 0, score = 0, mode = '', timerInterval;
 
-        async function fetchQuestions() {
-            let response = await fetch(API_URL);
-            let data = await response.json();
-            return data.questions;
+        function openSetup(m) {
+            mode = m;
+            document.getElementById('mainMenu').style.display = 'none';
+            document.getElementById('setupScreen').style.display = 'block';
+            document.getElementById('setupTitle').innerText = (m === 'free' ? "Навчання" : "Спринт");
         }
 
-        async function startFreeMode() {
+        async function prepareQuiz(count) {
+            document.getElementById('setupScreen').style.display = 'none';
+            document.getElementById('quizContainer').style.display = 'block';
+            let data = await fetch(API_URL).then(r => r.json());
+            questions = data.questions.sort(() => Math.random() - 0.5).slice(0, count);
+            startQuiz();
+        }
+
+        async function startAssessment() {
+            if(!confirm("Увага! Це офіційна атестація. Результат буде записано в базу керівництва. Починаємо?")) return;
+            mode = 'exam';
             document.getElementById('mainMenu').style.display = 'none';
             document.getElementById('quizContainer').style.display = 'block';
-            isTimedMode = false;
-
-            try {
-                questions = await fetchQuestions();
-                questions.sort(() => Math.random() - 0.5);
-                currentIndex = 0;
-                score = 0;
-                showQuestion();
-            } catch (error) {
-                document.getElementById('questionText').innerText = "Помилка! Перевірте базу даних.";
-            }
+            let data = await fetch(API_URL).then(r => r.json());
+            // Для атестації беремо всі доступні питання
+            questions = data.questions.sort(() => Math.random() - 0.5);
+            startQuiz();
         }
 
-        function openTimeSetup() {
-            document.getElementById('mainMenu').style.display = 'none';
-            document.getElementById('timeSetup').style.display = 'block';
-        }
-
-        async function startTimedQuiz(count) {
-            document.getElementById('timeSetup').style.display = 'none';
-            document.getElementById('quizContainer').style.display = 'block';
-            isTimedMode = true;
-
-            try {
-                document.getElementById('questionText').innerText = "З'єднуємось з базою знань...";
-                let allQuestions = await fetchQuestions();
-                allQuestions.sort(() => Math.random() - 0.5);
-                questions = allQuestions.slice(0, count); // Беремо обрану кількість питань
-                
-                currentIndex = 0;
-                score = 0;
-                showQuestion();
-            } catch (error) {
-                document.getElementById('questionText').innerText = "Помилка! Перевірте базу даних.";
-            }
+        function startQuiz() {
+            currentIndex = 0; score = 0;
+            showQuestion();
         }
 
         function showQuestion() {
             clearInterval(timerInterval);
-            document.getElementById('timerDisplay').innerText = "";
-
-            if (currentIndex >= questions.length) {
-                showResult();
-                return;
-            }
-
+            if (currentIndex >= questions.length) { finishQuiz(); return; }
+            
             let q = questions[currentIndex];
             document.getElementById('progressText').innerText = `Питання ${currentIndex + 1} з ${questions.length}`;
             document.getElementById('questionText').innerText = q.question;
-
-            let optionsHtml = "";
-            q.options.forEach((opt, index) => {
-                let optNum = index + 1;
-                optionsHtml += `<button class="menu-btn btn-secondary" onclick="checkAnswer(${optNum}, ${q.correct_answer})">${opt}</button>`;
+            
+            let html = "";
+            q.options.forEach((opt, i) => {
+                html += `<button class="menu-btn btn-secondary" onclick="checkAnswer(${i+1}, ${q.correct_answer})">${opt}</button>`;
             });
-            document.getElementById('optionsContainer').innerHTML = optionsHtml;
+            document.getElementById('optionsContainer').innerHTML = html;
 
-            if (isTimedMode) {
-                timeLeft = 15;
-                document.getElementById('timerDisplay').innerText = `⏱ Залишилось: ${timeLeft} сек`;
+            if (mode === 'timed') {
+                let left = 15;
+                document.getElementById('timerDisplay').innerText = `⏱ ${left} сек`;
                 timerInterval = setInterval(() => {
-                    timeLeft--;
-                    document.getElementById('timerDisplay').innerText = `⏱ Залишилось: ${timeLeft} сек`;
-                    if (timeLeft <= 0) {
-                        clearInterval(timerInterval);
-                        tg.HapticFeedback.notificationOccurred('warning');
-                        currentIndex++;
-                        showQuestion(); // Йдемо далі, якщо не встиг
-                    }
+                    left--;
+                    document.getElementById('timerDisplay').innerText = `⏱ ${left} сек`;
+                    if (left <= 0) { clearInterval(timerInterval); currentIndex++; showQuestion(); }
                 }, 1000);
             }
         }
 
-        function checkAnswer(selected, correct) {
-            clearInterval(timerInterval);
-            if (selected === correct) score++;
+        function checkAnswer(sel, corr) {
+            if (sel === corr) { score++; tg.HapticFeedback.notificationOccurred('success'); }
+            else { tg.HapticFeedback.notificationOccurred('error'); }
             currentIndex++;
             showQuestion();
         }
 
-        async function showResult() {
-            document.getElementById('progressText').innerText = "Відправляємо результати в базу...";
-            document.getElementById('questionText').innerText = `Твій результат: ${score} правильних відповідей з ${questions.length}`;
-            document.getElementById('optionsContainer').innerHTML = "";
+        async function finishQuiz() {
+            document.getElementById('progressText').innerText = "Збереження результату...";
+            let finalValue = (mode === 'exam') ? Math.round((score/questions.length)*100) : score;
+            
+            await fetch(API_URL, {
+                method: 'POST',
+                body: JSON.stringify({ tg_id: userId, name: userName, score: finalValue, type: mode })
+            });
+
+            document.getElementById('questionText').innerText = (mode === 'exam') 
+                ? `Іспит завершено! Ваш результат: ${finalValue}%`
+                : `Тренування завершено! Результат: ${score} з ${questions.length}`;
+            
+            document.getElementById('optionsContainer').innerHTML = `<button class="menu-btn btn-primary" onclick="location.reload()">В меню</button>`;
             document.getElementById('timerDisplay').innerText = "";
+        }
 
-            let userData = { tg_id: userId, name: userName, score: score };
-
-            try {
-                await fetch(API_URL, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'text/plain' },
-                    body: JSON.stringify(userData)
-                });
-                document.getElementById('progressText').innerText = "Результат успішно збережено! ✅";
-            } catch (error) {
-                document.getElementById('progressText').innerText = "Помилка збереження ❌";
-            }
-
-            document.getElementById('optionsContainer').innerHTML = `<button class="menu-btn btn-primary" onclick="location.reload()">Повернутися в меню</button>`;
+        async function showLeaderboard() {
+            document.getElementById('mainMenu').style.display = 'none';
+            document.getElementById('leaderboardContainer').style.display = 'block';
+            let leaders = await fetch(API_URL + "?action=leaderboard").then(r => r.json());
+            let html = leaders.map((l, i) => `<div class="leader-item"><span>${i+1}. ${l.name}</span><span>${l.score}б. ${l.status ? '('+l.status+')' : ''}</span></div>`).join('');
+            document.getElementById('leaderboardList').innerHTML = html || "Даних поки немає";
         }
     </script>
 </body>
