@@ -6,134 +6,160 @@
     <title>Атестація Персоналу - Emily Brooklyn Pizza</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
-        /* ОСНОВНІ БРЕНДОВІ КОЛЬОРИ */
+        /* ОСНОВНІ БРЕНДОВІ ТА НЕОНОВІ КОЛЬОРИ */
         :root {
             --brand-red: #E21836;    /* Фірмовий червоний */
-            --brand-dark: #111111;   /* Основний фон (темний) */
-            --brand-text: #ffffff;   /* Основний текст (білий) */
-            --brand-light: #FFFAE6;  /* Акцент (світлий) */
+            --brand-dark: #0A0A0A;   /* Глибокий чорний фон */
+            --brand-grey: #1E1E1E;   /* Другорядний темний */
+            --brand-text: #ffffff;   /* Основний текст */
+            --neon-red: #ff4d4d;     /* М'яке неонове червоне сяйво */
+            --neon-yellow: #ffee58;  /* Неонове жовте сяйво для акцентів */
             --tg-theme-button-color: var(--brand-red); /* Для нативних кнопок ТГ */
         }
 
+        /* ЦЕНТРУВАННЯ ТА ФОН */
         body {
             font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
             background-color: var(--brand-dark);
-            background-image: url('https://www.transparenttextures.com/patterns/dark-brick-wall.png'); /* Текстура Бруклінської цегли */
+            background-image: url('https://www.transparenttextures.com/patterns/clean-brick.png'); /* Чистіша Бруклінська текстура */
+            background-size: initial;
             color: var(--brand-text);
             margin: 0;
             padding: 20px;
+            box-sizing: border-box;
+            display: flex;
+            justify-content: center; /* Центруємо весь контент */
+            align-items: center; /* Центруємо весь контент */
+            min-height: 100vh; /* Заповнюємо весь екран */
+            font-weight: 500;
+        }
+
+        /* КОНТЕЙНЕР ДЛЯ МЕНЮ ТА ТЕСТУ (З НЕОНОВИМ СЯЙВОМ) */
+        .main-container {
+            width: 100%;
+            max-width: 320px;
             display: flex;
             flex-direction: column;
             align-items: center;
-            font-weight: 500;
+            text-align: center;
+            /* ДОДАЄМО НЕОНОВЕ СЯЙВО ВОКРУГ ЦЕНТРАЛЬНОГО ЕКРАНУ */
+            box-shadow: 0 0 15px -5px rgba(226, 24, 54, 0.4);
+            border-radius: 20px;
+            padding: 10px;
+            background-color: rgba(10, 10, 10, 0.85); /* Трохи прозорості */
         }
 
         /* КОНТЕЙНЕР ДЛЯ ЛОГО ТА ПРИВІТАННЯ */
         .header-brand {
             width: 100%;
-            max-width: 320px;
-            text-align: center;
             margin-bottom: 25px;
             display: flex;
             flex-direction: column;
             align-items: center;
         }
 
-        /* ЛОГОТИП ЕМІЛІ */
+        /* ОФІЦІЙНИЙ ЛОГОТИП ЕМІЛІ */
         .logo {
-            width: 140px; /* Трохи більший розмір */
+            width: 120px; /* Трохи компактніше */
             margin-bottom: 15px;
+            filter: drop-shadow(0 0 2px var(--brand-red)); /* Subtle logo highlight */
         }
 
-        .header-brand h1 {
+        .header-brand h1, 
+        #setupScreen h1, 
+        #leaderboardContainer h1, 
+        #quizContainer #questionText {
             font-size: 20px;
             margin: 0 0 5px 0;
-            color: var(--brand-light);
+            color: var(--brand-text);
             font-weight: 700;
+            text-shadow: 0 0 2px rgba(255, 255, 255, 0.5);
         }
 
-        .header-brand p {
-            color: var(--brand-light);
+        .header-brand p, .progress {
+            color: var(--brand-text);
             font-size: 13px;
-            opacity: 0.9;
+            opacity: 0.8;
             margin: 0;
         }
 
         /* СТИЛІЗАЦІЯ КНОПОК */
         .menu-btn {
             width: 100%;
-            max-width: 320px;
             padding: 16px;
             margin-bottom: 12px;
             border-radius: 12px;
             font-size: 15px;
             font-weight: 700;
-            text-transform: uppercase; /* Додаємо агресивності */
+            text-transform: uppercase;
             cursor: pointer;
             transition: all 0.15s ease-in-out;
             border: 2px solid transparent;
+            box-sizing: border-box;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.2), 0 2px 4px -1px rgba(0, 0, 0, 0.1);
         }
 
         .menu-btn:active {
             transform: scale(0.97);
         }
 
-        /* ГОЛОВНА БРЕНДОВА ЧЕРВОНА КНОПКА */
+        /* ГОЛОВНА БРЕНДОВА ЧЕРВОНА КНОПКА (З НЕОНОВИМ СТЯЖУВАННЯМ) */
         .btn-primary {
             background-color: var(--brand-red);
             color: #ffffff;
             border-color: var(--brand-red);
+            text-shadow: 0 0 1px rgba(255, 255, 255, 0.8);
+            box-shadow: 0 0 8px -3px var(--neon-red);
         }
 
         .btn-primary:active {
             background-color: #c0142e;
+            box-shadow: 0 0 10px -2px var(--neon-red);
         }
 
-        /* ДРУГОРЯДНА КНОПКА (ТЕМНА) */
+        /* ДРУГОРЯДНА КНОПКА (ТЕМНА З ЧЕРВОНИМ КОНТУРОМ) */
         .btn-secondary {
-            background-color: #222222;
-            color: var(--brand-light);
-            border-color: #222222;
+            background-color: transparent;
+            color: var(--neon-red);
+            border-color: var(--brand-red);
+            box-shadow: 0 0 3px -1px var(--neon-red);
+        }
+        .btn-secondary:active {
+             box-shadow: 0 0 5px 0px var(--neon-red);
         }
 
-        /* КНОПКА "АТЕСТАЦІЯ" (НЕБЕЗПЕЧНА) */
+        /* КНОПКА "АТЕСТАЦІЯ" (НЕБЕЗПЕЧНА ЧЕРВОНА МІТКА) */
         .btn-danger {
             background-color: transparent;
             color: var(--brand-red);
             border-color: var(--brand-red);
             margin-top: 15px;
+            border-style: solid; /* Make sure it's solid for the border to show */
         }
 
         /* СТИЛІ ЕКРАНІВ (РЕЖИМІВ) */
         #quizContainer, #setupScreen, #leaderboardContainer {
             display: none;
             width: 100%;
-            max-width: 320px;
             text-align: center;
         }
 
-        #setupScreen .header h1, 
-        #leaderboardContainer .header h1,
+        #setupScreen h1, #leaderboardContainer h1 {
+            color: var(--neon-yellow); /* Налаштування виділяємо жовтим */
+            text-shadow: 0 0 3px var(--neon-yellow);
+        }
+
         #quizContainer #questionText {
-            font-size: 18px;
-            font-weight: 700;
             margin-bottom: 20px;
-            color: var(--brand-light);
         }
 
-        .progress {
-            color: var(--brand-light);
-            opacity: 0.8;
-            font-size: 12px;
-            margin-bottom: 10px;
-        }
-
-        /* ТАЙМЕР */
+        /* ТАЙМЕР (ЯСКРАВО-ЧЕРВОНИЙ НЕОН) */
         #timerDisplay {
-            color: var(--brand-red);
+            color: #ff1a1a;
             font-size: 16px;
             font-weight: 700;
             margin-top: 10px;
+            text-shadow: 0 0 5px #ff1a1a, 0 0 2px #ffffff;
         }
 
         /* ТАБЛИЦЯ ЛІДЕРІВ */
@@ -141,60 +167,87 @@
             display: flex;
             justify-content: space-between;
             padding: 12px;
-            border-bottom: 1px solid #222222;
+            border-bottom: 1px solid var(--brand-grey);
             font-size: 14px;
-            background-color: rgba(34, 34, 34, 0.6);
+            background-color: rgba(30, 30, 30, 0.6);
             border-radius: 8px;
             margin-bottom: 5px;
+        }
+        .leader-item span:first-child {
+             color: var(--neon-yellow); /* Виділяємо імена жовтим */
+             text-shadow: 0 0 2px var(--neon-yellow);
         }
         .leader-item span:last-child {
             color: var(--brand-red);
             font-weight: 700;
         }
+
+        /* КНОПКА НАЗАД (СЕРЕДНЄ) */
+        .btn-back {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 8px;
+            text-transform: capitalize;
+            border-color: var(--brand-grey); /* More subdued back button */
+            background-color: #2a2a2a; /* Subdued color */
+            color: var(--brand-text);
+        }
+        .btn-back img {
+            width: 16px;
+            height: 16px;
+            filter: invert(1); /* Make the arrow icon white to match text */
+        }
     </style>
 </head>
 <body>
 
-    <div id="mainMenu">
-        <div class="header-brand">
-            <img src="https://im-emily.com/wp-content/uploads/2021/08/emily-logo-transparent.png" alt="Emily Brooklyn Pizza Logo" class="logo">
-            <h1 id="userName">Привіт!</h1>
-            <p>Обери режим навчання або іспиту</p>
+    <div class="main-container">
+
+        <div id="mainMenu">
+            <div class="header-brand">
+                <img src="https://im-emily.com/wp-content/uploads/2021/08/emily-logo-transparent.png" alt="Emily Brooklyn Pizza Logo" class="logo">
+                <h1 id="userName">Привіт!</h1>
+                <p>Обери режим навчання або іспиту</p>
+            </div>
+            <button class="menu-btn btn-primary" onclick="openSetup('free')">Вільний режим</button>
+            <button class="menu-btn btn-primary" onclick="openSetup('timed')">Режим на час (Спринт)</button>
+            <button class="menu-btn btn-secondary" onclick="showLeaderboard()">🏆 Рейтинг</button>
+            <button class="menu-btn btn-danger" onclick="startAssessment()">🔥 АТЕСТАЦІЯ</button>
         </div>
-        <button class="menu-btn btn-primary" onclick="openSetup('free')">Вільний режим</button>
-        <button class="menu-btn btn-primary" onclick="openSetup('timed')">Режим на час (Спринт)</button>
-        <button class="menu-btn btn-secondary" onclick="showLeaderboard()">🏆 Рейтинг</button>
-        <button class="menu-btn btn-danger" onclick="startAssessment()">🔥 АТЕСТАЦІЯ</button>
-    </div>
 
-    <div id="setupScreen">
-        <div class="header"><h1 id="setupTitle">Налаштування</h1><p class="progress">Обери кількість питань:</p></div>
-        <button class="menu-btn btn-secondary" onclick="prepareQuiz(20)">20 питань</button>
-        <button class="menu-btn btn-secondary" onclick="prepareQuiz(40)">40 питань</button>
-        <button class="menu-btn btn-secondary" onclick="prepareQuiz(60)">60 питань</button>
-        <button class="menu-btn btn-primary" onclick="location.reload()">🔙 Назад</button>
-    </div>
+        <div id="setupScreen">
+            <div class="header"><h1>Налаштування</h1><p class="progress">Обери кількість питань:</p></div>
+            <button class="menu-btn btn-secondary" onclick="prepareQuiz(20)">20 питань</button>
+            <button class="menu-btn btn-secondary" onclick="prepareQuiz(40)">40 питань</button>
+            <button class="menu-btn btn-secondary" onclick="prepareQuiz(60)">60 питань</button>
+            <button class="menu-btn btn-primary btn-back" onclick="location.reload()">
+                <img src="https://cdn-icons-png.flaticon.com/512/32/32323.png" alt="Back Arrow"> Назад
+            </button>
+        </div>
 
-    <div id="quizContainer">
-        <div class="progress" id="progressText">...</div>
-        <div id="questionText">...</div>
-        <div id="optionsContainer"></div>
-        <div id="timerDisplay"></div>
-    </div>
+        <div id="quizContainer">
+            <div class="progress" id="progressText">...</div>
+            <div id="questionText">Завантаження...</div>
+            <div id="optionsContainer"></div>
+            <div id="timerDisplay"></div>
+        </div>
 
-    <div id="leaderboardContainer">
-        <div class="header"><h1>🏆 ТОП-10</h1></div>
-        <div id="leaderboardList"></div>
-        <button class="menu-btn btn-primary" onclick="location.reload()" style="margin-top: 15px;">🔙 В меню</button>
-    </div>
+        <div id="leaderboardContainer">
+            <div class="header"><h1>🏆 ТОП-10</h1></div>
+            <div id="leaderboardList"></div>
+            <button class="menu-btn btn-primary btn-back" onclick="location.reload()" style="margin-top: 15px;">
+                <img src="https://cdn-icons-png.flaticon.com/512/32/32323.png" alt="Back Arrow"> В меню
+            </button>
+        </div>
 
-    <script>
+    </div> <script>
         let tg = window.Telegram.WebApp;
         tg.expand();
         
         // Налаштовуємо нативні кольори ТГ під бренд
-        tg.setHeaderColor('#111111'); // Робимо верх додатка чорним
-        tg.setBackgroundColor('#111111'); // Задній фон за межами додатка
+        tg.setHeaderColor('#0A0A0A'); // Робимо верх додатка чорним
+        tg.setBackgroundColor('#0A0A0A'); // Задній фон за межами додатка
 
         const API_URL = "https://script.google.com/macros/s/AKfycbxwXzgTnt_i5oQgmgU7zwwkbGmKDmCPG0QqFWddh3mWSv-PvzxtRns5eF78hEZllhAy/exec";
         let userName = tg.initDataUnsafe?.user?.first_name || "Колега";
@@ -214,9 +267,13 @@
             document.getElementById('setupScreen').style.display = 'none';
             document.getElementById('quizContainer').style.display = 'block';
             document.getElementById('questionText').innerText = "Завантаження меню...";
-            let data = await fetch(API_URL).then(r => r.json());
-            questions = data.questions.sort(() => Math.random() - 0.5).slice(0, count);
-            startQuiz();
+            try {
+                let response = await fetch(API_URL);
+                if (!response.ok) throw new Error("Помилка завантаження");
+                let data = await response.json();
+                questions = data.questions.sort(() => Math.random() - 0.5).slice(0, count);
+                startQuiz();
+            } catch (e) { document.getElementById('questionText').innerText = "Помилка завантаження. Спробуйте ще раз."; }
         }
 
         async function startAssessment() {
@@ -225,9 +282,13 @@
             document.getElementById('mainMenu').style.display = 'none';
             document.getElementById('quizContainer').style.display = 'block';
             document.getElementById('questionText').innerText = "Завантаження атестації...";
-            let data = await fetch(API_URL).then(r => r.json());
-            questions = data.questions.sort(() => Math.random() - 0.5);
-            startQuiz();
+            try {
+                let response = await fetch(API_URL);
+                if (!response.ok) throw new Error("Помилка завантаження");
+                let data = await response.json();
+                questions = data.questions.sort(() => Math.random() - 0.5);
+                startQuiz();
+            } catch (e) { document.getElementById('questionText').innerText = "Помилка завантаження. Спробуйте ще раз."; }
         }
 
         function startQuiz() {
@@ -245,6 +306,7 @@
             
             let html = "";
             q.options.forEach((opt, i) => {
+                // Всі кнопки варіантів темні з червоним контуром
                 html += `<button class="menu-btn btn-secondary" onclick="checkAnswer(${i+1}, ${q.correct_answer})">${opt}</button>`;
             });
             document.getElementById('optionsContainer').innerHTML = html;
@@ -271,15 +333,18 @@
             document.getElementById('progressText').innerText = "Збереження результату...";
             let finalValue = (mode === 'exam') ? Math.round((score/questions.length)*100) : score;
             
-            await fetch(API_URL, {
-                method: 'POST',
-                body: JSON.stringify({ tg_id: userId, name: userName, score: finalValue, type: mode })
-            });
+            try {
+                await fetch(API_URL, {
+                    method: 'POST',
+                    body: JSON.stringify({ tg_id: userId, name: userName, score: finalValue, type: mode })
+                });
+            } catch (e) { /* Помилка збереження, але показуємо результат */ }
 
             document.getElementById('questionText').innerText = (mode === 'exam') 
                 ? `Іспит завершено! Результат: ${finalValue}%`
                 : `Тренування завершено! Результат: ${score} з ${questions.length}`;
             
+            // Фінальна кнопка червона Бруклінська
             document.getElementById('optionsContainer').innerHTML = `<button class="menu-btn btn-primary" onclick="location.reload()">В меню</button>`;
             document.getElementById('timerDisplay').innerText = "";
         }
@@ -288,9 +353,11 @@
             document.getElementById('mainMenu').style.display = 'none';
             document.getElementById('leaderboardContainer').style.display = 'block';
             document.getElementById('leaderboardList').innerText = "Завантаження рейтингу...";
-            let leaders = await fetch(API_URL + "?action=leaderboard").then(r => r.json());
-            let html = leaders.map((l, i) => `<div class="leader-item"><span>${i+1}. ${l.name}</span><span>${l.score}б. ${l.status ? '('+l.status+')' : ''}</span></div>`).join('');
-            document.getElementById('leaderboardList').innerHTML = html || "Даних поки немає";
+            try {
+                let leaders = await fetch(API_URL + "?action=leaderboard").then(r => r.json());
+                let html = leaders.map((l, i) => `<div class="leader-item"><span>${i+1}. ${l.name}</span><span>${l.score}б. ${l.status ? '('+l.status+')' : ''}</span></div>`).join('');
+                document.getElementById('leaderboardList').innerHTML = html || "Даних поки немає";
+            } catch (e) { document.getElementById('leaderboardList').innerText = "Помилка завантаження рейтингу."; }
         }
     </script>
 </body>
