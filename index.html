@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Emily Brooklyn Pizza - Hall of Fame</title>
+    <title>Emily Brooklyn Pizza - Training</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@700&family=Montserrat:wght@400;700&display=swap" rel="stylesheet">
     <style>
@@ -14,25 +14,20 @@
         .logo-sub { font-size: 10px; letter-spacing: 3px; color: var(--text-muted); text-transform: uppercase; margin-top: 5px; margin-bottom: 20px; }
         .user-rank { font-size: 12px; color: #ffcc00; font-weight: 700; text-transform: uppercase; margin-top: 10px; text-shadow: 0 0 5px rgba(255, 204, 0, 0.5); }
         .user-stats { font-size: 11px; color: var(--text-muted); margin-bottom: 20px; }
-
+        #questionImage { width: 100%; border-radius: 15px; margin-bottom: 15px; border: 1px solid rgba(226, 24, 54, 0.3); display: none; object-fit: cover; max-height: 180px; box-shadow: 0 0 10px rgba(226, 24, 54, 0.2); }
         .menu-btn { width: 100%; padding: 14px; margin-bottom: 10px; border-radius: 14px; font-family: 'Montserrat', sans-serif; font-size: 14px; font-weight: 700; cursor: pointer; border: none; transition: all 0.2s; outline: none; }
         .btn-primary { background-color: var(--brand-red); color: white; box-shadow: 0 4px 15px rgba(226, 24, 54, 0.4); }
         .btn-secondary { background-color: #1e1e1e; color: white; border: 1px solid #333; }
         .btn-correct { background-color: #28a745 !important; box-shadow: 0 0 15px rgba(40, 167, 69, 0.6) !important; border: none !important; }
         .btn-incorrect { background-color: #dc3545 !important; box-shadow: 0 0 15px rgba(220, 53, 69, 0.6) !important; border: none !important; }
         .btn-disabled { pointer-events: none; opacity: 0.8; }
-
         .tabs-main { display: flex; gap: 4px; margin-bottom: 10px; background: #111; padding: 4px; border-radius: 12px; }
         .tab-m { flex: 1; font-size: 9px; padding: 8px 2px; border-radius: 8px; cursor: pointer; color: var(--text-muted); text-transform: uppercase; font-weight: 700; }
         .tab-m.active { background: var(--brand-red); color: white; }
-
         .tabs-sub { display: flex; justify-content: center; gap: 10px; margin-bottom: 15px; }
         .tab-s { font-size: 11px; padding: 5px 12px; border-radius: 20px; cursor: pointer; background: #222; color: var(--text-muted); border: 1px solid #333; }
         .tab-s.active { border-color: var(--brand-red); color: white; }
-
         .leader-item { display: flex; justify-content: space-between; padding: 12px 8px; border-bottom: 1px solid #222; font-size: 12px; }
-        .leader-item b { color: var(--brand-red); }
-
         #quizContainer, #setupScreen, #leaderboardContainer { display: none; }
     </style>
 </head>
@@ -41,31 +36,31 @@
         <div id="mainMenu">
             <div class="neon-logo">Emily</div>
             <div class="logo-sub">Brooklyn Pizza</div>
-            <h1 id="userName" style="font-size: 18px; margin:0;">Вітаємо!</h1>
+            <h1 id="userName" style="font-size: 18px; margin:0;">Welcome!</h1>
             <div id="rankDisplay" class="user-rank">...</div>
-            <div id="statsDisplay" class="user-stats">XP: 0</div>
-
+            <div id="statsDisplay" class="user-stats">XP: 0 (з 0 питань)</div>
             <button class="menu-btn btn-primary" onclick="openSetup('free')">📚 Навчання</button>
             <button class="menu-btn btn-primary" onclick="openSetup('timed')">⏱ Спринт</button>
             <button class="menu-btn btn-secondary" onclick="showLeaderboard()">🏆 Рейтинги</button>
+            <button class="menu-btn btn-secondary" style="border-color: var(--brand-red); color: #ffcc00;" onclick="openSetup('photo')">📸 Фото-вікторина</button>
             <button class="menu-btn btn-danger" style="margin-top:10px; border: 1px solid var(--brand-red); background:none; color: var(--brand-red);" onclick="startAssessment()">🔥 АТЕСТАЦІЯ</button>
         </div>
-
         <div id="setupScreen">
             <h1 id="setupTitle">Дистанція</h1>
-            <button class="menu-btn btn-secondary" onclick="prepareQuiz(20)">20 питань</button>
-            <button class="menu-btn btn-secondary" onclick="prepareQuiz(40)">40 питань</button>
-            <button class="menu-btn btn-secondary" onclick="prepareQuiz(60)">60 питань</button>
+            <div id="distOptions">
+                <button class="menu-btn btn-secondary" onclick="prepareQuiz(10)">10 питань</button>
+                <button class="menu-btn btn-secondary" onclick="prepareQuiz(20)">20 питань</button>
+                <button class="menu-btn btn-secondary" onclick="prepareQuiz(40)">40 питань</button>
+            </div>
             <button class="menu-btn btn-danger" style="background:none; border: 1px solid var(--brand-red); color:var(--brand-red);" onclick="location.reload()">Назад</button>
         </div>
-
         <div id="quizContainer">
+            <img id="questionImage" src="" alt="">
             <p id="progressText" style="color: var(--brand-red); font-weight: bold; font-size: 11px; margin:0;"></p>
             <div id="questionText" style="font-weight: 700; margin: 15px 0; font-size: 16px;"></div>
             <div id="optionsContainer"></div>
             <div id="timerDisplay" style="color: var(--brand-red); font-weight: bold; margin-top: 10px; font-size: 20px;"></div>
         </div>
-
         <div id="leaderboardContainer">
             <div class="tabs-main">
                 <div class="tab-m active" onclick="setMainTab('xp', this)">Hall of Fame</div>
@@ -81,17 +76,13 @@
             <button class="menu-btn btn-primary" onclick="location.reload()">В меню</button>
         </div>
     </div>
-
     <script>
         let tg = window.Telegram.WebApp;
         tg.expand(); tg.ready();
-
         const API_URL = "https://script.google.com/macros/s/AKfycbxwXzgTnt_i5oQgmgU7zwwkbGmKDmCPG0QqFWddh3mWSv-PvzxtRns5eF78hEZllhAy/exec";
         let userData = tg.initDataUnsafe?.user || {first_name: "Колега", id: "0"};
-
         let questions = [], currentIndex = 0, score = 0, mode = '', timerInterval, allLeaders = [];
-        let currentSprintScore = 0, currentMainTab = 'xp', currentSubTab = 20;
-        let timeLeft = 15;
+        let currentSprintScore = 0, currentMainTab = 'xp', currentSubTab = 20, timeLeft = 15;
 
         function getRankInfo(xp) {
             if (xp >= 1501) return "🔥 Emily Legend";
@@ -100,38 +91,36 @@
             if (xp >= 101) return "🗽 Brooklyn Local";
             return "🐣 Стажерчик";
         }
-
         async function initApp() {
-         document.getElementById('userName').innerText = "Вітаємо, " + userData.first_name + "!";
-         try {
-             allLeaders = await fetch(API_URL + "?action=leaderboard").then(r => r.json());
-             let me = allLeaders.find(l => String(l.tg_id) === String(userData.id)) || {xp: 0, total_asked: 0};
-             document.getElementById('rankDisplay').innerText = getRankInfo(me.xp);
-             // Оновлений рядок статистики:
-             document.getElementById('statsDisplay').innerText = `XP: ${me.xp} (з ${me.total_asked} питань)`;
-         } catch(e) {}
+            document.getElementById('userName').innerText = "Hi, " + userData.first_name + "!";
+            try {
+                allLeaders = await fetch(API_URL + "?action=leaderboard").then(r => r.json());
+                let me = allLeaders.find(l => String(l.tg_id) === String(userData.id)) || {xp: 0, total_asked: 0};
+                document.getElementById('rankDisplay').innerText = getRankInfo(me.xp);
+                document.getElementById('statsDisplay').innerText = `XP: ${me.xp} (з ${me.total_asked} питань)`;
+            } catch(e) {}
         }
         initApp();
-
         function openSetup(m) { 
             mode = m; 
             document.getElementById('mainMenu').style.display = 'none'; 
             document.getElementById('setupScreen').style.display = 'block'; 
+            document.getElementById('setupTitle').innerText = (m === 'photo') ? "Фото-тест" : "Дистанція";
         }
-
         async function prepareQuiz(count) {
             document.getElementById('setupScreen').style.display = 'none';
             document.getElementById('quizContainer').style.display = 'block';
             document.getElementById('questionText').innerText = "Завантаження...";
             let data = await fetch(API_URL).then(r => r.json());
-            
-            questions = data.questions.sort(() => Math.random() - 0.5).slice(0, count);
-            if(questions.length === 0) {
-                alert("Питань немає!"); location.reload(); return;
+            if (mode === 'photo') {
+                questions = data.questions.filter(q => q.photo && q.photo.length > 5);
+            } else {
+                questions = data.questions;
             }
+            questions = questions.sort(() => Math.random() - 0.5).slice(0, count);
+            if(questions.length === 0) { alert("Питань немає!"); location.reload(); return; }
             startQuiz();
         }
-
         async function startAssessment() {
             if(!confirm("Це офіційна атестація!")) return;
             mode = 'exam';
@@ -141,20 +130,18 @@
             questions = data.questions.sort(() => Math.random() - 0.5);
             startQuiz();
         }
-
         function startQuiz() { currentIndex = 0; score = 0; currentSprintScore = 0; showQuestion(); }
-
         function showQuestion() {
             clearInterval(timerInterval);
             if (currentIndex >= questions.length) { finishQuiz(); return; }
             let q = questions[currentIndex];
             document.getElementById('progressText').innerText = (currentIndex + 1) + " / " + questions.length;
             document.getElementById('questionText').innerText = q.question;
-
+            const imgEl = document.getElementById('questionImage');
+            if (q.photo && q.photo.length > 5) { imgEl.src = q.photo; imgEl.style.display = "block"; } else { imgEl.style.display = "none"; }
             let html = "";
             q.options.forEach((opt, i) => { html += `<button id="btn-${i+1}" class="menu-btn btn-secondary" onclick="checkAnswer(${i+1}, ${q.correct_answer})">${opt}</button>`; });
             document.getElementById('optionsContainer').innerHTML = html;
-
             if (mode === 'timed') {
                 timeLeft = 15;
                 document.getElementById('timerDisplay').innerText = "⏱ " + timeLeft;
@@ -165,12 +152,10 @@
                 }, 1000);
             }
         }
-
         function checkAnswer(sel, corr) {
             clearInterval(timerInterval);
             const btns = document.querySelectorAll('#optionsContainer button');
             btns.forEach(b => b.classList.add('btn-disabled'));
-
             if (sel == corr) {
                 score++;
                 if(mode === 'timed') currentSprintScore += (100 + (timeLeft * 10));
@@ -181,29 +166,16 @@
                 document.getElementById('btn-' + corr)?.classList.add('btn-correct');
                 tg.HapticFeedback.notificationOccurred('error');
             }
-            setTimeout(() => { currentIndex++; showQuestion(); }, 750);
+            setTimeout(() => { currentIndex++; showQuestion(); }, 750); // ПАУЗА 0.75 СЕК
         }
-
-        // ВАШ ФІНАЛЬНИЙ БЛОК БЕЗ ЗАЙВОГО
         async function finishQuiz() {
             let percent = Math.round((score / questions.length) * 100);
             document.getElementById('progressText').innerText = "Saving progress...";
-            
-            // Відправляємо дані на сервер
-            await fetch(API_URL, { 
-                method: 'POST', 
-                body: JSON.stringify({ 
-                    tg_id: userData.id, 
-                    name: userData.first_name, 
-                    score: percent, 
-                    sprint_score: currentSprintScore, 
-                    mode: mode, 
-                    asked_count: questions.length, 
-                    correct_count: score 
-                })
-            });
-
-            // Формуємо крутий фінальний текст
+            await fetch(API_URL, { method: 'POST', body: JSON.stringify({ 
+                tg_id: userData.id, name: userData.first_name, score: percent, 
+                sprint_score: currentSprintScore, mode: mode, 
+                asked_count: questions.length, correct_count: score 
+            })});
             let resultText = "";
             if (mode === 'timed') {
                 resultText = `🔥 Sprint Score: ${currentSprintScore}<br><small>+${score} XP to Hall of Fame</small>`;
@@ -212,18 +184,16 @@
             } else {
                 resultText = `Result: ${percent}% (${score}/${questions.length})<br><small>+${score} XP to Hall of Fame</small>`;
             }
-
             document.getElementById('questionText').innerHTML = resultText;
             document.getElementById('optionsContainer').innerHTML = `<button class="menu-btn btn-primary" onclick="location.reload()">Return to Menu</button>`;
+            document.getElementById('questionImage').style.display = 'none';
             document.getElementById('timerDisplay').innerText = "";
         }
-
         function showLeaderboard() {
             document.getElementById('mainMenu').style.display = 'none';
             document.getElementById('leaderboardContainer').style.display = 'block';
             renderLeaders();
         }
-
         function setMainTab(tab, el) {
             currentMainTab = tab;
             document.querySelectorAll('.tab-m').forEach(t => t.classList.remove('active'));
@@ -231,18 +201,15 @@
             document.getElementById('subTabs').style.display = (tab === 'xp' || tab === 'exam') ? 'none' : 'flex';
             renderLeaders();
         }
-
         function setSubTab(val, el) {
             currentSubTab = val;
             document.querySelectorAll('.tab-s').forEach(t => t.classList.remove('active'));
             el.classList.add('active');
             renderLeaders();
         }
-
         function renderLeaders() {
             let list = [...allLeaders];
             let html = "";
-            
             if (currentMainTab === 'xp') {
                 list.sort((a,b) => b.xp - a.xp);
                 html = list.map((l, i) => `<div class="leader-item"><span>${i+1}. ${l.name}</span><b>${l.xp} XP</b></div>`).join('');
