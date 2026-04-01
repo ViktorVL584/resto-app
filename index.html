@@ -102,13 +102,14 @@
         }
 
         async function initApp() {
-            document.getElementById('userName').innerText = "Hi, " + userData.first_name + "!";
-            try {
-                allLeaders = await fetch(API_URL + "?action=leaderboard").then(r => r.json());
-                let me = allLeaders.find(l => String(l.tg_id) === String(userData.id)) || {xp: 0};
-                document.getElementById('rankDisplay').innerText = getRankInfo(me.xp);
-                document.getElementById('statsDisplay').innerText = `Total XP: ${me.xp}`;
-            } catch(e) {}
+         document.getElementById('userName').innerText = "Вітаємо, " + userData.first_name + "!";
+         try {
+             allLeaders = await fetch(API_URL + "?action=leaderboard").then(r => r.json());
+             let me = allLeaders.find(l => String(l.tg_id) === String(userData.id)) || {xp: 0, total_asked: 0};
+             document.getElementById('rankDisplay').innerText = getRankInfo(me.xp);
+             // Оновлений рядок статистики:
+             document.getElementById('statsDisplay').innerText = `XP: ${me.xp} (з ${me.total_asked} питань)`;
+         } catch(e) {}
         }
         initApp();
 
@@ -180,7 +181,7 @@
                 document.getElementById('btn-' + corr)?.classList.add('btn-correct');
                 tg.HapticFeedback.notificationOccurred('error');
             }
-            setTimeout(() => { currentIndex++; showQuestion(); }, 1000);
+            setTimeout(() => { currentIndex++; showQuestion(); }, 750);
         }
 
         // ВАШ ФІНАЛЬНИЙ БЛОК БЕЗ ЗАЙВОГО
