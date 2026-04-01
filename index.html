@@ -12,28 +12,24 @@
         .main-container { width: 90%; max-width: 340px; background: rgba(15, 15, 15, 0.7); backdrop-filter: blur(10px); border: 1px solid rgba(226, 24, 54, 0.2); border-radius: 24px; padding: 25px 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); text-align: center; }
         .neon-logo { font-family: 'Caveat', cursive; font-size: 50px; color: #fff; text-shadow: 0 0 5px #fff, 0 0 10px #fff, 0 0 20px var(--brand-red), 0 0 40px var(--brand-red); margin: 0; line-height: 1; transform: rotate(-2deg); }
         .logo-sub { font-size: 10px; letter-spacing: 3px; color: var(--text-muted); text-transform: uppercase; margin-top: 5px; margin-bottom: 20px; }
-        
-        /* СТИЛЬ ПЕРСОНАЛЬНОЇ СТАТИСТИКИ */
         .user-rank { font-size: 12px; color: #ffcc00; font-weight: 700; text-transform: uppercase; margin-top: 10px; text-shadow: 0 0 5px rgba(255, 204, 0, 0.5); }
         .user-stats { font-size: 11px; color: var(--text-muted); margin-bottom: 20px; }
-
         .menu-btn { width: 100%; padding: 15px; margin-bottom: 10px; border-radius: 14px; font-family: 'Montserrat', sans-serif; font-size: 14px; font-weight: 700; cursor: pointer; border: none; transition: transform 0.1s; outline: none; }
         .menu-btn:active { transform: scale(0.97); }
         .btn-primary { background-color: var(--brand-red); color: white; box-shadow: 0 4px 15px rgba(226, 24, 54, 0.4); }
-        .btn-secondary { background-color: #1e1e1e; color: white; border: 1px solid #333; }
+        .btn-secondary { background-color: #1e1e1e; color: white; border: 1px solid #333; transition: all 0.2s; }
         .btn-danger { background-color: transparent; color: var(--brand-red); border: 1px solid var(--brand-red); margin-top: 10px; }
         
-        /* НОВІ КЛАСИ ДЛЯ МИТТЄВОГО ФІДБЕКУ (ПРАВИЛЬНО/НЕПРАВИЛЬНО) */
-        .btn-correct { background-color: #28a745 !important; color: white !important; border-color: #28a745 !important; box-shadow: 0 0 15px rgba(40, 167, 69, 0.6) !important; }
-        .btn-incorrect { background-color: #dc3545 !important; color: white !important; border-color: #dc3545 !important; box-shadow: 0 0 15px rgba(220, 53, 69, 0.6) !important; }
-        .btn-disabled { pointer-events: none; opacity: 0.9; }
+        /* СТИЛІ ФІДБЕКУ */
+        .btn-correct { background-color: #28a745 !important; color: white !important; box-shadow: 0 0 15px rgba(40, 167, 69, 0.6) !important; border: none !important; }
+        .btn-incorrect { background-color: #dc3545 !important; color: white !important; box-shadow: 0 0 15px rgba(220, 53, 69, 0.6) !important; border: none !important; }
+        .btn-disabled { pointer-events: none; opacity: 0.8; }
 
         #quizContainer, #setupScreen, #leaderboardContainer { display: none; }
         .tabs { display: flex; gap: 5px; margin-bottom: 15px; background: #1a1a1a; padding: 5px; border-radius: 10px; }
         .tab { flex: 1; font-size: 10px; padding: 8px 2px; border-radius: 8px; cursor: pointer; color: var(--text-muted); }
         .tab.active { background: var(--brand-red); color: white; }
         .leader-item { display: flex; justify-content: space-between; padding: 10px 5px; border-bottom: 1px solid #2a2a2a; font-size: 12px; }
-        .leader-item b { color: var(--brand-red); }
     </style>
 </head>
 <body>
@@ -41,11 +37,9 @@
         <div id="mainMenu">
             <div class="neon-logo">Emily</div>
             <div class="logo-sub">Brooklyn Pizza</div>
-            
             <h1 id="userName" style="font-size: 18px; margin:0;">Вітаємо!</h1>
-            <div id="rankDisplay" class="user-rank">Завантаження...</div>
+            <div id="rankDisplay" class="user-rank">...</div>
             <div id="statsDisplay" class="user-stats">0/0 (0%)</div>
-            
             <button class="menu-btn btn-primary" onclick="openSetup('free')">📚 Навчання</button>
             <button class="menu-btn btn-primary" onclick="openSetup('timed')">⏱ Спринт</button>
             <button class="menu-btn btn-secondary" onclick="showLeaderboard()">🏆 Рейтинги</button>
@@ -62,7 +56,7 @@
 
         <div id="quizContainer">
             <p id="progressText" style="color: var(--brand-red); font-weight: bold; font-size: 12px;"></p>
-            <div id="questionText" style="font-weight: 700; margin-bottom: 20px;"></div>
+            <div id="questionText" style="font-weight: 700; margin-bottom: 20px;">Завантаження...</div>
             <div id="optionsContainer"></div>
             <div id="timerDisplay" style="color: var(--brand-red); font-weight: bold; margin-top: 15px;"></div>
         </div>
@@ -89,7 +83,6 @@
         
         let questions = [], currentIndex = 0, score = 0, mode = '', timerInterval, allLeaders = [];
 
-        // Функція визначення рангу з Сопрано
         function getRankInfo(points) {
             if (points >= 1501) return "🔥 Emily Legend";
             if (points >= 701) return "🕴️ Pizza Don";
@@ -100,12 +93,13 @@
 
         async function initApp() {
             document.getElementById('userName').innerText = "Привіт, " + userData.first_name + "!";
-            allLeaders = await fetch(API_URL + "?action=leaderboard").then(r => r.json());
-            let me = allLeaders.find(l => String(l.tg_id) === String(userData.id)) || {total_correct: 0, total_asked: 0};
-            
-            let percent = me.total_asked > 0 ? Math.round((me.total_correct / me.total_asked) * 100) : 0;
-            document.getElementById('rankDisplay').innerText = getRankInfo(me.total_correct);
-            document.getElementById('statsDisplay').innerText = `Знання: ${percent}% (${me.total_correct}/${me.total_asked})`;
+            try {
+                allLeaders = await fetch(API_URL + "?action=leaderboard").then(r => r.json());
+                let me = allLeaders.find(l => String(l.tg_id) === String(userData.id)) || {total_correct: 0, total_asked: 0};
+                let percent = me.total_asked > 0 ? Math.round((me.total_correct / me.total_asked) * 100) : 0;
+                document.getElementById('rankDisplay').innerText = getRankInfo(me.total_correct);
+                document.getElementById('statsDisplay').innerText = `Знання: ${percent}% (${me.total_correct}/${me.total_asked})`;
+            } catch (e) { document.getElementById('rankDisplay').innerText = "Greenhorn"; }
         }
 
         initApp();
@@ -115,7 +109,6 @@
         async function prepareQuiz(count) {
             document.getElementById('setupScreen').style.display = 'none';
             document.getElementById('quizContainer').style.display = 'block';
-            document.getElementById('questionText').innerText = "Завантаження...";
             let data = await fetch(API_URL).then(r => r.json());
             questions = data.questions.sort(() => Math.random() - 0.5).slice(0, count);
             startQuiz();
@@ -139,14 +132,11 @@
             let q = questions[currentIndex];
             document.getElementById('progressText').innerText = (currentIndex + 1) + " / " + questions.length;
             document.getElementById('questionText').innerText = q.question;
-            
             let html = "";
             q.options.forEach((opt, i) => { 
-                // Додано ID для кожної кнопки, щоб ми могли міняти їх колір
                 html += `<button id="btn-${i+1}" class="menu-btn btn-secondary" onclick="checkAnswer(${i+1}, ${q.correct_answer})">${opt}</button>`; 
             });
             document.getElementById('optionsContainer').innerHTML = html;
-            
             if (mode === 'timed') {
                 let left = 15; document.getElementById('timerDisplay').innerText = "⏱ " + left;
                 timerInterval = setInterval(() => { left--; document.getElementById('timerDisplay').innerText = "⏱ " + left; if (left <= 0) { clearInterval(timerInterval); currentIndex++; showQuestion(); } }, 1000);
@@ -154,49 +144,30 @@
         }
 
         function checkAnswer(sel, corr) {
-            // Зупиняємо таймер, поки показуємо правильну відповідь
             clearInterval(timerInterval);
-            
-            // Блокуємо всі кнопки від подвійного натискання
             for(let i = 1; i <= 4; i++) {
                 let btn = document.getElementById('btn-' + i);
                 if(btn) btn.classList.add('btn-disabled');
             }
-
-            // Перевіряємо відповідь і запалюємо кольори
-            if (sel === corr) { 
+            if (sel == corr) { 
                 score++; 
                 tg.HapticFeedback.notificationOccurred('success'); 
                 document.getElementById('btn-' + sel).classList.add('btn-correct');
             } else { 
                 tg.HapticFeedback.notificationOccurred('error'); 
                 document.getElementById('btn-' + sel).classList.add('btn-incorrect');
-                document.getElementById('btn-' + corr).classList.add('btn-correct'); // Показуємо правильну!
+                document.getElementById('btn-' + corr).classList.add('btn-correct');
             }
-            
-            // Чекаємо 1.5 секунди (щоб мозок запам'ятав), потім йдемо далі
-            setTimeout(() => {
-                currentIndex++; 
-                showQuestion();
-            }, 1500);
+            setTimeout(() => { currentIndex++; showQuestion(); }, 1500);
         }
 
         async function finishQuiz() {
             let percent = Math.round((score / questions.length) * 100);
             document.getElementById('progressText').innerText = "Збереження...";
-            await fetch(API_URL, { 
-                method: 'POST', 
-                body: JSON.stringify({ 
-                    tg_id: userData.id, 
-                    name: userData.first_name, 
-                    score: percent, 
-                    type: mode,
-                    total_asked: questions.length,
-                    total_correct: score
-                }) 
-            });
+            await fetch(API_URL, { method: 'POST', body: JSON.stringify({ tg_id: userData.id, name: userData.first_name, score: percent, type: mode, total_asked: questions.length, total_correct: score }) });
             document.getElementById('questionText').innerText = "Результат: " + percent + "%";
             document.getElementById('optionsContainer').innerHTML = `<button class="menu-btn btn-primary" onclick="location.reload()">В меню</button>`;
+            document.getElementById('timerDisplay').innerText = "";
         }
 
         async function showLeaderboard() {
@@ -208,7 +179,7 @@
         function changeTab(type, el) {
             document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
             el.classList.add('active');
-            let filtered = allLeaders.filter(l => l[type] > 0).sort((a, b) => b[type] - a[type]);
+            let filtered = allLeaders.filter(l => l[type] >= 0).sort((a, b) => b[type] - a[type]);
             let html = filtered.map((l, i) => `<div class="leader-item"><span>${i+1}. ${l.name}</span><b>${l[type]}%</b></div>`).join('');
             document.getElementById('leaderboardList').innerHTML = html || "Пусто";
         }
