@@ -3,33 +3,37 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Emily Brooklyn Pizza - Training</title>
+    <title>Emily Brooklyn Pizza - Hall of Fame</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@700&family=Montserrat:wght@400;700&display=swap" rel="stylesheet">
     <style>
         :root { --brand-red: #E21836; --brand-dark: #0f0f0f; --text-main: #ffffff; --text-muted: #888888; }
         body { font-family: 'Montserrat', sans-serif; background: radial-gradient(circle at top, #3a0d14 0%, var(--brand-dark) 80%); background-color: var(--brand-dark); color: var(--text-main); margin: 0; padding: 0; min-height: 100vh; display: flex; justify-content: center; align-items: center; }
-        .main-container { width: 90%; max-width: 340px; background: rgba(15, 15, 15, 0.7); backdrop-filter: blur(10px); border: 1px solid rgba(226, 24, 54, 0.2); border-radius: 24px; padding: 25px 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); text-align: center; }
-        .neon-logo { font-family: 'Caveat', cursive; font-size: 50px; color: #fff; text-shadow: 0 0 5px #fff, 0 0 10px #fff, 0 0 20px var(--brand-red), 0 0 40px var(--brand-red); margin: 0; line-height: 1; transform: rotate(-2deg); }
+        .main-container { width: 95%; max-width: 360px; background: rgba(15, 15, 15, 0.7); backdrop-filter: blur(10px); border: 1px solid rgba(226, 24, 54, 0.2); border-radius: 24px; padding: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); text-align: center; box-sizing: border-box; }
+        .neon-logo { font-family: 'Caveat', cursive; font-size: 45px; color: #fff; text-shadow: 0 0 5px #fff, 0 0 10px #fff, 0 0 20px var(--brand-red), 0 0 40px var(--brand-red); margin: 0; line-height: 1; transform: rotate(-2deg); }
         .logo-sub { font-size: 10px; letter-spacing: 3px; color: var(--text-muted); text-transform: uppercase; margin-top: 5px; margin-bottom: 20px; }
         .user-rank { font-size: 12px; color: #ffcc00; font-weight: 700; text-transform: uppercase; margin-top: 10px; text-shadow: 0 0 5px rgba(255, 204, 0, 0.5); }
         .user-stats { font-size: 11px; color: var(--text-muted); margin-bottom: 20px; }
-        .menu-btn { width: 100%; padding: 15px; margin-bottom: 10px; border-radius: 14px; font-family: 'Montserrat', sans-serif; font-size: 14px; font-weight: 700; cursor: pointer; border: none; transition: transform 0.1s; outline: none; }
-        .menu-btn:active { transform: scale(0.97); }
+
+        .menu-btn { width: 100%; padding: 14px; margin-bottom: 10px; border-radius: 14px; font-family: 'Montserrat', sans-serif; font-size: 14px; font-weight: 700; cursor: pointer; border: none; transition: all 0.2s; outline: none; }
         .btn-primary { background-color: var(--brand-red); color: white; box-shadow: 0 4px 15px rgba(226, 24, 54, 0.4); }
-        .btn-secondary { background-color: #1e1e1e; color: white; border: 1px solid #333; transition: all 0.2s; }
-        .btn-danger { background-color: transparent; color: var(--brand-red); border: 1px solid var(--brand-red); margin-top: 10px; }
-        
-        /* СТИЛІ ФІДБЕКУ */
-        .btn-correct { background-color: #28a745 !important; color: white !important; box-shadow: 0 0 15px rgba(40, 167, 69, 0.6) !important; border: none !important; }
-        .btn-incorrect { background-color: #dc3545 !important; color: white !important; box-shadow: 0 0 15px rgba(220, 53, 69, 0.6) !important; border: none !important; }
+        .btn-secondary { background-color: #1e1e1e; color: white; border: 1px solid #333; }
+        .btn-correct { background-color: #28a745 !important; box-shadow: 0 0 15px rgba(40, 167, 69, 0.6) !important; border: none !important; }
+        .btn-incorrect { background-color: #dc3545 !important; box-shadow: 0 0 15px rgba(220, 53, 69, 0.6) !important; border: none !important; }
         .btn-disabled { pointer-events: none; opacity: 0.8; }
 
+        .tabs-main { display: flex; gap: 4px; margin-bottom: 10px; background: #111; padding: 4px; border-radius: 12px; }
+        .tab-m { flex: 1; font-size: 9px; padding: 8px 2px; border-radius: 8px; cursor: pointer; color: var(--text-muted); text-transform: uppercase; font-weight: 700; }
+        .tab-m.active { background: var(--brand-red); color: white; }
+
+        .tabs-sub { display: flex; justify-content: center; gap: 10px; margin-bottom: 15px; }
+        .tab-s { font-size: 11px; padding: 5px 12px; border-radius: 20px; cursor: pointer; background: #222; color: var(--text-muted); border: 1px solid #333; }
+        .tab-s.active { border-color: var(--brand-red); color: white; }
+
+        .leader-item { display: flex; justify-content: space-between; padding: 12px 8px; border-bottom: 1px solid #222; font-size: 12px; }
+        .leader-item b { color: var(--brand-red); }
+
         #quizContainer, #setupScreen, #leaderboardContainer { display: none; }
-        .tabs { display: flex; gap: 5px; margin-bottom: 15px; background: #1a1a1a; padding: 5px; border-radius: 10px; }
-        .tab { flex: 1; font-size: 10px; padding: 8px 2px; border-radius: 8px; cursor: pointer; color: var(--text-muted); }
-        .tab.active { background: var(--brand-red); color: white; }
-        .leader-item { display: flex; justify-content: space-between; padding: 10px 5px; border-bottom: 1px solid #2a2a2a; font-size: 12px; }
     </style>
 </head>
 <body>
@@ -39,83 +43,96 @@
             <div class="logo-sub">Brooklyn Pizza</div>
             <h1 id="userName" style="font-size: 18px; margin:0;">Вітаємо!</h1>
             <div id="rankDisplay" class="user-rank">...</div>
-            <div id="statsDisplay" class="user-stats">0/0 (0%)</div>
+            <div id="statsDisplay" class="user-stats">XP: 0</div>
+
             <button class="menu-btn btn-primary" onclick="openSetup('free')">📚 Навчання</button>
             <button class="menu-btn btn-primary" onclick="openSetup('timed')">⏱ Спринт</button>
             <button class="menu-btn btn-secondary" onclick="showLeaderboard()">🏆 Рейтинги</button>
-            <button class="menu-btn btn-danger" onclick="startAssessment()">🔥 АТЕСТАЦІЯ</button>
+            <button class="menu-btn btn-danger" style="margin-top:10px; border: 1px solid var(--brand-red); background:none; color: var(--brand-red);" onclick="startAssessment()">🔥 АТЕСТАЦІЯ</button>
         </div>
 
         <div id="setupScreen">
-            <h1>Питання</h1>
+            <h1 id="setupTitle">Дистанція</h1>
             <button class="menu-btn btn-secondary" onclick="prepareQuiz(20)">20 питань</button>
             <button class="menu-btn btn-secondary" onclick="prepareQuiz(40)">40 питань</button>
             <button class="menu-btn btn-secondary" onclick="prepareQuiz(60)">60 питань</button>
-            <button class="menu-btn btn-danger" onclick="location.reload()">Назад</button>
+            <button class="menu-btn btn-danger" style="background:none; border: 1px solid var(--brand-red); color:var(--brand-red);" onclick="location.reload()">Назад</button>
         </div>
 
         <div id="quizContainer">
-            <p id="progressText" style="color: var(--brand-red); font-weight: bold; font-size: 12px;"></p>
-            <div id="questionText" style="font-weight: 700; margin-bottom: 20px;">Завантаження...</div>
+            <p id="progressText" style="color: var(--brand-red); font-weight: bold; font-size: 11px; margin:0;"></p>
+            <div id="questionText" style="font-weight: 700; margin: 15px 0; font-size: 16px;"></div>
             <div id="optionsContainer"></div>
-            <div id="timerDisplay" style="color: var(--brand-red); font-weight: bold; margin-top: 15px;"></div>
+            <div id="timerDisplay" style="color: var(--brand-red); font-weight: bold; margin-top: 10px; font-size: 20px;"></div>
         </div>
 
         <div id="leaderboardContainer">
-            <h1 style="font-size: 18px; margin-bottom: 15px;">🏆 Рейтинги</h1>
-            <div class="tabs">
-                <div class="tab active" onclick="changeTab('exam', this)">Іспит</div>
-                <div class="tab" onclick="changeTab('free', this)">Навчання</div>
-                <div class="tab" onclick="changeTab('timed', this)">Спринт</div>
+            <div class="tabs-main">
+                <div class="tab-m active" onclick="setMainTab('xp', this)">Hall of Fame</div>
+                <div class="tab-m" onclick="setMainTab('free', this)">Навчання</div>
+                <div class="tab-m" onclick="setMainTab('timed', this)">Спринт</div>
             </div>
-            <div id="leaderboardList"></div>
-            <button class="menu-btn btn-danger" onclick="location.reload()" style="margin-top: 15px;">В меню</button>
+            <div id="subTabs" class="tabs-sub" style="display:none;">
+                <div class="tab-s active" onclick="setSubTab(20, this)">20</div>
+                <div class="tab-s" onclick="setSubTab(40, this)">40</div>
+                <div class="tab-s" onclick="setSubTab(60, this)">60</div>
+            </div>
+            <div id="leaderboardList" style="max-height: 300px; overflow-y: auto; margin-bottom: 15px;"></div>
+            <button class="menu-btn btn-primary" onclick="location.reload()">В меню</button>
         </div>
     </div>
 
     <script>
         let tg = window.Telegram.WebApp;
-        tg.expand();
-        tg.ready();
+        tg.expand(); tg.ready();
 
         const API_URL = "https://script.google.com/macros/s/AKfycbxwXzgTnt_i5oQgmgU7zwwkbGmKDmCPG0QqFWddh3mWSv-PvzxtRns5eF78hEZllhAy/exec";
-        let userData = tg.initDataUnsafe && tg.initDataUnsafe.user ? tg.initDataUnsafe.user : {first_name: "Колега", id: "0"};
-        
-        let questions = [], currentIndex = 0, score = 0, mode = '', timerInterval, allLeaders = [];
+        let userData = tg.initDataUnsafe?.user || {first_name: "Колега", id: "0"};
 
-        function getRankInfo(points) {
-            if (points >= 1501) return "🔥 Emily Legend";
-            if (points >= 701) return "🕴️ Pizza Don";
-            if (points >= 301) return "💼 Consigliere"; 
-            if (points >= 101) return "🗽 Brooklyn Local";
+        let questions = [], currentIndex = 0, score = 0, mode = '', timerInterval, allLeaders = [];
+        let currentSprintScore = 0, currentMainTab = 'xp', currentSubTab = 20;
+        let timeLeft = 15;
+
+        function getRankInfo(xp) {
+            if (xp >= 1501) return "🔥 Emily Legend";
+            if (xp >= 701) return "🕴️ Pizza Don";
+            if (xp >= 301) return "💼 Consigliere"; 
+            if (xp >= 101) return "🗽 Brooklyn Local";
             return "🐣 Стажерчик";
         }
 
         async function initApp() {
-            document.getElementById('userName').innerText = "Привіт, " + userData.first_name + "!";
+            document.getElementById('userName').innerText = "Hi, " + userData.first_name + "!";
             try {
                 allLeaders = await fetch(API_URL + "?action=leaderboard").then(r => r.json());
-                let me = allLeaders.find(l => String(l.tg_id) === String(userData.id)) || {total_correct: 0, total_asked: 0};
-                let percent = me.total_asked > 0 ? Math.round((me.total_correct / me.total_asked) * 100) : 0;
-                document.getElementById('rankDisplay').innerText = getRankInfo(me.total_correct);
-                document.getElementById('statsDisplay').innerText = `Знання: ${percent}% (${me.total_correct}/${me.total_asked})`;
-            } catch (e) { document.getElementById('rankDisplay').innerText = "Greenhorn"; }
+                let me = allLeaders.find(l => String(l.tg_id) === String(userData.id)) || {xp: 0};
+                document.getElementById('rankDisplay').innerText = getRankInfo(me.xp);
+                document.getElementById('statsDisplay').innerText = `Total XP: ${me.xp}`;
+            } catch(e) {}
         }
-
         initApp();
 
-        function openSetup(m) { mode = m; document.getElementById('mainMenu').style.display = 'none'; document.getElementById('setupScreen').style.display = 'block'; }
+        function openSetup(m) { 
+            mode = m; 
+            document.getElementById('mainMenu').style.display = 'none'; 
+            document.getElementById('setupScreen').style.display = 'block'; 
+        }
 
         async function prepareQuiz(count) {
             document.getElementById('setupScreen').style.display = 'none';
             document.getElementById('quizContainer').style.display = 'block';
+            document.getElementById('questionText').innerText = "Завантаження...";
             let data = await fetch(API_URL).then(r => r.json());
+            
             questions = data.questions.sort(() => Math.random() - 0.5).slice(0, count);
+            if(questions.length === 0) {
+                alert("Питань немає!"); location.reload(); return;
+            }
             startQuiz();
         }
 
         async function startAssessment() {
-            if(!confirm("Це офіційний іспит. Успіхів!")) return;
+            if(!confirm("Це офіційна атестація!")) return;
             mode = 'exam';
             document.getElementById('mainMenu').style.display = 'none';
             document.getElementById('quizContainer').style.display = 'block';
@@ -124,7 +141,7 @@
             startQuiz();
         }
 
-        function startQuiz() { currentIndex = 0; score = 0; showQuestion(); }
+        function startQuiz() { currentIndex = 0; score = 0; currentSprintScore = 0; showQuestion(); }
 
         function showQuestion() {
             clearInterval(timerInterval);
@@ -132,56 +149,112 @@
             let q = questions[currentIndex];
             document.getElementById('progressText').innerText = (currentIndex + 1) + " / " + questions.length;
             document.getElementById('questionText').innerText = q.question;
+
             let html = "";
-            q.options.forEach((opt, i) => { 
-                html += `<button id="btn-${i+1}" class="menu-btn btn-secondary" onclick="checkAnswer(${i+1}, ${q.correct_answer})">${opt}</button>`; 
-            });
+            q.options.forEach((opt, i) => { html += `<button id="btn-${i+1}" class="menu-btn btn-secondary" onclick="checkAnswer(${i+1}, ${q.correct_answer})">${opt}</button>`; });
             document.getElementById('optionsContainer').innerHTML = html;
+
             if (mode === 'timed') {
-                let left = 15; document.getElementById('timerDisplay').innerText = "⏱ " + left;
-                timerInterval = setInterval(() => { left--; document.getElementById('timerDisplay').innerText = "⏱ " + left; if (left <= 0) { clearInterval(timerInterval); currentIndex++; showQuestion(); } }, 1000);
+                timeLeft = 15;
+                document.getElementById('timerDisplay').innerText = "⏱ " + timeLeft;
+                timerInterval = setInterval(() => { 
+                    timeLeft--; 
+                    document.getElementById('timerDisplay').innerText = "⏱ " + timeLeft; 
+                    if (timeLeft <= 0) { checkAnswer(0, q.correct_answer); } 
+                }, 1000);
             }
         }
 
         function checkAnswer(sel, corr) {
             clearInterval(timerInterval);
-            for(let i = 1; i <= 4; i++) {
-                let btn = document.getElementById('btn-' + i);
-                if(btn) btn.classList.add('btn-disabled');
-            }
-            if (sel == corr) { 
-                score++; 
-                tg.HapticFeedback.notificationOccurred('success'); 
-                document.getElementById('btn-' + sel).classList.add('btn-correct');
-            } else { 
-                tg.HapticFeedback.notificationOccurred('error'); 
-                document.getElementById('btn-' + sel).classList.add('btn-incorrect');
-                document.getElementById('btn-' + corr).classList.add('btn-correct');
+            const btns = document.querySelectorAll('#optionsContainer button');
+            btns.forEach(b => b.classList.add('btn-disabled'));
+
+            if (sel == corr) {
+                score++;
+                if(mode === 'timed') currentSprintScore += (100 + (timeLeft * 10));
+                document.getElementById('btn-' + sel)?.classList.add('btn-correct');
+                tg.HapticFeedback.notificationOccurred('success');
+            } else {
+                if (sel != 0) document.getElementById('btn-' + sel)?.classList.add('btn-incorrect');
+                document.getElementById('btn-' + corr)?.classList.add('btn-correct');
+                tg.HapticFeedback.notificationOccurred('error');
             }
             setTimeout(() => { currentIndex++; showQuestion(); }, 1000);
         }
 
+        // ВАШ ФІНАЛЬНИЙ БЛОК БЕЗ ЗАЙВОГО
         async function finishQuiz() {
             let percent = Math.round((score / questions.length) * 100);
-            document.getElementById('progressText').innerText = "Збереження...";
-            await fetch(API_URL, { method: 'POST', body: JSON.stringify({ tg_id: userData.id, name: userData.first_name, score: percent, type: mode, total_asked: questions.length, total_correct: score }) });
-            document.getElementById('questionText').innerText = "Результат: " + percent + "%";
-            document.getElementById('optionsContainer').innerHTML = `<button class="menu-btn btn-primary" onclick="location.reload()">В меню</button>`;
+            document.getElementById('progressText').innerText = "Saving progress...";
+            
+            // Відправляємо дані на сервер
+            await fetch(API_URL, { 
+                method: 'POST', 
+                body: JSON.stringify({ 
+                    tg_id: userData.id, 
+                    name: userData.first_name, 
+                    score: percent, 
+                    sprint_score: currentSprintScore, 
+                    mode: mode, 
+                    asked_count: questions.length, 
+                    correct_count: score 
+                })
+            });
+
+            // Формуємо крутий фінальний текст
+            let resultText = "";
+            if (mode === 'timed') {
+                resultText = `🔥 Sprint Score: ${currentSprintScore}<br><small>+${score} XP to Hall of Fame</small>`;
+            } else if (mode === 'exam') {
+                resultText = `Exam Result: ${percent}%`;
+            } else {
+                resultText = `Result: ${percent}% (${score}/${questions.length})<br><small>+${score} XP to Hall of Fame</small>`;
+            }
+
+            document.getElementById('questionText').innerHTML = resultText;
+            document.getElementById('optionsContainer').innerHTML = `<button class="menu-btn btn-primary" onclick="location.reload()">Return to Menu</button>`;
             document.getElementById('timerDisplay').innerText = "";
         }
 
-        async function showLeaderboard() {
+        function showLeaderboard() {
             document.getElementById('mainMenu').style.display = 'none';
             document.getElementById('leaderboardContainer').style.display = 'block';
-            changeTab('exam', document.querySelector('.tab.active'));
+            renderLeaders();
         }
 
-        function changeTab(type, el) {
-            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+        function setMainTab(tab, el) {
+            currentMainTab = tab;
+            document.querySelectorAll('.tab-m').forEach(t => t.classList.remove('active'));
             el.classList.add('active');
-            let filtered = allLeaders.filter(l => l[type] >= 0).sort((a, b) => b[type] - a[type]);
-            let html = filtered.map((l, i) => `<div class="leader-item"><span>${i+1}. ${l.name}</span><b>${l[type]}%</b></div>`).join('');
-            document.getElementById('leaderboardList').innerHTML = html || "Пусто";
+            document.getElementById('subTabs').style.display = (tab === 'xp' || tab === 'exam') ? 'none' : 'flex';
+            renderLeaders();
+        }
+
+        function setSubTab(val, el) {
+            currentSubTab = val;
+            document.querySelectorAll('.tab-s').forEach(t => t.classList.remove('active'));
+            el.classList.add('active');
+            renderLeaders();
+        }
+
+        function renderLeaders() {
+            let list = [...allLeaders];
+            let html = "";
+            
+            if (currentMainTab === 'xp') {
+                list.sort((a,b) => b.xp - a.xp);
+                html = list.map((l, i) => `<div class="leader-item"><span>${i+1}. ${l.name}</span><b>${l.xp} XP</b></div>`).join('');
+            } else if (currentMainTab === 'free') {
+                let key = 't' + currentSubTab;
+                list = list.filter(l => l[key] > 0).sort((a,b) => b[key] - a[key]);
+                html = list.map((l, i) => `<div class="leader-item"><span>${i+1}. ${l.name}</span><b>${l[key]}%</b></div>`).join('');
+            } else if (currentMainTab === 'timed') {
+                let key = 's' + currentSubTab;
+                list = list.filter(l => l[key] > 0).sort((a,b) => b[key] - a[key]);
+                html = list.map((l, i) => `<div class="leader-item"><span>${i+1}. ${l.name}</span><b>${l[key]} pts</b></div>`).join('');
+            }
+            document.getElementById('leaderboardList').innerHTML = html || "<p style='font-size:12px; color:#555;'>No records yet</p>";
         }
     </script>
 </body>
