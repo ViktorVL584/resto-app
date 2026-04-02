@@ -48,9 +48,10 @@
         <div id="setupScreen">
             <h1 id="setupTitle">Дистанція</h1>
             <div id="distOptions">
-                <button class="menu-btn btn-secondary" onclick="prepareQuiz(10)">10 питань</button>
                 <button class="menu-btn btn-secondary" onclick="prepareQuiz(20)">20 питань</button>
-                <button class="menu-btn btn-secondary" onclick="prepareQuiz(40)">40 питань</button>
+                <button class="menu-btn btn-secondary" onclick="prepareQuiz(50)">50 питань</button>
+                <button class="menu-btn btn-secondary" onclick="prepareQuiz(70)">70 питань</button>
+                <button class="menu-btn btn-secondary" onclick="prepareQuiz(100)">100 питань</button>
             </div>
             <button class="menu-btn btn-danger" style="background:none; border: 1px solid var(--brand-red); color:var(--brand-red);" onclick="location.reload()">Назад</button>
         </div>
@@ -70,8 +71,9 @@
             </div>
             <div id="subTabs" class="tabs-sub" style="display:none;">
                 <div class="tab-s active" onclick="setSubTab(20, this)">20</div>
-                <div class="tab-s" onclick="setSubTab(40, this)">40</div>
-                <div class="tab-s" onclick="setSubTab(60, this)">60</div>
+                <div class="tab-s" onclick="setSubTab(50, this)">50</div>
+                <div class="tab-s" onclick="setSubTab(70, this)">70</div>
+                <div class="tab-s" onclick="setSubTab(100, this)">100</div>
             </div>
             <div id="leaderboardList" style="max-height: 300px; overflow-y: auto; margin-bottom: 15px;"></div>
             <button class="menu-btn btn-primary" onclick="location.reload()">В меню</button>
@@ -208,11 +210,11 @@
                 list.sort((a,b) => b.xp - a.xp);
                 html = list.map((l, i) => `<div class="leader-item"><span>${i+1}. ${l.name}</span><b>${l.xp} XP</b></div>`).join('');
             } else if (currentMainTab === 'free') {
-                let key = 't' + currentSubTab;
+                let key = 't' + currentSubTab; // t20, t50, t70, t100
                 list = list.filter(l => l[key] > 0).sort((a,b) => b[key] - a[key]);
                 html = list.map((l, i) => `<div class="leader-item"><span>${i+1}. ${l.name}</span><b>${l[key]}%</b></div>`).join('');
             } else if (currentMainTab === 'timed') {
-                let key = 's' + currentSubTab;
+                let key = 's' + currentSubTab; // s20, s50, s70, s100
                 list = list.filter(l => l[key] > 0).sort((a,b) => b[key] - a[key]);
                 html = list.map((l, i) => `<div class="leader-item"><span>${i+1}. ${l.name}</span><b>${l[key]} pts</b></div>`).join('');
             } else if (currentMainTab === 'photo') {
