@@ -8,8 +8,9 @@
     <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@700&family=Montserrat:wght@400;700&display=swap" rel="stylesheet">
     <style>
         :root { --brand-red: #E21836; --brand-dark: #0f0f0f; --text-main: #ffffff; --text-muted: #888888; }
-        body { font-family: 'Montserrat', sans-serif; background: radial-gradient(circle at top, #3a0d14 0%, var(--brand-dark) 80%); background-color: var(--brand-dark); color: var(--text-main); margin: 0; padding: 0; min-height: 100vh; display: flex; justify-content: center; align-items: center; }
-        .main-container { width: 95%; max-width: 360px; background: rgba(15, 15, 15, 0.7); backdrop-filter: blur(10px); border: 1px solid rgba(226, 24, 54, 0.2); border-radius: 24px; padding: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); text-align: center; box-sizing: border-box; }
+        body { font-family: 'Montserrat', sans-serif; background: radial-gradient(circle at top, #3a0d14 0%, var(--brand-dark) 80%); background-color: var(--brand-dark); color: var(--text-main); margin: 0; padding: 0; min-height: 100vh; display: flex; justify-content: center; align-items: center; overflow: hidden; }
+        .main-container { width: 95%; max-width: 360px; background: rgba(15, 15, 15, 0.7); backdrop-filter: blur(10px); border: 1px solid rgba(226, 24, 54, 0.2); border-radius: 24px; padding: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); text-align: center; box-sizing: border-box; max-height: 95vh; overflow-y: auto; }
+        
         .neon-logo { font-family: 'Caveat', cursive; font-size: 45px; color: #fff; text-shadow: 0 0 5px #fff, 0 0 10px #fff, 0 0 20px var(--brand-red), 0 0 40px var(--brand-red); margin: 0; line-height: 1; transform: rotate(-2deg); }
         .logo-sub { font-size: 10px; letter-spacing: 3px; color: var(--text-muted); text-transform: uppercase; margin-top: 5px; margin-bottom: 20px; }
         .user-rank { font-size: 12px; color: #ffcc00; font-weight: 700; text-transform: uppercase; margin-top: 10px; text-shadow: 0 0 5px rgba(255, 204, 0, 0.5); }
@@ -20,7 +21,6 @@
         .grid-btn i { font-size: 28px; font-style: normal; }
         .grid-btn:active { transform: scale(0.95); background: rgba(226, 24, 54, 0.2); border-color: var(--brand-red); }
 
-        #questionImage { width: 100%; border-radius: 15px; margin-bottom: 15px; border: 1px solid rgba(226, 24, 54, 0.3); display: none; object-fit: cover; max-height: 180px; box-shadow: 0 0 10px rgba(226, 24, 54, 0.2); }
         .menu-btn { width: 100%; padding: 14px; margin-bottom: 10px; border-radius: 14px; font-family: 'Montserrat', sans-serif; font-size: 14px; font-weight: 700; cursor: pointer; border: none; transition: all 0.2s; outline: none; }
         .btn-primary { background-color: var(--brand-red); color: white; box-shadow: 0 4px 15px rgba(226, 24, 54, 0.4); }
         .btn-secondary { background-color: #1e1e1e; color: white; border: 1px solid #333; }
@@ -42,7 +42,25 @@
         .tab-s.active { border-color: var(--brand-red); color: white; }
         .leader-item { display: flex; justify-content: space-between; padding: 12px 8px; border-bottom: 1px solid #222; font-size: 12px; }
         
-        #quizMenuContainer, #setupScreen, #quizContainer, #leaderboardContainer, #cleaningContainer, #deliveryContainer, #productContainer, #categoryViewContainer, #articleViewContainer { display: none; }
+        /* СТИЛІ ДЛЯ СВАЙП-КАРТОК ПРОДАКТУ */
+        .swipe-container { position: relative; width: 100%; height: 60vh; max-height: 500px; margin-bottom: 15px; perspective: 1000px; }
+        .swipe-card { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: #1a1a1a; border-radius: 20px; border: 1px solid rgba(226, 24, 54, 0.2); box-shadow: 0 10px 20px rgba(0,0,0,0.5); display: flex; flex-direction: column; overflow: hidden; will-change: transform; transform-origin: 50% 100%; }
+        .card-img-placeholder { width: 100%; height: 40%; background: #2a2a2a; display: flex; align-items: center; justify-content: center; font-size: 40px; color: #444; object-fit: cover; }
+        .card-body { padding: 15px; text-align: left; flex: 1; overflow-y: auto; display: flex; flex-direction: column; gap: 10px; }
+        .card-title-row { display: flex; justify-content: space-between; align-items: flex-start; }
+        .card-title { font-size: 18px; font-weight: 700; margin: 0; color: white; }
+        .card-weight { font-size: 12px; color: var(--brand-red); font-weight: bold; background: rgba(226,24,54,0.1); padding: 4px 8px; border-radius: 8px; white-space: nowrap; }
+        .card-text-block { font-size: 12px; color: #ccc; line-height: 1.4; background: rgba(0,0,0,0.2); padding: 10px; border-radius: 12px; }
+        .card-text-block strong { color: white; display: block; margin-bottom: 3px; font-size: 13px; }
+        .card-allergens { font-size: 11px; color: var(--brand-red); font-style: italic; }
+        
+        .swipe-hints { display: flex; justify-content: space-between; padding: 0 10px; margin-bottom: 10px; }
+        .hint-btn { background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); color: white; border-radius: 50%; width: 45px; height: 45px; display: flex; justify-content: center; align-items: center; font-size: 20px; cursor: pointer; transition: 0.2s; }
+        .hint-btn:active { transform: scale(0.9); background: rgba(226,24,54,0.2); }
+
+        .category-badge { display: inline-block; background: #E21836; color: white; padding: 5px 12px; border-radius: 20px; font-size: 12px; font-weight: bold; margin-bottom: 10px; box-shadow: 0 0 10px rgba(226,24,54,0.5); }
+
+        #quizMenuContainer, #setupScreen, #quizContainer, #leaderboardContainer, #cleaningContainer, #deliveryContainer, #productCategoriesContainer, #swipeViewContainer { display: none; }
     </style>
 </head>
 <body>
@@ -59,7 +77,7 @@
                 <button class="grid-btn" onclick="showScreen('quizMenuContainer')"><i>📝</i>Тести</button>
                 <button class="grid-btn" onclick="showScreen('deliveryContainer')"><i>📦</i>Доставки</button>
                 <button class="grid-btn" onclick="showScreen('cleaningContainer')"><i>🧴</i>Замиття</button>
-                <button class="grid-btn" onclick="showScreen('productContainer')"><i>📚</i>Продакт</button>
+                <button class="grid-btn" onclick="openProductMenu()"><i>📚</i>Продакт</button>
             </div>
             
             <button class="menu-btn btn-secondary" onclick="showLeaderboard()">🏆 Рейтинги</button>
@@ -100,42 +118,31 @@
             <button class="menu-btn btn-danger" style="margin-top:5px; border:none; font-size: 12px;" onclick="showScreen('mainMenu')">Скасувати</button>
         </div>
 
-        <div id="productContainer">
+        <div id="productCategoriesContainer">
             <h2 style="margin-top:0; color: white; font-size: 22px;">📚 Продакт</h2>
-            <p style="font-size: 11px; color: var(--text-muted); margin-bottom: 15px;">База знань та стандарти Emily</p>
+            <p style="font-size: 11px; color: var(--text-muted); margin-bottom: 15px;">Обери розділ для вивчення</p>
 
-            <div style="display: flex; flex-direction: column; gap: 10px;">
-                <button class="menu-btn btn-secondary" style="display: flex; align-items: center; justify-content: space-between; padding: 16px; text-align: left;" onclick="openCategory('kitchen')">
-                    <span style="font-size: 16px;">🍕 Кухня</span>
-                    <span style="color: var(--text-muted); font-size: 14px;">➔</span>
-                </button>
-                
-                <button class="menu-btn btn-secondary" style="display: flex; align-items: center; justify-content: space-between; padding: 16px; text-align: left;" onclick="openCategory('bar')">
-                    <span style="font-size: 16px;">🍹 Бар</span>
-                    <span style="color: var(--text-muted); font-size: 14px;">➔</span>
-                </button>
-
-                <button class="menu-btn btn-secondary" style="display: flex; align-items: center; justify-content: space-between; padding: 16px; text-align: left;" onclick="openCategory('service')">
-                    <span style="font-size: 16px;">📋 Стандарти та Сервіс</span>
-                    <span style="color: var(--text-muted); font-size: 14px;">➔</span>
-                </button>
-            </div>
+            <div id="dynamicCategoryList" style="display: flex; flex-direction: column; gap: 10px; max-height: 60vh; overflow-y: auto;">
+                </div>
 
             <button class="menu-btn btn-danger" style="margin-top:15px; border:none; font-size: 12px;" onclick="showScreen('mainMenu')">Назад в меню</button>
         </div>
 
-        <div id="categoryViewContainer">
-            <h2 id="categoryTitle" style="margin-top:0; color: white; font-size: 20px;">Назва категорії</h2>
-            <div id="categoryList" style="display: flex; flex-direction: column; gap: 8px; margin-bottom: 15px; max-height: 400px; overflow-y: auto;">
-                </div>
-            <button class="menu-btn btn-danger" style="margin-top:5px; border:none; font-size: 12px;" onclick="showScreen('productContainer')">Назад до розділів</button>
-        </div>
+        <div id="swipeViewContainer">
+            <div class="category-badge" id="currentSwipeCategory">Піца</div>
+            
+            <div class="swipe-container" id="swipeContainer">
+                <div class="swipe-card" id="swipeCard">
+                    </div>
+            </div>
 
-        <div id="articleViewContainer">
-            <h2 id="articleTitle" style="margin-top:0; color: white; font-size: 20px; text-align: left; border-bottom: 1px solid #333; padding-bottom: 10px;">Назва статті</h2>
-            <div id="articleContent" style="background: rgba(255,255,255,0.03); padding: 15px; border-radius: 15px; color: #ddd; font-size: 14px; text-align: left; margin-bottom: 15px; line-height: 1.6; max-height: 450px; overflow-y: auto;">
-                </div>
-            <button class="menu-btn btn-danger" style="margin-top:5px; border:none; font-size: 12px;" onclick="showScreen('categoryViewContainer')">Назад до списку</button>
+            <div class="swipe-hints">
+                <button class="hint-btn" onclick="forceSwipe(-1)">⬅️</button>
+                <div style="color: var(--text-muted); font-size: 12px; display: flex; align-items: center;" id="swipeProgressText">1 / 10</div>
+                <button class="hint-btn" onclick="forceSwipe(1)">➡️</button>
+            </div>
+            
+            <button class="menu-btn btn-danger" style="margin-top:5px; border:none; font-size: 12px;" onclick="showScreen('productCategoriesContainer')">Вийти з режиму</button>
         </div>
 
         <div id="deliveryContainer">
@@ -156,7 +163,7 @@
         </div>
 
         <div id="quizContainer">
-            <img id="questionImage" src="" alt="">
+            <img id="questionImage" src="" alt="" style="width: 100%; border-radius: 15px; margin-bottom: 15px; display: none; object-fit: cover; max-height: 180px;">
             <p id="progressText" style="color: var(--brand-red); font-weight: bold; font-size: 11px; margin:0;"></p>
             <div id="questionText" style="font-weight: 700; margin: 15px 0; font-size: 16px;"></div>
             <div id="optionsContainer"></div>
@@ -199,11 +206,18 @@
         }
 
         const API_URL = "https://script.google.com/macros/s/AKfycbxwXzgTnt_i5oQgmgU7zwwkbGmKDmCPG0QqFWddh3mWSv-PvzxtRns5eF78hEZllhAy/exec";
-        let questions = [], currentIndex = 0, score = 0, mode = '', timerInterval, allLeaders = [];
+        
+        // Глобальні змінні
+        let questions = [], allLeaders = [], menuItems = [];
+        let currentIndex = 0, score = 0, mode = '', timerInterval;
         let currentSprintScore = 0, currentMainTab = 'xp', currentSubTab = 20, timeLeft = 15;
 
+        // Змінні для Тіндера
+        let flatMenuArray = [];
+        let swipeCurrentIndex = 0;
+
         function showScreen(screenId) {
-            const screens = ['mainMenu', 'quizMenuContainer', 'setupScreen', 'quizContainer', 'leaderboardContainer', 'cleaningContainer', 'deliveryContainer', 'productContainer', 'categoryViewContainer', 'articleViewContainer'];
+            const screens = ['mainMenu', 'quizMenuContainer', 'setupScreen', 'quizContainer', 'leaderboardContainer', 'cleaningContainer', 'deliveryContainer', 'productCategoriesContainer', 'swipeViewContainer'];
             screens.forEach(s => {
                 let el = document.getElementById(s);
                 if (el) el.style.display = 'none';
@@ -213,121 +227,152 @@
         }
 
         // ==========================================
-        // БАЗА ЗНАНЬ (ПІЦА З ТАБЛИЦЬ)
+        // ПРОДАКТ (СВАЙПИ І КАТЕГОРІЇ)
         // ==========================================
-        const productData = {
-            kitchen: {
-                title: "🍕 Меню Піци",
-                items: [
-                    { 
-                        name: "BBQ Salami", 
-                        content: "<b>Вага:</b> 600г<br><br><b>Опис:</b> На повітряне ферментоване тісто додаємо томатний соус та багато тягучої моцарели. Щедро посипаємо пепероні, зверху додаємо фіолетову цибулю кільцями та завершуємо глазур'ю Texas BBQ.<br><br><b>Склад:</b> тісто для піци ферментоване, томатний соус, ковбаса пепероні, фіолетова цибуля, глазур bbq Texas, сир моцарелла.<br><br><span style='color:var(--brand-red); font-size:12px;'><b>Алергени:</b> глютен, молоковмісні.<br><i>Ідеально з пивом MAD Brewger - Jagger Lager</i></span>" 
-                    },
-                    { 
-                        name: "Chorizo", 
-                        content: "<b>Вага:</b> 600г<br><br><b>Опис:</b> Повітряне ферментоване тісто, томатна основа, тягуча моцарела та пряне чорізо. Додаємо мариновану фіолетову цибулю й завершуємо медовою глазур'ю BBQ з легким димним акцентом.<br><br><b>Склад:</b> тісто для піци ферментоване, моцарела, ковбаса чорізо, томатний соус, олія соняшникова, цибуля маринована та глазур барбек'ю.<br><br><span style='color:var(--brand-red); font-size:12px;'><b>Алергени:</b> глютен, молоковмісні.<br><i>Ідеально з Clover Club</i></span>" 
-                    },
-                    { 
-                        name: "Прошутто-Крудо Брі", 
-                        content: "<b>Вага:</b> 500г<br><br><b>Опис:</b> Ферментоване тісто, ніжні вершки, тягуча моцарела і ароматний пармезан. Додаємо трюфельну пасту, прошутто, кремовий брі та пікантні каперси. Смак, від якого хочеться закрити очі і насолоджуватися кожним шматочком!<br><br><b>Склад:</b> тісто для піци ферментоване, вершки, сир моцарелла, сир пармезан, паста трюфельна, прошутто, сир Брі, каперси.<br><br><span style='color:var(--brand-red); font-size:12px;'><b>Алергени:</b> лактоза, глютен.</span>" 
-                    },
-                    { 
-                        name: "Vitello", 
-                        content: "<b>Вага:</b> 550г<br><br><b>Опис:</b> Ніжний ростбіф, класичний соус тонато з тунцем та анчоусами, каперси та пармезан на ферментованому бульбашковому тісті.<br><br><b>Склад:</b> Тісто для піци ферментоване, вершки, сир моцарелла, Пастрамі з яловичини, каперси мариновані, черрі ферментовані, соус Тонато (тунець консервований, анчоуси, каперси, майонез яєчний, соус ворчестер, цибуля зелена, сир пармезан).<br><br><span style='color:var(--brand-red); font-size:12px;'><b>Алергени:</b> глютен, лактоза, соя, риба і морепродукти, ракоподібні.<br><i>Ідеально з пивом MAD Brewger - Jagger Lager</i></span>" 
-                    },
-                    { 
-                        name: "Bacon & Parm", 
-                        content: "<b>Вага:</b> 480г<br><br><b>Опис:</b> Ферментоване тісто, томатний соус, тягуча моцарела, соковитий сирокопчений бекон і щедра стружка пармезану. Завершуємо все ароматною пудрою з бекону для глибшого, хрусткого смаку.<br><br><b>Склад:</b> тісто для піци ферментоване, соус томатний для піци, сир моцарелла, бекон сирокопчений, сир пармезан, пудра з бекону.<br><br><span style='color:var(--brand-red); font-size:12px;'><b>Алергени:</b> лактоза, глютен.<br><i>Ідеально з пивом MAD Brewger - Jagger Lager</i></span>" 
-                    },
-                    { 
-                        name: "Чізес Краст 2.0", 
-                        content: "<b>Вага:</b> 460г<br><br><b>Опис:</b> Оновлена чізест краст, 4 сири: 1) пармезан, 2) горгонзола, 3) моцарела, 4) чедер + гострий мед та муштарда з айви! Той самий бульбашковий борт та супер тягуча начинка.<br><br><b>Склад:</b> Тісто для піци ферментоване, соус бешамель вершковий, сир горгонзола Дольче, сир горгонзолла Піканте, сир чедддер, сир мацарелла, сир пармезан, Муштарда з айви (айва, гірчиця, оцет винний, горіх фісташка, гострий мед).<br><br><span style='color:var(--brand-red); font-size:12px;'><b>Алергени:</b> Молоковмісні продукти, риба, мед.</span>" 
-                    },
-                    { 
-                        name: "Peperoni Brooklyn", 
-                        content: "<b>Вага:</b> 510г<br><br><b>Опис:</b> Спайсі пепероні з перцем халапеньйо та пармезаном + соус до бортів 'Томат-пармезан'.<br><br><b>Склад:</b> Соус на основі: томатна паста (пульпа з спеціями), моцарела, папероні, перець халапеньо, пармезан.<br><br><span style='color:var(--brand-red); font-size:12px;'><b>Алергени:</b> глютен, молоковмісні продукти.</span>" 
-                    },
-                    { 
-                        name: "Марго зі страчателою та томатами", 
-                        content: "<b>Вага:</b> 560г<br><br><b>Опис:</b> Страчателла власного виробництва з квашеними чері на томатному соусі з моцареллою, пармезановим крашем та свіжим базиліком + соус до бортів 'Томат-пармезан'.<br><br><b>Склад:</b> Соус на основі: томатний та моцарела, страчателла, квашені томати, пармезан, базилік.<br><br><span style='color:var(--brand-red); font-size:12px;'><b>Алергени:</b> глютен, молоковмісні продукти.</span>" 
-                    },
-                    { 
-                        name: "Мортаделла-страчателла", 
-                        content: "<b>Вага:</b> 520г<br><br><b>Опис:</b> Багато мортаделли та страчателли власного виробництва у поєднанні з сирним соусом, крашем фісташок та базиліком + соус до бортів 'Лимон-гірчиця'.<br><br><b>Склад:</b> Соус на основі: вершки та сирний соус(чедер), моцарела, мортаделла, страчателла, краш фісташок, пармезан, базилік.<br><br><span style='color:var(--brand-red); font-size:12px;'><b>Алергени:</b> глютен, молоковмісні продукти, горіхи.</span>" 
-                    },
-                    { 
-                        name: "Карбонара by Emily", 
-                        content: "<b>Вага:</b> 490г<br><br><b>Опис:</b> Підкопчений бекон у сирному соусі з зеленою цибулею і пармезаном, + соус до бортів 'Лимон-гірчиця'. Все, як вчила бабця!<br><br><b>Склад:</b> Соус на основі: сирний, моцарела, бекон, зелена цибуля, пармезан.<br><br><span style='color:var(--brand-red); font-size:12px;'><b>Алергени:</b> глютен, молоковмісні продукти.</span>" 
-                    },
-                    { 
-                        name: "Chicken Caesar", 
-                        content: "<b>Вага:</b> 700г<br><br><b>Опис:</b> Апетитна курка сувід, мікс салату з томатами чері, моцарела, соус Цезар + соус для бортиків 'Лимон-гірчиця'.<br><br><b>Склад:</b> Моцарела, на основу іде соус з вершків, мікс салат, чері, соус цезар, курка сувід, пармезан.<br><br><span style='color:var(--brand-red); font-size:12px;'><b>Алергени:</b> глютен, риба, яйця, молоковмісні продукти.</span>" 
-                    },
-                    { 
-                        name: "Бурата-прошуто", 
-                        content: "<b>Вага:</b> 700г<br><br><b>Опис:</b> Дуже багато прошуто та буррата власного виробництва зі свіжою руколою та чері на томатному соусі з моцарелою, поливається песто та посипається пармезаном + соус до бортів томат-пармезан.<br><br><b>Склад:</b> томатна паста, моцарела, прошуто, помідори коктейльні (чері), рукола, бурата, соус песто, пармезан.<br><br><span style='color:var(--brand-red); font-size:12px;'><b>Алергени:</b> глютен, молоковмісні продукти, горіхи.</span>" 
-                    },
-                    { 
-                        name: "Andriano", 
-                        content: "<b>Вага:</b> 650г<br><br><b>Опис:</b> Хрумка картопля фрі та багато мисливських ковбасок у соусі BBQ, пармезан та крафтова моцарела, зелена цибуля + соус до бортів 'Томат-пармезан'.<br><br><b>Склад:</b> Соус на основу: BBQ, моцарела, мисливські ковбаски, картопля фрі, зелена цибуля, пармезан.<br><br><span style='color:var(--brand-red); font-size:12px;'><b>Алергени:</b> глютен, молоковмісні продукти.</span>" 
-                    },
-                    { 
-                        name: "4 Meat", 
-                        content: "<b>Вага:</b> 655г<br><br><b>Опис:</b> Мега м'ясна піца яка поєднює в собі 4 види м'яса, а саме - Прошуто котто, чорізо, шинка та бекон в томатному соусі + гострий мед, з хрумкою руколою, справжня very meat pizza + соус до бортиків 'Томат-пармезан'.<br><br><b>Склад:</b> Чорізо, прошуто котто, бекон, шинка, основа томатна з моцарелою, соус гострий мед, рукола.<br><br><span style='color:var(--brand-red); font-size:12px;'><b>Алергени:</b> глютен, молоковмісні продукти, мед.</span>" 
-                    },
-                    { 
-                        name: "Кальцоне", 
-                        content: "<b>Вага:</b> 490г<br><br><b>Опис:</b> Наше кальцоне – об'єднує в собі ніжну моцарелу, соковите папероні та бекон, в томатній пасті, з пармезаном та свіжим базиліком. Подається гарячим, із хрусткою скоринкою, яка приховує усі ці смачні інгредієнти всередині.<br><br><b>Склад:</b> моцарела, папероні, бекон, томатна паста, пармезан, базилік.<br><br><span style='color:var(--brand-red); font-size:12px;'><b>Алергени:</b> глютен, молоковмісні продукти.</span>" 
-                    },
-                    { 
-                        name: "King Prawn Pizza", 
-                        content: "<b>Вага:</b> 650г<br><br><b>Опис:</b> Королівська креветка в устричному соусі, моцарела, соус спайсі, чері, рукола та лимон гриль + соус до бортів лимон-гірчиця.<br><br><b>Склад:</b> креветка в устричному, соус спайс, рукола, лимон, моцарела, чері, пармезан.<br><br><span style='color:var(--brand-red); font-size:12px;'><b>Алергени:</b> глютен, молоковмісні продукти, морепродукти.</span>" 
-                    }
-                ]
-            },
-            bar: {
-                title: "🍹 Бар",
-                items: [
-                    { 
-                        name: "Апероль Шприц", 
-                        content: "<b>Бокал:</b> Винний<br><br><b>Пропорції:</b><br>- 100 мл Просекко<br>- 50 мл Апероль<br>- 20 мл Содова<br><br><b>Приготування:</b> Повний бокал льоду, додати інгредієнти, перемішати барною ложкою. Прикраса - слайс апельсина." 
-                    }
-                ]
-            },
-            service: {
-                title: "📋 Стандарти та Сервіс",
-                items: [
-                    { 
-                        name: "Чек-лист відкриття", 
-                        content: "<b>До 10:00 потрібно:</b><br>1. Увімкнути світло та фонову музику.<br>2. Перевірити касу.<br>3. Протерти всі столи вологою ганчіркою.<br>4. Перевірити чистоту вбиральні." 
-                    }
-                ]
+        function openProductMenu() {
+            if (menuItems.length === 0) {
+                alert("Завантажуємо меню з бази... Спробуй через секунду.");
+                return;
             }
-        };
-
-        let currentCategoryId = '';
-
-        function openCategory(catId) {
-            currentCategoryId = catId;
-            const data = productData[catId];
-            document.getElementById('categoryTitle').innerText = data.title;
             
-            const listContainer = document.getElementById('categoryList');
-            listContainer.innerHTML = data.items.map((item, index) => `
-                <button class="menu-btn btn-secondary" style="padding: 14px; text-align: left; font-size: 15px; font-weight: normal; border: 1px solid rgba(255,255,255,0.05);" onclick="openArticle(${index})">
-                    ${item.name}
-                </button>
-            `).join('');
+            // Групуємо по категоріях для кнопок меню
+            let categories = [...new Set(menuItems.map(item => item.category))];
+            let html = "";
+            categories.forEach(cat => {
+                let count = menuItems.filter(i => i.category === cat).length;
+                html += `
+                    <button class="menu-btn btn-secondary" style="display: flex; align-items: center; justify-content: space-between; padding: 16px; text-align: left;" onclick="startSwipeMode('${cat}')">
+                        <span style="font-size: 16px; font-weight: bold;">🍽 ${cat} <span style="font-size: 12px; color: var(--text-muted); font-weight: normal;">(${count})</span></span>
+                        <span style="color: var(--brand-red); font-size: 14px;">➔</span>
+                    </button>
+                `;
+            });
             
-            showScreen('categoryViewContainer');
+            document.getElementById('dynamicCategoryList').innerHTML = html || "<p>Меню пусте</p>";
+            showScreen('productCategoriesContainer');
         }
 
-        function openArticle(index) {
-            const item = productData[currentCategoryId].items[index];
-            document.getElementById('articleTitle').innerText = item.name;
-            document.getElementById('articleContent').innerHTML = item.content;
-            showScreen('articleViewContainer');
+        function startSwipeMode(startCategory) {
+            // Формуємо плоский масив для свайпів, починаючи з обраної категорії
+            // Це дозволить після закінчення "Піци" автоматично переходити на "Пасти"
+            flatMenuArray = menuItems.sort((a, b) => {
+                if(a.category === startCategory && b.category !== startCategory) return -1;
+                if(a.category !== startCategory && b.category === startCategory) return 1;
+                return a.category.localeCompare(b.category);
+            });
+            
+            swipeCurrentIndex = 0;
+            renderSwipeCard();
+            showScreen('swipeViewContainer');
         }
+
+        function renderSwipeCard() {
+            if (swipeCurrentIndex < 0) swipeCurrentIndex = 0;
+            if (swipeCurrentIndex >= flatMenuArray.length) {
+                alert("Ти переглянув все меню!");
+                showScreen('productCategoriesContainer');
+                return;
+            }
+
+            const item = flatMenuArray[swipeCurrentIndex];
+            const card = document.getElementById('swipeCard');
+            
+            // Оновлюємо бейдж категорії і прогрес
+            document.getElementById('currentSwipeCategory').innerText = item.category;
+            document.getElementById('swipeProgressText').innerText = `${swipeCurrentIndex + 1} / ${flatMenuArray.length}`;
+
+            // Генеруємо перчики 🌶️
+            let peppers = "";
+            if (item.spicy > 0) {
+                for(let p=0; p<item.spicy; p++) peppers += "🌶️";
+            }
+
+            let photoHtml = item.photo ? `<img src="${item.photo}" style="width: 100%; height: 40%; object-fit: cover;">` : `<div class="card-img-placeholder">🍽</div>`;
+
+            card.innerHTML = `
+                ${photoHtml}
+                <div class="card-body">
+                    <div class="card-title-row">
+                        <h2 class="card-title">${item.name} <span style="font-size:14px;">${peppers}</span></h2>
+                        ${item.weight ? `<div class="card-weight">${item.weight}</div>` : ''}
+                    </div>
+                    
+                    <div style="flex:1; overflow-y:auto; padding-right:5px; display:flex; flex-direction:column; gap:8px;">
+                        ${item.desc ? `<div class="card-text-block"><strong>Смачний опис:</strong>${item.desc}</div>` : ''}
+                        ${item.ingredients ? `<div class="card-text-block"><strong>Склад:</strong>${item.ingredients}</div>` : ''}
+                        ${item.allergens ? `<div class="card-allergens">⚠️ Алергени: ${item.allergens}</div>` : ''}
+                    </div>
+                </div>
+            `;
+            
+            // Скидаємо трансформацію
+            card.style.transition = 'none';
+            card.style.transform = 'translateX(0px) rotate(0deg)';
+            card.style.opacity = '1';
+        }
+
+        function forceSwipe(direction) {
+            const card = document.getElementById('swipeCard');
+            card.style.transition = 'transform 0.3s ease-out, opacity 0.3s';
+            
+            if (direction === 1) { // Свайп вліво (Наступне)
+                card.style.transform = `translateX(-120vw) rotate(-15deg)`;
+                card.style.opacity = '0';
+                setTimeout(() => { swipeCurrentIndex++; renderSwipeCard(); }, 300);
+            } else { // Свайп вправо (Попереднє)
+                if (swipeCurrentIndex === 0) return; // Немає попереднього
+                card.style.transform = `translateX(120vw) rotate(15deg)`;
+                card.style.opacity = '0';
+                setTimeout(() => { swipeCurrentIndex--; renderSwipeCard(); }, 300);
+            }
+        }
+
+        // --- ЛОГІКА ТАЧ-СВАЙПІВ ---
+        const swipeContainer = document.getElementById('swipeContainer');
+        let startX = 0, startY = 0, currentX = 0, isDragging = false;
+
+        swipeContainer.addEventListener('touchstart', (e) => {
+            startX = e.touches[0].clientX;
+            startY = e.touches[0].clientY;
+            isDragging = true;
+            const card = document.getElementById('swipeCard');
+            card.style.transition = 'none';
+        });
+
+        swipeContainer.addEventListener('touchmove', (e) => {
+            if (!isDragging) return;
+            const card = document.getElementById('swipeCard');
+            let deltaX = e.touches[0].clientX - startX;
+            let deltaY = e.touches[0].clientY - startY;
+            
+            // Якщо користувач скролить текст вниз/вверх - не свайпаємо картку
+            if (Math.abs(deltaY) > Math.abs(deltaX) && Math.abs(deltaX) < 30) {
+                isDragging = false;
+                card.style.transform = `translateX(0px) rotate(0deg)`;
+                return;
+            }
+            
+            currentX = deltaX;
+            let rotate = currentX * 0.05;
+            card.style.transform = `translateX(${currentX}px) rotate(${rotate}deg)`;
+        });
+
+        swipeContainer.addEventListener('touchend', (e) => {
+            if (!isDragging) return;
+            isDragging = false;
+            
+            if (currentX > 80) { // Свайпнули вправо
+                forceSwipe(-1);
+            } else if (currentX < -80) { // Свайпнули вліво
+                forceSwipe(1);
+            } else { // Повертаємо на місце
+                const card = document.getElementById('swipeCard');
+                card.style.transition = 'transform 0.3s ease-out';
+                card.style.transform = `translateX(0px) rotate(0deg)`;
+            }
+            currentX = 0;
+        });
+
 
         // ==========================================
         // ЛОГІКА МОДУЛЯ ЗАМИТТЯ
@@ -337,13 +382,11 @@
         function handleNewPhotos(event) {
             const files = Array.from(event.target.files);
             if (files.length === 0) return;
-            
             if (cleaningPhotosArray.length + files.length > 10) { 
                 alert("Максимум 10 фото!"); 
                 event.target.value = ''; 
                 return; 
             }
-            
             files.forEach(file => cleaningPhotosArray.push(file));
             event.target.value = ''; 
             renderPhotoGallery();
@@ -461,13 +504,25 @@
             
             showScreen('mainMenu');
             try {
+                // ОДИН ЗАПИТ ОТРИМУЄ І ЛІДЕРІВ, І ПИТАННЯ, І МЕНЮ
+                let response = await fetch(API_URL + "?action=init").then(r => r.json());
+                
+                // В Гугл скрипті ми запакували все: {questions: [], menu: []}
+                // Тому забираємо все
+                if(response.questions) questions = response.questions;
+                if(response.menu) menuItems = response.menu;
+                
+                // Для лідерборду робимо окремий запит або, як було раніше
                 allLeaders = await fetch(API_URL + "?action=leaderboard").then(r => r.json());
+                
                 let me = allLeaders.find(l => String(l.tg_id) === String(userData.id)) || {xp: 0, total_asked: 0};
                 let rankEl = document.getElementById('rankDisplay');
                 let statsEl = document.getElementById('statsDisplay');
                 if (rankEl) rankEl.innerText = getRankInfo(me.xp);
                 if (statsEl) statsEl.innerText = `XP: ${me.xp} (з ${me.total_asked} питань)`;
-            } catch(e) {}
+            } catch(e) {
+                console.log(e);
+            }
         }
         
         initApp();
@@ -480,35 +535,32 @@
 
         async function prepareQuiz(count) {
             showScreen('quizContainer');
-            document.getElementById('questionText').innerText = "Завантаження...";
-            try {
-                let data = await fetch(API_URL).then(r => r.json());
-                if (mode === 'photo') {
-                    questions = data.questions.filter(q => q.photo && q.photo.length > 5);
-                } else {
-                    questions = data.questions;
-                }
-                questions = questions.sort(() => Math.random() - 0.5).slice(0, count);
-                if(questions.length === 0) { alert("Питань немає!"); showScreen('mainMenu'); return; }
-                startQuiz();
-            } catch (e) {
-                alert("Помилка завантаження бази.");
-                showScreen('mainMenu');
+            if(questions.length === 0) { alert("Питань немає! Завантажте сторінку ще раз."); showScreen('mainMenu'); return; }
+            let quizQ = [];
+            if (mode === 'photo') {
+                quizQ = questions.filter(q => q.photo && q.photo.length > 5);
+            } else {
+                quizQ = [...questions];
             }
+            quizQ = quizQ.sort(() => Math.random() - 0.5).slice(0, count);
+            if(quizQ.length === 0) { alert("Питань немає!"); showScreen('mainMenu'); return; }
+            
+            // Підміняємо глобальний масив для гри
+            let tempQuestions = [...questions];
+            questions = quizQ;
+            startQuiz();
+            questions = tempQuestions; // повертаємо назад після гри
         }
 
         async function startAssessment() {
             if(!confirm("Це офіційна атестація!")) return;
             mode = 'exam';
             showScreen('quizContainer');
-            try {
-                let data = await fetch(API_URL).then(r => r.json());
-                questions = data.questions.sort(() => Math.random() - 0.5);
-                startQuiz();
-            } catch(e) {
-                alert("Помилка бази.");
-                showScreen('mainMenu');
-            }
+            if(questions.length === 0) { alert("База пуста."); showScreen('mainMenu'); return; }
+            let temp = [...questions];
+            questions = questions.sort(() => Math.random() - 0.5);
+            startQuiz();
+            questions = temp;
         }
 
         function startQuiz() { currentIndex = 0; score = 0; currentSprintScore = 0; showQuestion(); }
