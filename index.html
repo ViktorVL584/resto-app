@@ -14,7 +14,6 @@
         .neon-logo { font-family: 'Caveat', cursive; font-size: 45px; color: #fff; text-shadow: 0 0 5px #fff, 0 0 10px #fff, 0 0 20px var(--brand-red), 0 0 40px var(--brand-red); margin: 0; line-height: 1; transform: rotate(-2deg); }
         .logo-sub { font-size: 10px; letter-spacing: 3px; color: var(--text-muted); text-transform: uppercase; margin-top: 5px; margin-bottom: 20px; }
         
-        /* НОВА СІТКА НА 6 КНОПОК */
         .grid-menu { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 15px; }
         .grid-btn { background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 16px; padding: 15px 5px; color: white; font-family: 'Montserrat', sans-serif; font-size: 12px; font-weight: 700; cursor: pointer; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px; transition: 0.2s; }
         .grid-btn i { font-size: 28px; font-style: normal; }
@@ -60,19 +59,18 @@
         .hint-btn:active { transform: scale(0.9); background: rgba(226,24,54,0.2); }
         .category-badge { display: inline-block; background: #E21836; color: white; padding: 5px 12px; border-radius: 20px; font-size: 12px; font-weight: bold; margin-bottom: 10px; box-shadow: 0 0 10px rgba(226,24,54,0.5); }
 
-        /* СТИЛІ ДЛЯ ЗОН І ПРОФІЛЮ */
+        /* СТИЛІ ЗОН І ХРОНОЛОГІЇ */
         .queue-box { background: rgba(226, 24, 54, 0.1); border: 1px solid var(--brand-red); border-radius: 15px; padding: 12px; margin-bottom: 20px; text-align: left; }
         .queue-item { display: flex; justify-content: space-between; font-size: 12px; padding: 8px 0; border-bottom: 1px dashed rgba(255,255,255,0.1); }
         .queue-item:last-child { border-bottom: none; }
-        .staff-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; background: rgba(255,255,255,0.03); padding: 8px 12px; border-radius: 12px; }
-        .staff-name { font-size: 13px; font-weight: bold; color: white; width: 45%; text-align: left; }
-        .staff-input { width: 50%; padding: 8px; border-radius: 8px; border: 1px solid #444; background: #111; color: white; font-family: 'Montserrat', sans-serif; font-size: 12px; }
-        .staff-input:focus { border-color: var(--brand-red); outline: none; }
-
+        .history-item { background: rgba(255,255,255,0.05); padding: 12px; border-radius: 12px; margin-bottom: 8px; text-align: left; font-size: 12px; color: #ddd; line-height: 1.4; border-left: 3px solid var(--brand-red); }
+        .history-date { font-size: 10px; color: var(--text-muted); margin-bottom: 4px; font-weight: bold; }
+        .staff-input-area { width: 100%; height: 120px; padding: 12px; border-radius: 12px; border: 1px solid #444; background: #111; color: white; font-family: 'Montserrat', sans-serif; font-size: 13px; box-sizing: border-box; resize: none; line-height: 1.5; }
+        .staff-input-area:focus { border-color: var(--brand-red); outline: none; }
         .profile-stat { background: #1a1a1a; border-radius: 15px; padding: 15px; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; border: 1px solid rgba(255,255,255,0.05); }
 
         /* ВІДОБРАЖЕННЯ ЕКРАНІВ */
-        #quizMenuContainer, #setupScreen, #quizContainer, #leaderboardContainer, #cleaningContainer, #zonesAssignContainer, #productCategoriesContainer, #swipeViewContainer, #deliveryContainer, #profileContainer { display: none; }
+        #quizMenuContainer, #setupScreen, #quizContainer, #leaderboardContainer, #cleaningContainer, #zonesMenuContainer, #zonesHistoryContainer, #zonesInputContainer, #zonesQueueContainer, #productCategoriesContainer, #swipeViewContainer, #deliveryContainer, #profileContainer { display: none; }
     </style>
 </head>
 <body>
@@ -87,7 +85,7 @@
                 <button class="grid-btn" onclick="showScreen('deliveryContainer')"><i>📦</i>Доставки</button>
                 <button class="grid-btn" onclick="showScreen('cleaningContainer')"><i>🧴</i>Замиття</button>
                 <button class="grid-btn" onclick="openProductMenu()"><i>📚</i>Продакт</button>
-                <button class="grid-btn" onclick="openZonesMenu()"><i>🪑</i>Зони</button>
+                <button class="grid-btn" onclick="showScreen('zonesMenuContainer')"><i>🪑</i>Зони</button>
                 <button class="grid-btn" onclick="openProfile()"><i>👤</i>Профіль</button>
             </div>
             
@@ -112,35 +110,60 @@
                 <span style="color: var(--text-muted); font-size: 13px;">Telegram ID:</span>
                 <b id="profileId" style="font-size: 12px; color: var(--text-muted);">0</b>
             </div>
-
             <button class="menu-btn btn-danger" style="margin-top:15px; border:none; font-size: 12px;" onclick="showScreen('mainMenu')">Назад в меню</button>
         </div>
 
-        <div id="deliveryContainer">
-            <h2 style="margin-top:0;">📦 Доставки</h2>
-            <p style="color:var(--text-muted); font-size: 12px;">Модуль у розробці. Тут буде контроль пакування та видачі.</p>
-            <button class="menu-btn btn-secondary" onclick="showScreen('mainMenu')">Назад</button>
+        <div id="zonesMenuContainer">
+            <h2 style="margin-top:0; color: white;">🪑 Управління зонами</h2>
+            <p style="font-size: 11px; color: var(--text-muted); margin-bottom: 20px;">Обери потрібний розділ</p>
+            
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 12px;">
+                <button class="menu-btn btn-secondary" style="margin:0; font-size:13px; padding:20px 10px;" onclick="openZonesHistory()">📜 Хронологія</button>
+                <button class="menu-btn btn-secondary" style="margin:0; font-size:13px; padding:20px 10px; border-color:var(--brand-red);" onclick="showScreen('zonesInputContainer'); document.getElementById('shiftDateText').valueAsDate = new Date();">✍️ Внести зони</button>
+            </div>
+            
+            <div style="display: flex; justify-content: center; margin-bottom: 20px;">
+                <button class="menu-btn btn-primary" style="width: 70%; padding: 18px;" onclick="openZonesQueue()">🛋 Черга на дивани</button>
+            </div>
+            
+            <button class="menu-btn btn-danger" style="border:none; font-size: 12px;" onclick="showScreen('mainMenu')">Назад в меню</button>
         </div>
 
-        <div id="zonesAssignContainer">
-            <h2 style="margin-top:0; color: white;">🪑 Зони та Графік</h2>
+        <div id="zonesHistoryContainer">
+            <h2 style="margin-top:0; color: white;">📜 Хронологія</h2>
+            <div id="historyListDisplay" style="max-height: 400px; overflow-y: auto; padding-right: 5px; margin-bottom: 15px;">
+                </div>
+            <button class="menu-btn btn-secondary" onclick="showScreen('zonesMenuContainer')">Назад</button>
+        </div>
+
+        <div id="zonesInputContainer">
+            <h2 style="margin-top:0; color: white;">✍️ Внести зони</h2>
+            <div style="text-align: left; margin-bottom: 15px;">
+                <label style="font-size: 12px; color: var(--text-muted); font-weight: bold;">Дата зміни:</label>
+                <input type="date" id="shiftDateText" style="width: 100%; padding: 10px; border-radius: 10px; border: 1px solid #444; background: #1a1a1a; color: white; margin-top: 5px; font-family: 'Montserrat'; box-sizing: border-box;">
+            </div>
             
+            <textarea class="staff-input-area" id="zonesRawText" placeholder="Напиши просто текстом. Наприклад:&#10;Марта - 1-21,&#10;Юстина і Даша 22-42"></textarea>
+            <p style="font-size: 10px; color: var(--brand-red); margin-top: 5px; text-align: left;">*Якщо написати ім'я поруч із 22-28 або 22-42, система сама зарахує їм дивани.</p>
+
+            <button class="menu-btn btn-correct" id="saveZonesTextBtn" style="margin-top:10px;" onclick="saveZonesText()">ВІДПРАВИТИ В ХРОНОЛОГІЮ</button>
+            <button class="menu-btn btn-danger" style="margin-top:5px; border:none; font-size: 12px;" onclick="showScreen('zonesMenuContainer')">Скасувати</button>
+        </div>
+
+        <div id="zonesQueueContainer">
+            <h2 style="margin-top:0; color: white;">🛋 Черга (Дивани)</h2>
             <div class="queue-box">
-                <div style="font-size: 14px; font-weight: bold; margin-bottom: 8px; text-align: center; color: white;">🔥 Графік на дивани (Наступні вихідні)</div>
+                <div style="font-size: 14px; font-weight: bold; margin-bottom: 8px; text-align: center; color: white;">🔥 Графік на наступні вихідні</div>
                 <div style="font-size: 10px; color: var(--text-muted); text-align: center; margin-bottom: 10px;">Прогноз системи на основі історії черги</div>
                 <div id="sofaScheduleList">
                     </div>
             </div>
-
-            <div style="text-align: left; margin-bottom: 15px;">
-                <label style="font-size: 12px; color: var(--text-muted); font-weight: bold;">Призначити зони на дату:</label>
-                <input type="date" id="shiftDate" style="width: 100%; padding: 10px; border-radius: 10px; border: 1px solid #444; background: #1a1a1a; color: white; margin-top: 5px; font-family: 'Montserrat'; box-sizing: border-box;">
-            </div>
-
-            <div id="staffAssignList" style="margin-bottom: 15px; max-height: 200px; overflow-y: auto; padding-right: 5px;"></div>
-
-            <button class="menu-btn btn-correct" id="saveZonesBtn" onclick="saveZoneAssignments()">ЗБЕРЕГТИ РОЗПОДІЛ</button>
-            <button class="menu-btn btn-danger" style="margin-top:5px; border:none; font-size: 12px;" onclick="showScreen('mainMenu')">Назад в меню</button>
+            <button class="menu-btn btn-secondary" onclick="showScreen('zonesMenuContainer')">Назад</button>
+        </div>
+        <div id="deliveryContainer">
+            <h2 style="margin-top:0;">📦 Доставки</h2>
+            <p style="color:var(--text-muted); font-size: 12px;">Модуль у розробці. Тут буде контроль пакування та видачі.</p>
+            <button class="menu-btn btn-secondary" onclick="showScreen('mainMenu')">Назад</button>
         </div>
 
         <div id="quizMenuContainer">
@@ -245,16 +268,16 @@
 
         const API_URL = "https://script.google.com/macros/s/AKfycbxwXzgTnt_i5oQgmgU7zwwkbGmKDmCPG0QqFWddh3mWSv-PvzxtRns5eF78hEZllhAy/exec";
         
-        let questions = [], allLeaders = [], menuItems = [];
+        let questions = [], allLeaders = [], menuItems = [], globalHistory = [];
         let currentIndex = 0, score = 0, mode = '', timerInterval;
         let currentSprintScore = 0, currentMainTab = 'xp', currentSubTab = 20, timeLeft = 15;
         let flatMenuArray = [], swipeCurrentIndex = 0;
         
-        const staffList = ['Віктор Лащук', 'Пашко Ангеліна', 'Білогруд Юстина', 'Юлія ПТ', 'Кулик Дарія', 'Павлик Марта', 'Цибуляк Ірина', 'Олег Баб\'як', 'Олександр Низкошапка'];
+        const staffList = ['Віктор', 'Ангеліна', 'Юстина', 'Юлія', 'Дарія', 'Марта', 'Ірина', 'Олег', 'Олександр'];
         let globalSofaQueue = {};
 
         function showScreen(screenId) {
-            const screens = ['mainMenu', 'quizMenuContainer', 'setupScreen', 'quizContainer', 'leaderboardContainer', 'cleaningContainer', 'zonesAssignContainer', 'productCategoriesContainer', 'swipeViewContainer', 'deliveryContainer', 'profileContainer'];
+            const screens = ['mainMenu', 'quizMenuContainer', 'setupScreen', 'quizContainer', 'leaderboardContainer', 'cleaningContainer', 'zonesMenuContainer', 'zonesHistoryContainer', 'zonesInputContainer', 'zonesQueueContainer', 'productCategoriesContainer', 'swipeViewContainer', 'deliveryContainer', 'profileContainer'];
             screens.forEach(s => { let el = document.getElementById(s); if (el) el.style.display = 'none'; });
             let target = document.getElementById(screenId);
             if (target) target.style.display = 'block';
@@ -276,18 +299,17 @@
                 if(response.questions) questions = response.questions;
                 if(response.menu) menuItems = response.menu;
                 if(response.sofaQueue) globalSofaQueue = response.sofaQueue;
+                if(response.zoneHistory) globalHistory = response.zoneHistory;
                 
                 allLeaders = await fetch(API_URL + "?action=leaderboard").then(r => r.json());
                 
                 let me = allLeaders.find(l => String(l.tg_id) === String(userData.id)) || {xp: 0, total_asked: 0};
-                window.myStats = me; // Зберігаємо для профілю
+                window.myStats = me; 
             } catch(e) {}
         }
         initApp();
 
-        // ==========================================
         // ПРОФІЛЬ
-        // ==========================================
         function openProfile() {
             let me = window.myStats || {xp: 0, total_asked: 0};
             document.getElementById('profileName').innerText = userData.first_name;
@@ -299,12 +321,57 @@
         }
 
         // ==========================================
-        // ЗОНИ І ЧЕРГА НА ДИВАНИ (ПРОГНОЗ НА МІСЯЦЬ)
+        // ЗОНИ: ХРОНОЛОГІЯ ТА ЧЕРГА
         // ==========================================
-        function openZonesMenu() {
-            document.getElementById('shiftDate').valueAsDate = new Date();
+        function openZonesHistory() {
+            let hHtml = "";
+            if (globalHistory.length === 0) {
+                hHtml = "<p style='color:#777; font-size:12px;'>Хронологія пуста</p>";
+            } else {
+                globalHistory.forEach(h => {
+                    let formattedText = h.text.replace(/\n/g, '<br>');
+                    hHtml += `
+                    <div class="history-item">
+                        <div class="history-date">📅 ${h.date}</div>
+                        <div>${formattedText}</div>
+                    </div>`;
+                });
+            }
+            document.getElementById('historyListDisplay').innerHTML = hHtml;
+            showScreen('zonesHistoryContainer');
+        }
+
+        async function saveZonesText() {
+            const btn = document.getElementById('saveZonesTextBtn');
+            const dateVal = document.getElementById('shiftDateText').value;
+            const textVal = document.getElementById('zonesRawText').value.trim();
             
-            // 1. Знаходимо 8 наступних вихідних днів (від сьогодні)
+            if(!dateVal) return alert("Обери дату!");
+            if(!textVal) return alert("Напиши розподіл зон!");
+
+            btn.innerText = "ЗБЕРЕЖЕННЯ..."; btn.style.opacity = '0.5'; btn.style.pointerEvents = 'none';
+
+            try {
+                await fetch(API_URL, { method: 'POST', body: JSON.stringify({
+                    action: "saveZonesText", date: dateVal, rawText: textVal
+                })});
+                if (tg && typeof tg.HapticFeedback !== 'undefined') tg.HapticFeedback.notificationOccurred('success');
+                alert("Зони успішно додано в Хронологію!");
+                
+                // Додаємо локально щоб не перезавантажувати
+                let parts = dateVal.split('-');
+                let fDate = `${parts[2]}.${parts[1]}.${parts[0]}`;
+                globalHistory.unshift({date: fDate, text: textVal});
+                
+                document.getElementById('zonesRawText').value = "";
+                showScreen('zonesMenuContainer');
+            } catch (e) { alert("Помилка збереження."); }
+            
+            btn.innerText = "ВІДПРАВИТИ В ХРОНОЛОГІЮ"; btn.style.opacity = '1'; btn.style.pointerEvents = 'auto';
+        }
+
+        function openZonesQueue() {
+            // 1. Знаходимо 8 наступних вихідних
             let nextWeekends = [];
             let d = new Date();
             while(nextWeekends.length < 8) {
@@ -336,44 +403,7 @@
                 qHtml += `<div class="queue-item"><span>📅 ${dateStr}</span><b style="color:white;">${staffName}</b></div>`;
             });
             document.getElementById('sofaScheduleList').innerHTML = qHtml;
-
-            // Форма призначення
-            let inputsHtml = "";
-            staffList.forEach((name, i) => {
-                inputsHtml += `
-                    <div class="staff-row">
-                        <span class="staff-name">${name}</span>
-                        <input type="text" class="staff-input" id="zoneInput_${i}" placeholder="Напр: 22-28">
-                    </div>
-                `;
-            });
-            document.getElementById('staffAssignList').innerHTML = inputsHtml;
-            showScreen('zonesAssignContainer');
-        }
-
-        async function saveZoneAssignments() {
-            const btn = document.getElementById('saveZonesBtn');
-            const dateVal = document.getElementById('shiftDate').value;
-            if(!dateVal) return alert("Обери дату!");
-            
-            let assignments = [];
-            staffList.forEach((name, i) => {
-                let zoneVal = document.getElementById(`zoneInput_${i}`).value.trim();
-                if (zoneVal !== "") assignments.push({ name: name, zone: zoneVal });
-            });
-            if (assignments.length === 0) return alert("Не призначено жодної зони!");
-
-            btn.innerText = "ЗБЕРЕЖЕННЯ..."; btn.style.opacity = '0.5'; btn.style.pointerEvents = 'none';
-
-            try {
-                await fetch(API_URL, { method: 'POST', body: JSON.stringify({
-                    action: "saveZones", date: dateVal, assignments: assignments
-                })});
-                if (tg && typeof tg.HapticFeedback !== 'undefined') tg.HapticFeedback.notificationOccurred('success');
-                alert("Розподіл збережено!");
-                showScreen('mainMenu');
-            } catch (e) { alert("Помилка збереження."); }
-            btn.innerText = "ЗБЕРЕГТИ РОЗПОДІЛ"; btn.style.opacity = '1'; btn.style.pointerEvents = 'auto';
+            showScreen('zonesQueueContainer');
         }
 
         // ==========================================
@@ -476,9 +506,7 @@
             currentX = 0;
         });
 
-        // ==========================================
-        // ЛОГІКА МОДУЛЯ ЗАМИТТЯ
-        // ==========================================
+        // ЗАМИТТЯ
         let cleaningPhotosArray = [];
         function handleNewPhotos(event) {
             const files = Array.from(event.target.files);
@@ -529,9 +557,7 @@
             } catch (e) { alert("Помилка відправки."); btn.innerText = "ЗАМИТИ ЗОНУ"; btn.style.opacity = '1'; btn.style.pointerEvents = 'auto'; }
         }
 
-        // ==========================================
         // ВІКТОРИНИ
-        // ==========================================
         function openSetup(m) { mode = m; showScreen('setupScreen'); document.getElementById('setupTitle').innerText = (m === 'photo') ? "Фото-тест" : "Дистанція"; }
         async function prepareQuiz(count) {
             showScreen('quizContainer'); if(questions.length === 0) { alert("Питань немає!"); showScreen('mainMenu'); return; }
@@ -563,7 +589,7 @@
             let percent = Math.round((score / questions.length) * 100); document.getElementById('progressText').innerText = "Saving progress...";
             try { await fetch(API_URL, { method: 'POST', body: JSON.stringify({ tg_id: userData.id, name: userData.first_name, score: percent, sprint_score: currentSprintScore, mode: mode, asked_count: questions.length, correct_count: score }) }); } catch(e) {}
             let resultText = (mode === 'timed') ? `🔥 Sprint Score: ${currentSprintScore}` : `Finished! ${percent}%`;
-            document.getElementById('questionText').innerHTML = `${resultText}<br><small>+${score} XP to Hall of Fame</small>`; document.getElementById('optionsContainer').innerHTML = `<button class="menu-btn btn-primary" onclick="showScreen('mainMenu')">В меню</button>`; document.getElementById('questionImage').style.display = 'none'; document.getElementById('timerDisplay').innerText = "";
+            document.getElementById('questionText').innerHTML = `${resultText}<br><small>+${score} XP</small>`; document.getElementById('optionsContainer').innerHTML = `<button class="menu-btn btn-primary" onclick="showScreen('mainMenu')">В меню</button>`; document.getElementById('questionImage').style.display = 'none'; document.getElementById('timerDisplay').innerText = "";
         }
         function showLeaderboard() { showScreen('leaderboardContainer'); renderLeaders(); }
         function setMainTab(tab, el) { currentMainTab = tab; document.querySelectorAll('.tab-m').forEach(t => t.classList.remove('active')); el.classList.add('active'); let sub = document.getElementById('subTabs'); if (sub) sub.style.display = (tab === 'free' || tab === 'timed') ? 'flex' : 'none'; renderLeaders(); }
