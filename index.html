@@ -24,8 +24,11 @@
         .btn-secondary { background-color: #1e1e1e; color: white; border: 1px solid #333; }
         .btn-danger { background: none; border: 1px solid var(--brand-red); color: var(--brand-red); }
         .btn-correct { background-color: #28a745 !important; box-shadow: 0 0 15px rgba(40, 167, 69, 0.6) !important; color: white; }
-        .btn-incorrect { background-color: #dc3545 !important; box-shadow: 0 0 15px rgba(220, 53, 69, 0.6) !important; color: white; }
         .btn-disabled { pointer-events: none; opacity: 0.8; }
+        
+        /* НОВА СТРИМАНА КНОПКА */
+        .btn-solid { background-color: #2b2b2b; color: white; border: 1px solid #555; }
+        .btn-solid:active { background-color: #3b3b3b; }
         
         .checkbox-list { text-align: left; background: #1a1a1a; padding: 15px; border-radius: 15px; margin-bottom: 15px; }
         .checkbox-label { display: flex; align-items: center; gap: 10px; margin-bottom: 12px; font-size: 13px; color: #ddd; }
@@ -59,17 +62,23 @@
         .hint-btn:active { transform: scale(0.9); background: rgba(226,24,54,0.2); }
         .category-badge { display: inline-block; background: #E21836; color: white; padding: 5px 12px; border-radius: 20px; font-size: 12px; font-weight: bold; margin-bottom: 10px; box-shadow: 0 0 10px rgba(226,24,54,0.5); }
 
-        /* СТИЛІ ЗОН І ХРОНОЛОГІЇ */
+        /* ЗОНИ, ХРОНОЛОГІЯ ТА ПРОФІЛЬ */
         .queue-box { background: rgba(226, 24, 54, 0.1); border: 1px solid var(--brand-red); border-radius: 15px; padding: 12px; margin-bottom: 20px; text-align: left; }
         .queue-item { display: flex; justify-content: space-between; font-size: 12px; padding: 8px 0; border-bottom: 1px dashed rgba(255,255,255,0.1); }
         .queue-item:last-child { border-bottom: none; }
-        .history-item { background: rgba(255,255,255,0.05); padding: 12px; border-radius: 12px; margin-bottom: 8px; text-align: left; font-size: 12px; color: #ddd; line-height: 1.4; border-left: 3px solid var(--brand-red); }
-        .history-date { font-size: 10px; color: var(--text-muted); margin-bottom: 4px; font-weight: bold; }
-        .staff-input-area { width: 100%; height: 120px; padding: 12px; border-radius: 12px; border: 1px solid #444; background: #111; color: white; font-family: 'Montserrat', sans-serif; font-size: 13px; box-sizing: border-box; resize: none; line-height: 1.5; }
-        .staff-input-area:focus { border-color: var(--brand-red); outline: none; }
+        
+        .history-card { background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.05); border-radius: 15px; margin-bottom: 12px; overflow: hidden; text-align: left; }
+        .history-date { background: rgba(226, 24, 54, 0.15); padding: 8px 12px; font-size: 11px; font-weight: bold; color: white; border-bottom: 1px solid rgba(255,255,255,0.05); }
+        .history-row { display: flex; justify-content: space-between; padding: 8px 12px; font-size: 12px; color: #ddd; border-bottom: 1px solid rgba(255,255,255,0.02); }
+        .history-row:last-child { border-bottom: none; }
+        
+        .assign-row { display: flex; align-items: center; gap: 8px; margin-bottom: 10px; }
+        .staff-select { flex: 1; padding: 10px; border-radius: 8px; border: 1px solid #444; background: #111; color: white; font-family: 'Montserrat'; font-size: 12px; }
+        .zone-input { flex: 1; padding: 10px; border-radius: 8px; border: 1px solid #444; background: #111; color: white; font-family: 'Montserrat'; font-size: 12px; }
+        .del-btn { background: #333; color: #ff4757; border: none; border-radius: 8px; width: 35px; height: 35px; font-weight: bold; cursor: pointer; }
+
         .profile-stat { background: #1a1a1a; border-radius: 15px; padding: 15px; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; border: 1px solid rgba(255,255,255,0.05); }
 
-        /* ВІДОБРАЖЕННЯ ЕКРАНІВ */
         #quizMenuContainer, #setupScreen, #quizContainer, #leaderboardContainer, #cleaningContainer, #zonesMenuContainer, #zonesHistoryContainer, #zonesInputContainer, #zonesQueueContainer, #productCategoriesContainer, #swipeViewContainer, #deliveryContainer, #profileContainer { display: none; }
     </style>
 </head>
@@ -99,16 +108,16 @@
             <div id="profileRank" style="color: #ffcc00; font-weight: bold; font-size: 14px; margin-bottom: 20px;">Ранг</div>
 
             <div class="profile-stat">
+                <span style="color: var(--text-muted); font-size: 13px;">Відпрацьовано змін:</span>
+                <b id="profileShifts" style="font-size: 16px; color: var(--brand-red);">0</b>
+            </div>
+            <div class="profile-stat">
                 <span style="color: var(--text-muted); font-size: 13px;">Всього XP:</span>
                 <b id="profileXp" style="font-size: 16px; color: white;">0</b>
             </div>
             <div class="profile-stat">
                 <span style="color: var(--text-muted); font-size: 13px;">Пройдено тестів:</span>
                 <b id="profileTests" style="font-size: 16px; color: white;">0</b>
-            </div>
-            <div class="profile-stat">
-                <span style="color: var(--text-muted); font-size: 13px;">Telegram ID:</span>
-                <b id="profileId" style="font-size: 12px; color: var(--text-muted);">0</b>
             </div>
             <button class="menu-btn btn-danger" style="margin-top:15px; border:none; font-size: 12px;" onclick="showScreen('mainMenu')">Назад в меню</button>
         </div>
@@ -119,47 +128,45 @@
             
             <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 12px;">
                 <button class="menu-btn btn-secondary" style="margin:0; font-size:13px; padding:20px 10px;" onclick="openZonesHistory()">📜 Хронологія</button>
-                <button class="menu-btn btn-secondary" style="margin:0; font-size:13px; padding:20px 10px; border-color:var(--brand-red);" onclick="showScreen('zonesInputContainer'); document.getElementById('shiftDateText').valueAsDate = new Date();">✍️ Внести зони</button>
+                <button class="menu-btn btn-secondary" style="margin:0; font-size:13px; padding:20px 10px; border-color:var(--brand-red);" onclick="openZonesInput()">✍️ Внести зони</button>
             </div>
             
             <div style="display: flex; justify-content: center; margin-bottom: 20px;">
-                <button class="menu-btn btn-primary" style="width: 70%; padding: 18px;" onclick="openZonesQueue()">🛋 Черга на дивани</button>
+                <button class="menu-btn btn-primary" style="width: 70%; padding: 18px;" onclick="openZonesQueue()">🛋 Черга (Дивани)</button>
             </div>
-            
             <button class="menu-btn btn-danger" style="border:none; font-size: 12px;" onclick="showScreen('mainMenu')">Назад в меню</button>
         </div>
 
         <div id="zonesHistoryContainer">
             <h2 style="margin-top:0; color: white;">📜 Хронологія</h2>
-            <div id="historyListDisplay" style="max-height: 400px; overflow-y: auto; padding-right: 5px; margin-bottom: 15px;">
-                </div>
+            <div id="historyListDisplay" style="max-height: 400px; overflow-y: auto; padding-right: 5px; margin-bottom: 15px;"></div>
             <button class="menu-btn btn-secondary" onclick="showScreen('zonesMenuContainer')">Назад</button>
         </div>
 
         <div id="zonesInputContainer">
             <h2 style="margin-top:0; color: white;">✍️ Внести зони</h2>
-            <div style="text-align: left; margin-bottom: 15px;">
+            <div style="text-align: left; margin-bottom: 15px; background: rgba(255,255,255,0.02); padding: 10px; border-radius: 12px;">
                 <label style="font-size: 12px; color: var(--text-muted); font-weight: bold;">Дата зміни:</label>
-                <input type="date" id="shiftDateText" style="width: 100%; padding: 10px; border-radius: 10px; border: 1px solid #444; background: #1a1a1a; color: white; margin-top: 5px; font-family: 'Montserrat'; box-sizing: border-box;">
+                <input type="date" id="shiftDateInput" style="width: 100%; padding: 10px; border-radius: 8px; border: 1px solid #444; background: #111; color: white; margin-top: 5px; font-family: 'Montserrat'; box-sizing: border-box;">
             </div>
             
-            <textarea class="staff-input-area" id="zonesRawText" placeholder="Напиши просто текстом. Наприклад:&#10;Марта - 1-21,&#10;Юстина і Даша 22-42"></textarea>
-            <p style="font-size: 10px; color: var(--brand-red); margin-top: 5px; text-align: left;">*Якщо написати ім'я поруч із 22-28 або 22-42, система сама зарахує їм дивани.</p>
-
-            <button class="menu-btn btn-correct" id="saveZonesTextBtn" style="margin-top:10px;" onclick="saveZonesText()">ВІДПРАВИТИ В ХРОНОЛОГІЮ</button>
+            <div id="dynamicAssignmentsList" style="text-align: left; max-height: 250px; overflow-y: auto; padding-right: 5px; margin-bottom: 10px;"></div>
+            
+            <button class="menu-btn btn-secondary" style="font-size: 12px; padding: 10px; border: 1px dashed #555;" onclick="addAssignmentRow()">+ Додати офіціанта</button>
+            <button class="menu-btn btn-solid" id="saveZonesBtn" style="margin-top:15px;" onclick="saveStructuredZones()">ВНЕСТИ</button>
             <button class="menu-btn btn-danger" style="margin-top:5px; border:none; font-size: 12px;" onclick="showScreen('zonesMenuContainer')">Скасувати</button>
         </div>
 
         <div id="zonesQueueContainer">
             <h2 style="margin-top:0; color: white;">🛋 Черга (Дивани)</h2>
             <div class="queue-box">
-                <div style="font-size: 14px; font-weight: bold; margin-bottom: 8px; text-align: center; color: white;">🔥 Графік на наступні вихідні</div>
-                <div style="font-size: 10px; color: var(--text-muted); text-align: center; margin-bottom: 10px;">Прогноз системи на основі історії черги</div>
-                <div id="sofaScheduleList">
-                    </div>
+                <div style="font-size: 14px; font-weight: bold; margin-bottom: 8px; text-align: center; color: white;">🔥 Графік на вихідні дні</div>
+                <div style="font-size: 10px; color: var(--text-muted); text-align: center; margin-bottom: 10px;">Прогноз системи на основі історії черги (тільки СБ/НД)</div>
+                <div id="sofaScheduleList"></div>
             </div>
             <button class="menu-btn btn-secondary" onclick="showScreen('zonesMenuContainer')">Назад</button>
         </div>
+
         <div id="deliveryContainer">
             <h2 style="margin-top:0;">📦 Доставки</h2>
             <p style="color:var(--text-muted); font-size: 12px;">Модуль у розробці. Тут буде контроль пакування та видачі.</p>
@@ -268,12 +275,10 @@
 
         const API_URL = "https://script.google.com/macros/s/AKfycbxwXzgTnt_i5oQgmgU7zwwkbGmKDmCPG0QqFWddh3mWSv-PvzxtRns5eF78hEZllhAy/exec";
         
-        let questions = [], allLeaders = [], menuItems = [], globalHistory = [];
+        let questions = [], allLeaders = [], menuItems = [], globalHistoryRaw = [], globalStats = {};
         let currentIndex = 0, score = 0, mode = '', timerInterval;
         let currentSprintScore = 0, currentMainTab = 'xp', currentSubTab = 20, timeLeft = 15;
         let flatMenuArray = [], swipeCurrentIndex = 0;
-        
-        const staffList = ['Віктор', 'Ангеліна', 'Юстина', 'Юлія', 'Дарія', 'Марта', 'Ірина', 'Олег', 'Олександр'];
         let globalSofaQueue = {};
 
         function showScreen(screenId) {
@@ -294,84 +299,132 @@
         async function initApp() {
             document.getElementById('userName').innerText = "Hi, " + userData.first_name + "!";
             showScreen('mainMenu');
+            
+            // Авто-реєстрація
+            fetch(API_URL, { method: 'POST', body: JSON.stringify({ action: "registerUser", tg_id: userData.id, name: userData.first_name }) });
+
             try {
                 let response = await fetch(API_URL + "?action=init").then(r => r.json());
                 if(response.questions) questions = response.questions;
                 if(response.menu) menuItems = response.menu;
+                if(response.leaders) allLeaders = response.leaders;
                 if(response.sofaQueue) globalSofaQueue = response.sofaQueue;
-                if(response.zoneHistory) globalHistory = response.zoneHistory;
+                if(response.zoneHistory) globalHistoryRaw = response.zoneHistory;
+                if(response.stats) globalStats = response.stats;
                 
-                allLeaders = await fetch(API_URL + "?action=leaderboard").then(r => r.json());
-                
-                let me = allLeaders.find(l => String(l.tg_id) === String(userData.id)) || {xp: 0, total_asked: 0};
+                let me = allLeaders.find(l => String(l.tg_id) === String(userData.id)) || {name: userData.first_name, xp: 0, total_asked: 0};
                 window.myStats = me; 
             } catch(e) {}
         }
         initApp();
 
+        // ==========================================
         // ПРОФІЛЬ
+        // ==========================================
         function openProfile() {
-            let me = window.myStats || {xp: 0, total_asked: 0};
-            document.getElementById('profileName').innerText = userData.first_name;
+            let me = window.myStats || {name: userData.first_name, xp: 0, total_asked: 0};
+            document.getElementById('profileName').innerText = me.name;
             document.getElementById('profileId').innerText = userData.id;
             document.getElementById('profileRank').innerText = getRankInfo(me.xp);
             document.getElementById('profileXp').innerText = me.xp;
             document.getElementById('profileTests').innerText = me.total_asked;
+            
+            let shiftsCount = (globalStats && globalStats[me.name]) ? globalStats[me.name].shifts : 0;
+            document.getElementById('profileShifts').innerText = shiftsCount;
+            
             showScreen('profileContainer');
         }
 
         // ==========================================
-        // ЗОНИ: ХРОНОЛОГІЯ ТА ЧЕРГА
+        // ЗОНИ: ХРОНОЛОГІЯ, ВВІД ТА ЧЕРГА
         // ==========================================
         function openZonesHistory() {
+            let grouped = {};
+            globalHistoryRaw.forEach(item => {
+                if(!grouped[item.date]) grouped[item.date] = [];
+                grouped[item.date].push(item);
+            });
+
             let hHtml = "";
-            if (globalHistory.length === 0) {
-                hHtml = "<p style='color:#777; font-size:12px;'>Хронологія пуста</p>";
-            } else {
-                globalHistory.forEach(h => {
-                    let formattedText = h.text.replace(/\n/g, '<br>');
-                    hHtml += `
-                    <div class="history-item">
-                        <div class="history-date">📅 ${h.date}</div>
-                        <div>${formattedText}</div>
-                    </div>`;
+            let dates = Object.keys(grouped).sort((a,b) => {
+                let pa = a.split('.'), pb = b.split('.');
+                return new Date(pb[2], pb[1]-1, pb[0]) - new Date(pa[2], pa[1]-1, pa[0]);
+            });
+
+            if (dates.length === 0) hHtml = "<p style='color:#777; font-size:12px;'>Хронологія пуста</p>";
+            else {
+                dates.forEach(d => {
+                    hHtml += `<div class="history-card"><div class="history-date">📅 ${d}</div>`;
+                    grouped[d].forEach(row => {
+                        hHtml += `<div class="history-row"><span>${row.name}</span> <b style="color:var(--brand-red);">${row.zone}</b></div>`;
+                    });
+                    hHtml += `</div>`;
                 });
             }
             document.getElementById('historyListDisplay').innerHTML = hHtml;
             showScreen('zonesHistoryContainer');
         }
 
-        async function saveZonesText() {
-            const btn = document.getElementById('saveZonesTextBtn');
-            const dateVal = document.getElementById('shiftDateText').value;
-            const textVal = document.getElementById('zonesRawText').value.trim();
+        function openZonesInput() {
+            document.getElementById('shiftDateInput').valueAsDate = new Date();
+            document.getElementById('dynamicAssignmentsList').innerHTML = "";
+            addAssignmentRow(); // Додаємо один порожній рядок одразу
+            addAssignmentRow();
+            showScreen('zonesInputContainer');
+        }
+
+        function addAssignmentRow() {
+            let staffOptions = "<option value='' disabled selected>Оберіть ім'я</option>";
+            allLeaders.forEach(l => { staffOptions += `<option value="${l.name}">${l.name}</option>`; });
             
+            let div = document.createElement('div');
+            div.className = 'assign-row';
+            div.innerHTML = `
+                <select class="staff-select">${staffOptions}</select>
+                <input type="text" class="zone-input" placeholder="Напр: 22-28 або ЛБ">
+                <button class="del-btn" onclick="this.parentElement.remove()">✕</button>
+            `;
+            document.getElementById('dynamicAssignmentsList').appendChild(div);
+        }
+
+        async function saveStructuredZones() {
+            const btn = document.getElementById('saveZonesBtn');
+            const dateVal = document.getElementById('shiftDateInput').value;
             if(!dateVal) return alert("Обери дату!");
-            if(!textVal) return alert("Напиши розподіл зон!");
+            
+            let assignments = [];
+            let rows = document.querySelectorAll('.assign-row');
+            rows.forEach(r => {
+                let name = r.querySelector('.staff-select').value;
+                let zone = r.querySelector('.zone-input').value.trim();
+                if(name && zone) assignments.push({name: name, zone: zone});
+            });
+
+            if(assignments.length === 0) return alert("Додай хоча б одну зону!");
 
             btn.innerText = "ЗБЕРЕЖЕННЯ..."; btn.style.opacity = '0.5'; btn.style.pointerEvents = 'none';
 
             try {
                 await fetch(API_URL, { method: 'POST', body: JSON.stringify({
-                    action: "saveZonesText", date: dateVal, rawText: textVal
+                    action: "saveStructuredZones", date: dateVal, assignments: assignments
                 })});
                 if (tg && typeof tg.HapticFeedback !== 'undefined') tg.HapticFeedback.notificationOccurred('success');
-                alert("Зони успішно додано в Хронологію!");
+                alert("Зони успішно внесено!");
                 
-                // Додаємо локально щоб не перезавантажувати
                 let parts = dateVal.split('-');
                 let fDate = `${parts[2]}.${parts[1]}.${parts[0]}`;
-                globalHistory.unshift({date: fDate, text: textVal});
+                assignments.forEach(a => { globalHistoryRaw.push({date: fDate, name: a.name, zone: a.zone}); });
                 
-                document.getElementById('zonesRawText').value = "";
                 showScreen('zonesMenuContainer');
             } catch (e) { alert("Помилка збереження."); }
             
-            btn.innerText = "ВІДПРАВИТИ В ХРОНОЛОГІЮ"; btn.style.opacity = '1'; btn.style.pointerEvents = 'auto';
+            btn.innerText = "ВНЕСТИ"; btn.style.opacity = '1'; btn.style.pointerEvents = 'auto';
         }
 
         function openZonesQueue() {
-            // 1. Знаходимо 8 наступних вихідних
+            let staffNames = allLeaders.map(l => l.name);
+            if(staffNames.length === 0) staffNames = ['Віктор', 'Ангеліна', 'Юстина', 'Юлія']; // фолбек
+
             let nextWeekends = [];
             let d = new Date();
             while(nextWeekends.length < 8) {
@@ -379,9 +432,8 @@
                 d.setDate(d.getDate() + 1);
             }
             
-            // 2. Сортуємо людей (хто найдовше не був)
             let queueArr = [];
-            for (let waiter of staffList) {
+            for (let waiter of staffNames) {
                 let dateStr = globalSofaQueue[waiter] || "Не було";
                 let sortVal = 0;
                 if (dateStr !== "Не було") {
@@ -392,7 +444,6 @@
             }
             queueArr.sort((a, b) => a.sortVal - b.sortVal);
             
-            // 3. Формуємо графік
             let qHtml = "";
             let days = ['Нд', 'Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб'];
             let months = ['січ', 'лют', 'бер', 'квіт', 'трав', 'черв', 'лип', 'серп', 'вер', 'жовт', 'лист', 'груд'];
