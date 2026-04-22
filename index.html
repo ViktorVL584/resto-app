@@ -5,6 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Emily Waiter App</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+    
     <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@700&family=Montserrat:wght@400;700&display=swap" rel="stylesheet">
     <style>
         :root { --brand-red: #E21836; --brand-dark: #0f0f0f; --text-main: #ffffff; --text-muted: #888888; }
@@ -36,10 +39,11 @@
         .card-info-block { background: rgba(255,255,255,0.04); padding: 12px; border-radius: 12px; font-size: 13px; color: #ddd; }
         .card-info-title { color: #ffcc00; display: block; margin-bottom: 4px; font-weight: bold; font-size: 11px; text-transform: uppercase; }
 
-        .sofa-table { width: 100%; border-collapse: collapse; font-size: 13px; margin-top: 10px; }
-        .sofa-table td { padding: 12px; border-bottom: 1px solid #333; text-align: left; }
-        .sofa-date { color: var(--brand-red); font-weight: bold; width: 40%; }
-        .sofa-name { color: white; font-weight: bold; }
+        .sofa-table { width: 100%; border-collapse: collapse; font-size: 14px; margin-top: 10px; border-radius:12px; overflow:hidden; }
+        .sofa-table th { color: var(--text-muted); font-size: 11px; padding: 10px; background: rgba(0,0,0,0.4); text-transform: uppercase; }
+        .sofa-table td { padding: 12px; text-align: center; width: 50%; }
+        .sofa-date { color: var(--brand-red); font-weight: bold; font-size: 12px; }
+        .sofa-name { color: white; font-weight: bold; font-size: 13px; border-bottom: 1px solid rgba(255,255,255,0.05); }
 
         .avatar-box { width: 80px; height: 80px; border-radius: 50%; background: #222; display: flex; align-items: center; justify-content: center; font-size: 40px; margin: 0 auto 10px auto; border: 2px solid var(--brand-red); cursor: pointer; overflow: hidden; position: relative; }
         .avatar-box img { width: 100%; height: 100%; object-fit: cover; }
@@ -47,7 +51,7 @@
         .search-bar { width: 100%; padding: 12px; border-radius: 12px; border: 1px solid #444; background: #1a1a1a; color: white; font-family: 'Montserrat'; margin-bottom: 15px; box-sizing: border-box; }
         .search-result-item { padding: 12px; border-bottom: 1px solid #333; text-align: left; cursor: pointer; display: flex; justify-content: space-between; }
 
-        #quizMenuContainer, #setupScreen, #quizContainer, #leaderboardContainer, #cleaningContainer, #zonesMenuContainer, #zonesHistoryContainer, #zonesInputContainer, #zonesQueueContainer, #productMainContainer, #productKitchenContainer, #swipeViewContainer, #deliveryContainer, #profileContainer, #reviewsContainer { display: none; }
+        #quizMenuContainer, #duelLobbyContainer, #setupScreen, #quizContainer, #leaderboardContainer, #cleaningContainer, #zonesMenuContainer, #zonesHistoryContainer, #zonesInputContainer, #zonesQueueContainer, #productMainContainer, #productKitchenContainer, #swipeViewContainer, #deliveryContainer, #profileContainer, #reviewsContainer { display: none; }
     </style>
 </head>
 <body>
@@ -105,56 +109,22 @@
             <button class="menu-btn btn-danger" onclick="showScreen('mainMenu')">Назад</button>
         </div>
 
-        <div id="deliveryContainer">
-            <h2 style="margin:0 0 10px 0;">📦 Доставки</h2>
-            <p style="font-size: 11px; color: var(--text-muted); margin-bottom: 15px;">Номер чеку та до 5 фото</p>
-
-            <input type="text" id="deliveryReceiptInput" class="search-bar" placeholder="🧾 Номер чеку або 'Наш'" oninput="updateDeliveryBtnState()">
-
-            <div style="background: rgba(255,255,255,0.03); padding: 12px; border-radius: 18px; margin-bottom: 15px; border: 1px solid rgba(226,24,54,0.1);">
-                <div id="deliveryGallery" style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin-bottom: 12px;"></div>
-                <button class="menu-btn btn-secondary" style="margin:0; border: 1px dashed var(--brand-red); font-size: 13px;" onclick="document.getElementById('hiddenDeliveryInput').click()">📸 Додати фото</button>
-                <input type="file" id="hiddenDeliveryInput" accept="image/*" multiple style="display: none;" onchange="handleDeliveryPhotos(event)">
-                <div id="deliveryCountText" style="margin-top: 8px; font-size: 10px; color: var(--text-muted);">0 / 5 (мін. 1)</div>
+        <div id="zonesMenuContainer">
+            <h2 style="margin:0 0 15px 0;">🪑 Зони</h2>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 12px;">
+                <button class="menu-btn btn-secondary" style="margin:0; padding:20px 10px;" onclick="openZonesHistory()">📜 Хронологія</button>
+                <button class="menu-btn btn-secondary" style="margin:0; padding:20px 10px; border-color:var(--brand-red);" onclick="openZonesInput()">✍️ Внести зони</button>
             </div>
-
-            <button class="menu-btn btn-correct" id="submitDeliveryBtn" onclick="submitDeliveryReport()" style="opacity: 0.4; pointer-events: none; padding: 18px;">ВІДПРАВИТИ</button>
-            <button class="menu-btn btn-danger" style="margin-top:5px; border:none;" onclick="showScreen('mainMenu')">Скасувати</button>
+            <div style="display: flex; justify-content: center; margin-bottom: 20px;">
+                <button class="menu-btn btn-primary" style="width: 100%; padding: 18px;" onclick="openZonesQueue()">🛋 Дивани (22-28)</button>
+            </div>
+            <button class="menu-btn btn-danger" onclick="showScreen('mainMenu')">Назад</button>
         </div>
 
         <div id="zonesQueueContainer">
-            <h2 style="margin:0;">💸 Money Talk</h2>
-            <p style="font-size:11px; color:#888;">Черга на дивани (22-28)</p>
+            <h2 style="margin:0; color:var(--brand-red);">🛋 Дивани (22-28)</h2>
             <table class="sofa-table" id="sofaScheduleTable"></table>
             <button class="menu-btn btn-secondary" style="margin-top:20px;" onclick="showScreen('zonesMenuContainer')">Назад</button>
-        </div>
-
-        <div id="productKitchenContainer">
-            <h2 style="margin:0 0 15px 0;">🍔 Кухня</h2>
-            <input type="text" id="menuSearchInput" class="search-bar" placeholder="🔍 Назва або склад..." onkeyup="filterMenu()">
-            <div id="searchResults" style="display:none;"></div>
-            <div id="dynamicCategoryList" style="display:flex; flex-direction:column; gap:10px;"></div>
-            <button class="menu-btn btn-danger" style="margin-top:20px;" onclick="showScreen('productMainContainer')">Назад</button>
-        </div>
-
-        <div id="swipeViewContainer">
-            <div class="category-badge" id="currentSwipeCategory" style="display:inline-block; background:var(--brand-red); color:white; padding:5px 12px; border-radius:20px; font-size:12px; font-weight:bold; margin-bottom:10px;">Піца</div>
-            <div class="swipe-container" id="swipeContainer">
-                <div class="swipe-card" id="swipeCard"></div>
-            </div>
-            <div style="display:flex; justify-content:space-between; padding:0 10px; margin-bottom:10px;">
-                <button class="menu-btn btn-secondary" style="width:45px; height:45px; border-radius:50%; padding:0;" onclick="forceSwipe(-1)">⬅️</button>
-                <div style="color:white; font-size:14px; font-weight:bold; display:flex; align-items:center;" id="swipeProgressText">1 / 10</div>
-                <button class="menu-btn btn-secondary" style="width:45px; height:45px; border-radius:50%; padding:0;" onclick="forceSwipe(1)">➡️</button>
-            </div>
-            <button class="menu-btn btn-danger" onclick="showScreen('productKitchenContainer')">Вийти</button>
-        </div>
-
-        <div id="quizContainer">
-            <img id="questionImage" src="" style="width:100%; border-radius:15px; margin-bottom:15px; display:none; height:180px; object-fit:cover;">
-            <p id="progressText" style="color:var(--brand-red); font-size:11px; font-weight:bold;"></p>
-            <div id="questionText" style="font-weight:700; margin:15px 0; font-size:16px;"></div>
-            <div id="optionsContainer"></div>
         </div>
 
         <div id="zonesInputContainer">
@@ -173,18 +143,93 @@
         </div>
 
         <div id="productMainContainer">
-            <h2>📚 Продакт</h2>
-            <button class="menu-btn btn-secondary" style="padding:20px; border-color:var(--brand-red);" onclick="openKitchenMenu()">🍔 Кухня</button>
-            <button class="menu-btn btn-secondary" style="padding:20px; opacity:0.5;">🍹 Бар (Скоро)</button>
-            <button class="menu-btn btn-danger" onclick="showScreen('mainMenu')">Назад</button>
+            <h2 style="margin:0 0 15px 0;">📚 Продакт</h2>
+            <button class="menu-btn btn-secondary" style="padding:20px; font-size:18px; border-color:var(--brand-red);" onclick="openKitchenMenu()">🍔 Кухня</button>
+            <button class="menu-btn btn-secondary" style="padding:20px; font-size:18px; opacity:0.5;">🍹 Бар (Скоро)</button>
+            <button class="menu-btn btn-secondary" style="padding:20px; font-size:18px; opacity:0.5;" onclick="alert('Модуль в розробці')">💼 Сервіс (Work)</button>
+            <button class="menu-btn btn-danger" style="margin-top:10px;" onclick="showScreen('mainMenu')">Назад</button>
         </div>
-        
-        <div id="zonesMenuContainer">
-            <h2>🪑 Зони</h2>
-            <button class="menu-btn btn-secondary" onclick="openZonesHistory()">📜 Хронологія</button>
-            <button class="menu-btn btn-secondary" onclick="openZonesInput()">✍️ Внести зони</button>
-            <button class="menu-btn btn-primary" onclick="openZonesQueue()">💸 Money Talk</button>
-            <button class="menu-btn btn-danger" onclick="showScreen('mainMenu')">Назад</button>
+
+        <div id="productKitchenContainer">
+            <h2 style="margin:0 0 15px 0;">🍔 Кухня</h2>
+            <input type="text" id="menuSearchInput" class="search-bar" placeholder="🔍 Пошук..." onkeyup="filterMenu()">
+            <div id="searchResults" style="display:none; background:#1a1a1a; border-radius:12px; max-height:350px; overflow-y:auto; margin-bottom:15px; border:1px solid #333;"></div>
+            <div id="dynamicCategoryList" style="display:flex; flex-direction:column; gap:10px; max-height:50vh; overflow-y:auto;"></div>
+            <button class="menu-btn btn-danger" style="margin-top:15px;" onclick="showScreen('productMainContainer')">Назад</button>
+        </div>
+
+        <div id="swipeViewContainer">
+            <div class="category-badge" id="currentSwipeCategory" style="display:inline-block; background:var(--brand-red); color:white; padding:5px 12px; border-radius:20px; font-size:12px; font-weight:bold; margin-bottom:10px;">Піца</div>
+            <div class="swipe-container" id="swipeContainer">
+                <div class="swipe-card" id="swipeCard"></div>
+            </div>
+            <div style="display:flex; justify-content:space-between; padding:0 10px; margin-bottom:10px;">
+                <button class="menu-btn btn-secondary" style="width:45px; height:45px; border-radius:50%; padding:0;" onclick="forceSwipe(-1)">⬅️</button>
+                <div style="color:white; font-size:14px; font-weight:bold; display:flex; align-items:center;" id="swipeProgressText">1 / 10</div>
+                <button class="menu-btn btn-secondary" style="width:45px; height:45px; border-radius:50%; padding:0;" onclick="forceSwipe(1)">➡️</button>
+            </div>
+            <button class="menu-btn btn-danger" onclick="showScreen('productKitchenContainer')">Вийти</button>
+        </div>
+
+        <div id="quizMenuContainer">
+            <h2 style="margin:0 0 15px 0;">📝 Тести</h2>
+            <button class="menu-btn btn-primary" onclick="openSetup('free')">📚 Навчання</button>
+            <button class="menu-btn btn-primary" onclick="openSetup('timed')">⏱ Спринт</button>
+            <button class="menu-btn btn-danger" onclick="startAssessment()">🔥 Атестація</button>
+            
+            <div style="margin-top:20px; padding-top:20px; border-top:1px solid #333;">
+                <h3 style="color:#ffcc00; margin:0 0 10px 0;">⚔️ Батли 1x1</h3>
+                <button class="menu-btn btn-correct" onclick="createDuelLobby()">Створити Лоббі</button>
+                <button class="menu-btn btn-secondary" style="border-color:#ffcc00;" onclick="scanToJoinDuel()">📷 Сканувати QR суперника</button>
+            </div>
+
+            <button class="menu-btn btn-secondary" style="margin-top:15px;" onclick="showScreen('mainMenu')">Назад</button>
+        </div>
+
+        <div id="setupScreen">
+            <h1 id="setupTitle">Дистанція</h1>
+            <button class="menu-btn btn-secondary" onclick="prepareQuiz(15)">15 питань</button>
+            <button class="menu-btn btn-secondary" onclick="prepareQuiz(25)">25 питань</button>
+            <button class="menu-btn btn-danger" style="margin-top:20px;" onclick="showScreen('quizMenuContainer')">Назад</button>
+        </div>
+
+        <div id="duelLobbyContainer">
+            <h2 style="margin:0 0 15px 0; color:#ffcc00;">⚔️ Батл 1x1</h2>
+            
+            <div id="duelCreatorView" style="display:none;">
+                <p style="font-size:12px; color:#888;">Дай відсканувати цей код супернику:</p>
+                <div id="qrcode" style="margin: 0 auto 20px auto; background:white; padding:10px; width:150px; height:150px; border-radius:10px;"></div>
+                <p id="duelStatusText" style="color:var(--brand-red); font-weight:bold;">Очікуємо суперника...</p>
+                <button id="startDuelBtn" class="menu-btn btn-correct" style="display:none; padding:18px; font-size:18px;" onclick="triggerStartDuel()">ПОГНАЛИ!</button>
+            </div>
+            
+            <div id="duelJoinerView" style="display:none;">
+                <div style="font-size:60px; margin:20px 0;">⏳</div>
+                <p id="joinerStatusText" style="color:white; font-weight:bold; font-size:16px;">Підключення...</p>
+            </div>
+
+            <button class="menu-btn btn-danger" style="margin-top:20px;" onclick="cancelDuel()">Скасувати</button>
+        </div>
+
+        <div id="quizContainer">
+            <img id="questionImage" src="" style="width:100%; border-radius:15px; margin-bottom:15px; display:none; height:180px; object-fit:cover;">
+            <p id="progressText" style="color:var(--brand-red); font-size:11px; font-weight:bold;"></p>
+            <div id="questionText" style="font-weight:700; margin:15px 0; font-size:16px;"></div>
+            <div id="optionsContainer"></div>
+        </div>
+
+        <div id="deliveryContainer">
+            <h2 style="margin:0 0 10px 0;">📦 Доставки</h2>
+            <p style="font-size:11px; color:var(--text-muted); margin-bottom:15px;">Номер чеку та до 5 фото</p>
+            <input type="text" id="deliveryReceiptInput" class="search-bar" placeholder="🧾 Номер чеку або 'Наш'" oninput="updateDeliveryBtnState()">
+            <div style="background:rgba(255,255,255,0.03); padding:12px; border-radius:18px; margin-bottom:15px; border:1px solid rgba(226,24,54,0.1);">
+                <div id="deliveryGallery" style="display:grid; grid-template-columns:repeat(4,1fr); gap:8px; margin-bottom:12px;"></div>
+                <button class="menu-btn btn-secondary" style="margin:0; border:1px dashed var(--brand-red); font-size:13px;" onclick="document.getElementById('hiddenDeliveryInput').click()">📸 Додати фото</button>
+                <input type="file" id="hiddenDeliveryInput" accept="image/*" multiple style="display:none;" onchange="handleDeliveryPhotos(event)">
+                <div id="deliveryCountText" style="margin-top:8px; font-size:10px; color:var(--text-muted);">0 / 5 (мін. 1)</div>
+            </div>
+            <button class="menu-btn btn-correct" id="submitDeliveryBtn" onclick="submitDeliveryReport()" style="opacity:0.4; pointer-events:none; padding:18px;">ВІДПРАВИТИ</button>
+            <button class="menu-btn btn-danger" style="margin-top:5px; border:none;" onclick="showScreen('mainMenu')">Скасувати</button>
         </div>
 
         <div id="reviewsContainer">
@@ -194,21 +239,6 @@
             <input type="file" id="hiddenReviewInput" accept="image/*" multiple style="display:none;" onchange="handleReviewPhotos(event)">
             <button class="menu-btn btn-correct" id="submitReviewsBtn" onclick="submitReviewsReport()" style="opacity:0.5; pointer-events:none; margin-top:10px;">Відправити</button>
             <button class="menu-btn btn-danger" onclick="openProfile()">Назад</button>
-        </div>
-
-        <div id="quizMenuContainer">
-            <h2>📝 Тести</h2>
-            <button class="menu-btn btn-primary" onclick="openSetup('free')">📚 Навчання</button>
-            <button class="menu-btn btn-primary" onclick="openSetup('timed')">⏱ Спринт</button>
-            <button class="menu-btn btn-danger" onclick="startAssessment()">🔥 Атестація</button>
-            <button class="menu-btn btn-secondary" onclick="showScreen('mainMenu')">Назад</button>
-        </div>
-
-        <div id="setupScreen">
-            <h1 id="setupTitle">Дистанція</h1>
-            <button class="menu-btn btn-secondary" onclick="prepareQuiz(20)">20 питань</button>
-            <button class="menu-btn btn-secondary" onclick="prepareQuiz(50)">50 питань</button>
-            <button class="menu-btn btn-danger" onclick="showScreen('quizMenuContainer')">Назад</button>
         </div>
 
         <div id="cleaningContainer">
@@ -231,8 +261,9 @@
         </div>
 
         <div id="leaderboardContainer">
-            <div id="leaderboardList" style="max-height: 400px; overflow-y: auto; margin-bottom: 15px;"></div>
-            <button class="menu-btn btn-primary" onclick="showScreen('mainMenu')">В меню</button>
+            <h2 style="margin:0 0 15px 0;">🏆 Рейтинг</h2>
+            <div id="leaderboardList" style="max-height:400px; overflow-y:auto; margin-bottom:15px;"></div>
+            <button class="menu-btn btn-danger" onclick="showScreen('mainMenu')">Назад</button>
         </div>
     </div>
 
@@ -243,8 +274,14 @@
         
         let menuItems = [], globalHistory = [], allLeaders = [], globalReviews = {}, globalStats = {}, globalDeliveries = {};
         let flatMenuArray = [], swipeCurrentIndex = 0, questions = [], currentIndex = 0, score = 0, mode = '';
+        
+        // ЗМІННІ ДЛЯ БАТЛУ
+        let currentDuelId = null;
+        let duelInterval = null;
 
         const staffNames = ["Кулик Дарія", "Олег Баб'як", "Лащук Віктор", "Пашко Ангеліна", "Цибуляк Ірина", "Павлик Марта", "Юстина Білогруд", "Юлія"];
+        const sofaCycleOrder = ["Кулик Дарія", "Олег Баб'як", "Лащук Віктор", "Пашко Ангеліна", "Цибуляк Ірина", "Павлик Марта", "Юстина Білогруд", "Юлія"];
+        const anchorDate = new Date(2026, 3, 25); // 25.04.2026
 
         function showScreen(id) {
             document.querySelectorAll('.main-container > div').forEach(d => d.style.display = 'none');
@@ -266,11 +303,11 @@
                 window.myStats = allLeaders.find(u => String(u.tg_id) === String(userData.id)) || {name: userData.first_name, xp:0, avatar:""};
                 
                 document.getElementById('userName').innerText = "Hi, " + userData.first_name + "!";
-                document.getElementById('userName').style.color = "#fff";
             } catch(e) { document.getElementById('userName').innerText = "Помилка зв'язку"; }
         }
         initApp();
 
+        // === ПРОФІЛЬ ===
         function openProfile() {
             let me = window.myStats;
             const imgEl = document.getElementById('avatarImage');
@@ -290,7 +327,6 @@
             
             document.getElementById('profileShifts').innerText = globalStats[me.name]?.shifts || 0;
             document.getElementById('profileDeliveries').innerText = globalDeliveries[me.name] || 0;
-
             let acc = me.total_asked > 0 ? Math.round((me.xp / me.total_asked) * 100) : 0;
             document.getElementById('profileAccuracy').innerText = acc + "%";
 
@@ -304,103 +340,23 @@
             window.myStats.avatar = base64; openProfile();
         }
 
-        // ДОСТАВКИ
-        let deliveryPhotosArray = [];
-        function handleDeliveryPhotos(event) {
-            const files = Array.from(event.target.files); if (files.length === 0) return;
-            if (deliveryPhotosArray.length + files.length > 5) { alert("Максимум 5 фото!"); event.target.value = ''; return; }
-            files.forEach(file => deliveryPhotosArray.push(file)); event.target.value = ''; 
-            renderDeliveryGallery(); updateDeliveryBtnState();
-        }
-        function removeDeliveryPhoto(index) { deliveryPhotosArray.splice(index, 1); renderDeliveryGallery(); updateDeliveryBtnState(); }
-        function renderDeliveryGallery() {
-            document.getElementById('deliveryGallery').innerHTML = deliveryPhotosArray.map((file, i) => `<div style="position:relative; aspect-ratio:1/1; border-radius:8px; overflow:hidden; border:1px solid rgba(255,255,255,0.1);"><img src="${URL.createObjectURL(file)}" style="width:100%; height:100%; object-fit:cover;"><div onclick="removeDeliveryPhoto(${i})" style="position:absolute; top:2px; right:2px; background:var(--brand-red); color:white; border-radius:50%; width:18px; height:18px; font-size:10px; display:flex; align-items:center; justify-content:center;">✕</div></div>`).join('');
-            document.getElementById('deliveryCountText').innerText = `${deliveryPhotosArray.length} / 5 (мін. 1)`;
-        }
-        function updateDeliveryBtnState() {
-            const text = document.getElementById('deliveryReceiptInput').value.trim();
-            const btn = document.getElementById('submitDeliveryBtn');
-            if (deliveryPhotosArray.length >= 1 && text.length > 0) { btn.style.opacity = '1'; btn.style.pointerEvents = 'auto'; } 
-            else { btn.style.opacity = '0.4'; btn.style.pointerEvents = 'none'; }
-        }
-        async function submitDeliveryReport() {
-            const btn = document.getElementById('submitDeliveryBtn'); btn.innerText = "ВІДПРАВКА..."; btn.style.opacity = '0.5'; btn.style.pointerEvents = 'none';
-            const receipt = document.getElementById('deliveryReceiptInput').value.trim();
-            let photoBase64Array = [];
-            try {
-                for (let file of deliveryPhotosArray) { photoBase64Array.push({ mimeType: 'image/jpeg', data: await compressImage(file, 800, 0.6) }); }
-                await fetch(API_URL, { method: 'POST', body: JSON.stringify({ action: "deliveryReport", name: userData.first_name, receipt: receipt, photos: photoBase64Array })});
-                alert("Доставку зафіксовано! 🚀");
-                document.getElementById('deliveryReceiptInput').value = ""; deliveryPhotosArray = []; renderDeliveryGallery(); updateDeliveryBtnState(); 
-                if (!globalDeliveries[userData.first_name]) globalDeliveries[userData.first_name] = 0;
-                globalDeliveries[userData.first_name]++;
-                showScreen('mainMenu'); 
-            } catch (e) { alert("Помилка відправки."); }
-            btn.innerText = "ВІДПРАВИТИ";
-        }
-
-        // ПРОДАКТ І СВАЙПИ
-        function openKitchenMenu() {
-            let cats = [...new Set(menuItems.map(i => i.category))];
-            document.getElementById('dynamicCategoryList').innerHTML = cats.map(c => `<button class="menu-btn btn-secondary" style="display:flex; justify-content:space-between; padding:16px;" onclick="startSwipe('${c}')"><span style="font-weight:bold;">🍽 ${c}</span><span style="color:var(--brand-red);">➔</span></button>`).join('');
-            showScreen('productKitchenContainer');
-        }
-
-        function startSwipe(cat) {
-            flatMenuArray = menuItems;
-            swipeCurrentIndex = flatMenuArray.findIndex(i => i.category === cat);
-            renderSwipe(); showScreen('swipeViewContainer');
-        }
-
-        function renderSwipe() {
-            let item = flatMenuArray[swipeCurrentIndex];
-            let catItems = flatMenuArray.filter(i => i.category === item.category);
-            let relIdx = catItems.findIndex(i => i.name === item.name) + 1;
-            
-            document.getElementById('currentSwipeCategory').innerText = item.category;
-            document.getElementById('swipeProgressText').innerText = relIdx + " / " + catItems.length;
-            
-            let peps = item.spicy ? `<span style="color:#ff4444;">${item.spicy}</span>` : '';
-            
-            document.getElementById('swipeCard').innerHTML = `
-                <div class="card-img-container">${item.photo ? `<img src="${item.photo}">` : '<div style="font-size:50px; display:flex; align-items:center; justify-content:center; height:100%;">🍽</div>'}</div>
-                <div class="card-body">
-                    <div style="display:flex; justify-content:space-between; align-items:flex-start;">
-                        <h2 class="card-title">${item.name} ${peps}</h2>
-                        <span style="font-size:12px; color:var(--brand-red); font-weight:bold; background:rgba(226,24,54,0.15); padding:3px 8px; border-radius:8px;">${item.weight}</span>
-                    </div>
-                    <div class="card-info-block"><span class="card-info-title">🧀 Склад</span>${item.ingredients}</div>
-                    ${item.desc ? `<div class="card-info-block"><span class="card-info-title">📖 Опис</span>${item.desc}</div>` : ''}
-                    ${item.allergens ? `<div style="font-size:11px; color:#E21836; font-style:italic; margin-top:auto;">⚠️ ${item.allergens}</div>` : ''}
-                </div>
-            `;
-        }
-
-        function forceSwipe(dir) {
-            swipeCurrentIndex += dir;
-            if(swipeCurrentIndex < 0) swipeCurrentIndex = 0;
-            if(swipeCurrentIndex >= flatMenuArray.length) swipeCurrentIndex = flatMenuArray.length - 1;
-            renderSwipe();
-        }
-
-        // MONEY TALK
+        // === ЗОНИ ТА ДИВАНИ ===
         function openZonesQueue() {
-            let html = "";
-            let start = new Date(2026, 3, 25);
-            let now = new Date(); now.setHours(0,0,0,0);
-            let count = 0;
-            let d = new Date(start);
-            let cycleIdx = 0;
+            let html = "<tr><th>Субота</th><th>Неділя</th></tr>";
+            let d = new Date(anchorDate);
+            let cycle = 0;
+            let months = ['01','02','03','04','05','06','07','08','09','10','11','12'];
+            
+            for(let w=0; w<4; w++) {
+                let satDate = ("0"+d.getDate()).slice(-2) + "." + months[d.getMonth()];
+                let sun = new Date(d); sun.setDate(sun.getDate() + 1);
+                let sunDate = ("0"+sun.getDate()).slice(-2) + "." + months[sun.getMonth()];
 
-            while(count < 16) {
-                if(d.getDay() === 6 || d.getDay() === 0) {
-                    if(d >= now) {
-                        html += `<tr><td class="sofa-date">${d.getDate().toString().padStart(2,'0')}.${(d.getMonth()+1).toString().padStart(2,'0')}</td><td class="sofa-name">${staffNames[cycleIdx % staffNames.length]}</td></tr>`;
-                        count++;
-                    }
-                    cycleIdx++;
-                }
-                d.setDate(d.getDate()+1);
+                html += `<tr style="background:rgba(255,255,255,0.05);"><td class="sofa-date">${satDate}</td><td class="sofa-date">${sunDate}</td></tr>`;
+                html += `<tr><td class="sofa-name">${sofaCycleOrder[cycle % 8]}</td><td class="sofa-name">${sofaCycleOrder[(cycle+1) % 8]}</td></tr>`;
+
+                d.setDate(d.getDate() + 7);
+                cycle += 2;
             }
             document.getElementById('sofaScheduleTable').innerHTML = html;
             showScreen('zonesQueueContainer');
@@ -420,59 +376,333 @@
             showScreen('zonesHistoryContainer');
         }
 
+        function openZonesInput() {
+            document.getElementById('shiftDateInput').valueAsDate = new Date();
+            document.getElementById('dynamicAssignmentsList').innerHTML = ""; addAssignmentRow(); addAssignmentRow(); 
+            showScreen('zonesInputContainer');
+        }
+
         function addAssignmentRow() {
             let div = document.createElement('div');
-            div.style.display = 'flex'; div.style.gap = '5px'; div.style.marginBottom = '10px';
+            div.className = 'assign-row';
             div.innerHTML = `
-                <select style="flex:1; padding:10px; border-radius:8px; background:#222; color:white; border:1px solid #444;">${staffNames.map(n => `<option>${n}</option>`).join('')}</select>
-                <input type="text" placeholder="Зона" style="width:80px; padding:10px; border-radius:8px; background:#222; color:white; border:1px solid #444;">
-                <button onclick="this.parentElement.remove()" style="background:none; border:none; color:#E21836; font-weight:bold;">✕</button>
+                <select class="staff-select">${staffNames.map(n => `<option>${n}</option>`).join('')}</select>
+                <input type="text" class="zone-input" placeholder="Зона">
+                <button class="del-btn" onclick="this.parentElement.remove()">✕</button>
             `;
             document.getElementById('dynamicAssignmentsList').appendChild(div);
         }
 
         async function saveStructuredZones() {
+            let btn = document.getElementById('saveZonesBtn');
             let date = document.getElementById('shiftDateInput').value; if(!date) return alert("Обери дату!");
             let assigns = [];
             document.querySelectorAll('#dynamicAssignmentsList > div').forEach(row => { assigns.push({name: row.querySelector('select').value, zone: row.querySelector('input').value}); });
             if(assigns.length===0) return alert("Пусто!");
-            await fetch(API_URL, {method:'POST', body: JSON.stringify({action:'saveStructuredZones', date:date, assignments:assigns})});
-            alert("Збережено!"); initApp();
+            
+            btn.innerText = "ЗБЕРЕЖЕННЯ..."; btn.style.opacity = '0.5'; btn.style.pointerEvents = 'none';
+            try {
+                let res = await fetch(API_URL, {method:'POST', body: JSON.stringify({action:'saveStructuredZones', date:date, assignments:assigns})}).then(r=>r.json());
+                if(res.success) { alert("Збережено!"); showScreen('zonesMenuContainer'); initApp(); }
+            } catch(e) { alert("Помилка з'єднання"); }
+            btn.innerText = "Внести"; btn.style.opacity = '1'; btn.style.pointerEvents = 'auto';
         }
 
-        // ВІДГУКИ
+        // === ПРОДАКТ (СУЦІЛЬНИЙ СВАЙП) ===
+        function openKitchenMenu() {
+            let cats = [...new Set(menuItems.map(i => i.category))];
+            document.getElementById('dynamicCategoryList').innerHTML = cats.map(c => `<button class="menu-btn btn-secondary" style="display:flex; justify-content:space-between; padding:16px;" onclick="startSwipe('${c}')"><span style="font-weight:bold;">🍽 ${c}</span><span style="color:var(--brand-red);">➔</span></button>`).join('');
+            showScreen('productKitchenContainer');
+        }
+
+        function filterMenu() {
+            let q = document.getElementById('menuSearchInput').value.toLowerCase();
+            let res = document.getElementById('searchResults');
+            if(q.length < 1) { res.style.display = 'none'; return; }
+            let matches = menuItems.filter(i => i.name.toLowerCase().includes(q) || i.ingredients.toLowerCase().includes(q)).slice(0, 7);
+            res.innerHTML = matches.map(m => `<div class="search-result-item" onclick="startSwipeAt('${m.name.replace(/'/g, "\\'")}')"><b>${m.name}</b><small style="color:var(--brand-red);">${m.category}</small></div>`).join('');
+            res.style.display = 'block';
+        }
+
+        function startSwipeAt(name) {
+            flatMenuArray = menuItems; 
+            swipeCurrentIndex = flatMenuArray.findIndex(i => i.name === name);
+            renderSwipe(); showScreen('swipeViewContainer');
+        }
+
+        function startSwipe(cat) {
+            flatMenuArray = menuItems; // ВЕСЬ МАСИВ
+            swipeCurrentIndex = flatMenuArray.findIndex(i => i.category === cat);
+            renderSwipe(); showScreen('swipeViewContainer');
+        }
+
+        function renderSwipe() {
+            if(swipeCurrentIndex < 0) swipeCurrentIndex = 0;
+            if(swipeCurrentIndex >= flatMenuArray.length) swipeCurrentIndex = flatMenuArray.length - 1;
+            
+            let item = flatMenuArray[swipeCurrentIndex];
+            document.getElementById('currentSwipeCategory').innerText = item.category;
+            
+            let catItems = flatMenuArray.filter(i => i.category === item.category);
+            let relIdx = catItems.findIndex(i => i.name === item.name) + 1;
+            document.getElementById('swipeProgressText').innerText = relIdx + " / " + catItems.length;
+            
+            let peps = item.spicy ? `<span style="color:#ff4444;">${item.spicy}</span>` : '';
+            
+            document.getElementById('swipeCard').innerHTML = `
+                <div class="card-img-container">${item.photo ? `<img src="${item.photo}">` : '<div style="font-size:50px; display:flex; align-items:center; justify-content:center; height:100%;">🍽</div>'}</div>
+                <div class="card-body">
+                    <div style="display:flex; justify-content:space-between; align-items:flex-start;">
+                        <h2 class="card-title">${item.name} ${peps}</h2>
+                        <span style="font-size:12px; color:var(--brand-red); font-weight:bold; background:rgba(226,24,54,0.15); padding:3px 8px; border-radius:8px;">${item.weight}</span>
+                    </div>
+                    <div class="card-info-block"><span class="card-info-title">🧀 Склад</span>${item.ingredients}</div>
+                    ${item.desc ? `<div class="card-info-block"><span class="card-info-title">📖 Опис</span>${item.desc}</div>` : ''}
+                    ${item.allergens ? `<div style="font-size:11px; color:#E21836; font-style:italic; margin-top:auto;">⚠️ ${item.allergens}</div>` : ''}
+                </div>
+            `;
+            const card = document.getElementById('swipeCard');
+            card.style.transition = 'none'; card.style.transform = 'translateX(0px)'; card.style.opacity = '1';
+        }
+
+        function forceSwipe(dir) {
+            const card = document.getElementById('swipeCard'); 
+            card.style.transition = 'transform 0.3s ease-out, opacity 0.3s';
+            if (dir === 1) { 
+                if (swipeCurrentIndex >= flatMenuArray.length - 1) return;
+                card.style.transform = `translateX(-120vw)`; card.style.opacity = '0'; 
+                setTimeout(() => { swipeCurrentIndex++; renderSwipe(); }, 300); 
+            } else { 
+                if (swipeCurrentIndex <= 0) return; 
+                card.style.transform = `translateX(120vw)`; card.style.opacity = '0'; 
+                setTimeout(() => { swipeCurrentIndex--; renderSwipe(); }, 300); 
+            }
+        }
+
+        // ==========================================
+        // БАТЛИ 1X1 (QR + СИНХРОННІСТЬ)
+        // ==========================================
+        async function createDuelLobby() {
+            showScreen('duelLobbyContainer');
+            document.getElementById('duelCreatorView').style.display = 'block';
+            document.getElementById('duelJoinerView').style.display = 'none';
+            document.getElementById('qrcode').innerHTML = "";
+            document.getElementById('startDuelBtn').style.display = 'none';
+            document.getElementById('duelStatusText').innerText = "Створюємо лоббі...";
+
+            let data = await fetch(API_URL + "?action=getQuestions").then(r=>r.json());
+            questions = data.questions.sort(()=>0.5-Math.random()).slice(0,15);
+            
+            currentDuelId = "DUEL_" + new Date().getTime();
+            await fetch(API_URL, {method:'POST', body: JSON.stringify({action:'createDuel', duel_id: currentDuelId, name:userData.first_name, questions:questions})});
+            
+            new QRCode(document.getElementById("qrcode"), { text: currentDuelId, width: 150, height: 150, colorDark: "#000000", colorLight: "#ffffff" });
+            document.getElementById('duelStatusText').innerText = "Нехай суперник відсканує код!";
+
+            duelInterval = setInterval(pollDuelStatus, 3000);
+        }
+
+        function scanToJoinDuel() {
+            if (tg && tg.showScanQrPopup) {
+                tg.showScanQrPopup({text: "Наведи камеру на QR код суперника"}, function(text) {
+                    if (text.startsWith("DUEL_")) {
+                        tg.closeScanQrPopup();
+                        joinDuelLobby(text);
+                    }
+                    return true;
+                });
+            } else {
+                let p = prompt("Немає доступу до камери ТГ. Введи ID:");
+                if(p) joinDuelLobby(p);
+            }
+        }
+
+        async function joinDuelLobby(id) {
+            currentDuelId = id;
+            showScreen('duelLobbyContainer');
+            document.getElementById('duelCreatorView').style.display = 'none';
+            document.getElementById('duelJoinerView').style.display = 'block';
+            document.getElementById('joinerStatusText').innerText = "З'єднуємось...";
+
+            await fetch(API_URL, {method:'POST', body: JSON.stringify({action:'joinDuel', duel_id: currentDuelId, name:userData.first_name})});
+            document.getElementById('joinerStatusText').innerText = "Чекаємо, поки суперник запустить гру!";
+            
+            duelInterval = setInterval(pollDuelStatus, 3000);
+        }
+
+        async function triggerStartDuel() {
+            document.getElementById('startDuelBtn').innerText = "Запуск...";
+            await fetch(API_URL, {method:'POST', body: JSON.stringify({action:'startDuel', duel_id: currentDuelId})});
+        }
+
+        async function pollDuelStatus() {
+            let res = await fetch(API_URL + "?action=checkDuel&duel_id=" + currentDuelId).then(r=>r.json());
+            
+            // Якщо я творець і бачу, що статус ready
+            if (res.status === 'ready' && document.getElementById('duelCreatorView').style.display === 'block') {
+                document.getElementById('duelStatusText').innerHTML = "Суперник знайдений: <b style='color:white;'>" + res.p2 + "</b>";
+                document.getElementById('startDuelBtn').style.display = 'block';
+            }
+            
+            // Якщо статус playing — ОБИДВА запускають гру
+            if (res.status === 'playing') {
+                clearInterval(duelInterval);
+                questions = JSON.parse(res.questions);
+                mode = 'duel';
+                startCountdownAndPlay();
+            }
+        }
+
+        function startCountdownAndPlay() {
+            showScreen('quizContainer');
+            document.getElementById('progressText').innerText = "";
+            document.getElementById('questionText').innerText = "ГОТУЙСЯ!";
+            document.getElementById('optionsContainer').innerHTML = "<h1 style='font-size:80px; text-align:center; color:white;' id='countdownText'>3</h1>";
+            
+            let c = 3;
+            let intv = setInterval(() => {
+                c--;
+                if(c > 0) document.getElementById('countdownText').innerText = c;
+                else {
+                    clearInterval(intv);
+                    currentIndex = 0; score = 0; showQuestion();
+                }
+            }, 1000);
+        }
+
+        function cancelDuel() {
+            clearInterval(duelInterval);
+            showScreen('quizMenuContainer');
+        }
+
+        // === ТЕСТИ ===
+        function openSetup(m) { mode = m; showScreen('setupScreen'); }
+        
+        async function prepareQuiz(num) {
+            showScreen('quizContainer');
+            document.getElementById('questionText').innerText = "Завантаження...";
+            document.getElementById('optionsContainer').innerHTML = "";
+            let data = await fetch(API_URL + "?action=getQuestions").then(res => res.json());
+            questions = data.questions.sort(() => 0.5 - Math.random()).slice(0, num);
+            currentIndex = 0; score = 0; showQuestion(); 
+        }
+
+        function showQuestion() {
+            if(currentIndex >= questions.length) { finishQuiz(); return; }
+            let q = questions[currentIndex];
+            document.getElementById('progressText').innerText = (currentIndex+1) + " / " + questions.length;
+            document.getElementById('questionText').innerText = q.question;
+            document.getElementById('optionsContainer').innerHTML = q.options.map((o, i) => `<button class="menu-btn btn-secondary" onclick="checkAnswer(${i+1}, '${q.correct_answer}', this)">${o}</button>`).join('');
+        }
+
+        function checkAnswer(ans, corr, btn) {
+            document.querySelectorAll('#optionsContainer button').forEach(b => b.classList.add('btn-disabled'));
+            if(String(ans) === String(corr)) { score++; btn.classList.add('btn-correct'); if(tg?.HapticFeedback) tg.HapticFeedback.notificationOccurred('success'); }
+            else { btn.classList.add('btn-incorrect'); if(tg?.HapticFeedback) tg.HapticFeedback.notificationOccurred('error'); }
+            setTimeout(() => { currentIndex++; showQuestion(); }, 1500);
+        }
+
+        async function finishQuiz() {
+            document.getElementById('progressText').innerText = "Збереження...";
+            
+            if (mode === 'duel') {
+                document.getElementById('questionText').innerText = "Чекаємо суперника...";
+                document.getElementById('optionsContainer').innerHTML = "<div style='font-size:50px; text-align:center;'>⏳</div>";
+                
+                await fetch(API_URL, {method:'POST', body: JSON.stringify({action:'submitDuelScore', duel_id:currentDuelId, name:userData.first_name, score:score})});
+                
+                // Чекаємо, поки інший закінчить
+                duelInterval = setInterval(async () => {
+                    let res = await fetch(API_URL + "?action=checkDuel&duel_id=" + currentDuelId).then(r=>r.json());
+                    if(res.status === 'finished') {
+                        clearInterval(duelInterval);
+                        let myScore = (res.p1 === userData.first_name) ? parseInt(res.p1_score) : parseInt(res.p2_score);
+                        let theirScore = (res.p1 === userData.first_name) ? parseInt(res.p2_score) : parseInt(res.p1_score);
+                        let theirName = (res.p1 === userData.first_name) ? res.p2 : res.p1;
+                        
+                        let msg = "";
+                        if(myScore > theirScore) msg = "🔥 ТИ ВИГРАВ! (+20 XP)";
+                        else if(myScore < theirScore) msg = "💀 ТИ ПРОГРАВ (-20 XP)";
+                        else msg = "🤝 НІЧИЯ! (0 XP)";
+                        
+                        document.getElementById('questionText').innerHTML = `<span style='color:white; font-size:24px;'>${msg}</span><br><br>Твій бал: <b style='color:var(--brand-red);'>${myScore}/15</b><br>Суперник (${theirName}): <b>${theirScore}/15</b>`;
+                        document.getElementById('optionsContainer').innerHTML = `<button class="menu-btn btn-primary" onclick="initApp()">В меню</button>`;
+                    }
+                }, 3000);
+            } else {
+                let percent = Math.round((score/questions.length)*100);
+                await fetch(API_URL, {method:'POST', body: JSON.stringify({tg_id:userData.id, name:userData.first_name, score:percent, sprint_score:score*10, mode:mode, asked_count:questions.length, correct_count:score})});
+                document.getElementById('questionText').innerHTML = `Готово! Твій результат: ${score}/${questions.length}`;
+                document.getElementById('optionsContainer').innerHTML = `<button class="menu-btn btn-primary" onclick="initApp()">В меню</button>`;
+            }
+        }
+
+        // === ДОСТАВКИ ТА ІНШЕ ===
+        let deliveryPhotosArray = [];
+        function handleDeliveryPhotos(event) {
+            const files = Array.from(event.target.files); if (files.length === 0) return;
+            if (deliveryPhotosArray.length + files.length > 5) { alert("Максимум 5 фото!"); event.target.value = ''; return; }
+            files.forEach(file => deliveryPhotosArray.push(file)); event.target.value = ''; 
+            document.getElementById('deliveryGallery').innerHTML = deliveryPhotosArray.map((file, i) => `<div style="position:relative; aspect-ratio:1/1; border-radius:8px; overflow:hidden; border:1px solid rgba(255,255,255,0.1);"><img src="${URL.createObjectURL(file)}" style="width:100%; height:100%; object-fit:cover;"><div onclick="deliveryPhotosArray.splice(${i},1); handleDeliveryPhotos({target:{files:[]}})" style="position:absolute; top:2px; right:2px; background:var(--brand-red); color:white; border-radius:50%; width:18px; height:18px; font-size:10px; display:flex; align-items:center; justify-content:center;">✕</div></div>`).join('');
+            document.getElementById('deliveryCountText').innerText = `${deliveryPhotosArray.length} / 5 (мін. 1)`;
+            updateDeliveryBtnState();
+        }
+        function updateDeliveryBtnState() {
+            const text = document.getElementById('deliveryReceiptInput').value.trim();
+            const btn = document.getElementById('submitDeliveryBtn');
+            if (deliveryPhotosArray.length >= 1 && text.length > 0) { btn.style.opacity = '1'; btn.style.pointerEvents = 'auto'; } 
+            else { btn.style.opacity = '0.4'; btn.style.pointerEvents = 'none'; }
+        }
+        async function submitDeliveryReport() {
+            const btn = document.getElementById('submitDeliveryBtn'); btn.innerText = "⏳"; btn.style.pointerEvents = 'none';
+            const receipt = document.getElementById('deliveryReceiptInput').value.trim();
+            let photoBase64Array = [];
+            for (let file of deliveryPhotosArray) { photoBase64Array.push({ mimeType: 'image/jpeg', data: await compressImage(file, 800, 0.6) }); }
+            await fetch(API_URL, { method: 'POST', body: JSON.stringify({ action: "deliveryReport", name: userData.first_name, receipt: receipt, photos: photoBase64Array })});
+            alert("Зафіксовано!"); document.getElementById('deliveryReceiptInput').value = ""; deliveryPhotosArray = []; 
+            document.getElementById('deliveryGallery').innerHTML = ""; updateDeliveryBtnState(); initApp();
+        }
+
         let reviewPhotos = [];
         function handleReviewPhotos(e) {
             reviewPhotos = Array.from(e.target.files);
             document.getElementById('reviewGallery').innerHTML = reviewPhotos.map(f => `<img src="${URL.createObjectURL(f)}" style="width:100%; aspect-ratio:1; object-fit:cover; border-radius:5px;">`).join('');
             document.getElementById('submitReviewsBtn').style.opacity = '1'; document.getElementById('submitReviewsBtn').style.pointerEvents = 'auto';
         }
-
         async function submitReviewsReport() {
             let btn = document.getElementById('submitReviewsBtn'); btn.innerText = "⏳";
             let photos = [];
             for(let f of reviewPhotos) { photos.push({mimeType:'image/jpeg', data: await compressImage(f, 800, 0.6)}); }
-            await fetch(API_URL, {method:'POST', body: JSON.stringify({action:'submitReviews', name:window.myStats.name, photos:photos})});
+            await fetch(API_URL, {method:'POST', body: JSON.stringify({action:'submitReviews', name:userData.first_name, photos:photos})});
             alert("Відправлено!"); initApp();
         }
 
-        // ЗАМИТТЯ
         let cleaningPhotosArray = [];
         function handleNewPhotos(event) {
             const files = Array.from(event.target.files); if (files.length === 0) return;
             files.forEach(file => cleaningPhotosArray.push(file)); event.target.value = ''; 
             document.getElementById('photoGallery').innerHTML = cleaningPhotosArray.map((file, i) => `<div style="position:relative;"><img src="${URL.createObjectURL(file)}" style="width:100%; aspect-ratio:1; object-fit:cover; border-radius:5px;"><div onclick="cleaningPhotosArray.splice(${i},1); handleNewPhotos({target:{files:[]}})" style="position:absolute; top:2px; right:2px; background:red; color:white; width:15px; height:15px; font-size:10px; display:flex; align-items:center; justify-content:center; border-radius:50%;">✕</div></div>`).join('');
+            updateCleaningBtnState();
+        }
+        function updateCleaningBtnState() {
             const checkedBoxes = document.querySelectorAll('#zonesCheckboxes input:checked');
             const btn = document.getElementById('submitCleaningBtn');
             if (cleaningPhotosArray.length >= 3 && checkedBoxes.length > 0) { btn.style.opacity = '1'; btn.style.pointerEvents = 'auto'; } else { btn.style.opacity = '0.4'; btn.style.pointerEvents = 'none'; }
         }
+        document.getElementById('zonesCheckboxes').addEventListener('change', updateCleaningBtnState);
+
         async function submitCleaningReport() {
             const btn = document.getElementById('submitCleaningBtn'); btn.innerText = "⏳";
             const zones = Array.from(document.querySelectorAll('#zonesCheckboxes input:checked')).map(cb => cb.value); 
             let photoBase64Array = [];
             for (let file of cleaningPhotosArray) { photoBase64Array.push({ mimeType: 'image/jpeg', data: await compressImage(file, 800, 0.6) }); }
             await fetch(API_URL, { method: 'POST', body: JSON.stringify({ action: "cleaningReport", name: userData.first_name, zones: zones, photos: photoBase64Array })});
-            alert("Замито!"); showScreen('mainMenu'); btn.innerText = "ЗАМИТИ";
+            alert("Замито!"); initApp();
+        }
+
+        function showLeaderboard() {
+            document.getElementById('leaderboardList').innerHTML = allLeaders.sort((a,b)=>b.xp-a.xp).map((l,i) => `<div style="display:flex; justify-content:space-between; padding:10px; border-bottom:1px solid #333;"><span>${i+1}. ${l.name}</span><b style="color:var(--brand-red);">${l.xp} XP</b></div>`).join('');
+            showScreen('leaderboardContainer');
         }
 
         function compressImage(file, max, qual) {
@@ -489,45 +719,6 @@
                     }
                 }
             });
-        }
-        
-        function filterMenu() {
-            let q = document.getElementById('menuSearchInput').value.toLowerCase();
-            let res = document.getElementById('searchResults');
-            if(q.length < 1) { res.style.display = 'none'; return; }
-            let matches = menuItems.filter(i => i.name.toLowerCase().includes(q) || i.ingredients.toLowerCase().includes(q)).slice(0, 7);
-            res.innerHTML = matches.map(m => `<div class="search-result-item" onclick="startSwipeAt('${m.name.replace(/'/g, "\\'")}')"><b>${m.name}</b><small style="color:var(--brand-red);">${m.category}</small></div>`).join('');
-            res.style.display = 'block';
-        }
-        function startSwipeAt(name) {
-            flatMenuArray = menuItems;
-            swipeCurrentIndex = flatMenuArray.findIndex(i => i.name === name);
-            renderSwipe(); showScreen('swipeViewContainer');
-        }
-
-        // ТЕСТИ
-        function openSetup(m) { mode = m; showScreen('setupScreen'); }
-        async function prepareQuiz(num) {
-            let data = await fetch(API_URL + "?action=getQuestions").then(res => res.json());
-            questions = data.questions.sort(() => 0.5 - Math.random()).slice(0, num);
-            currentIndex = 0; score = 0; showQuestion(); showScreen('quizContainer');
-        }
-        function showQuestion() {
-            if(currentIndex >= questions.length) { alert("Кінець! Правильно: " + score); showScreen('mainMenu'); return; }
-            let q = questions[currentIndex];
-            document.getElementById('progressText').innerText = (currentIndex+1) + " / " + questions.length;
-            document.getElementById('questionText').innerText = q.question;
-            document.getElementById('optionsContainer').innerHTML = q.options.map((o, i) => `<button class="menu-btn btn-secondary" onclick="checkAnswer(${i+1}, ${q.correct_answer}, this)">${o}</button>`).join('');
-        }
-        function checkAnswer(ans, corr, btn) {
-            if(ans == corr) { score++; btn.style.background = '#28a745'; }
-            else { btn.style.background = '#dc3545'; }
-            setTimeout(() => { currentIndex++; showQuestion(); }, 1200);
-        }
-        
-        function showLeaderboard() {
-            document.getElementById('leaderboardList').innerHTML = allLeaders.sort((a,b)=>b.xp-a.xp).map((l,i) => `<div style="display:flex; justify-content:space-between; padding:10px; border-bottom:1px solid #333;"><span>${i+1}. ${l.name}</span><b style="color:var(--brand-red);">${l.xp} XP</b></div>`).join('');
-            showScreen('leaderboardContainer');
         }
     </script>
 </body>
