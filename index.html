@@ -152,4 +152,465 @@
                 <button class="menu-btn btn-secondary" onclick="prepareQuiz(70)">70 питань</button>
                 <button class="menu-btn btn-secondary" onclick="prepareQuiz(100)">100 питань</button>
             </div>
-            <button class="menu-
+            <button class="menu-btn btn-danger" onclick="showScreen('quizMenuContainer')">Назад</button>
+        </div>
+
+        <div id="quizContainer">
+            <img id="questionImage" src="" alt="">
+            <p id="progressText" style="color: var(--brand-red); font-weight: bold; font-size: 11px; margin:0;"></p>
+            <div id="questionText" style="font-weight: 700; margin: 15px 0; font-size: 16px;"></div>
+            <div id="optionsContainer"></div>
+            <div id="timerDisplay" style="color: var(--brand-red); font-weight: bold; margin-top: 10px; font-size: 20px;"></div>
+        </div>
+
+        <div id="leaderboardContainer">
+            <div class="tabs-main">
+                <div class="tab-m active" onclick="setMainTab('xp', this)">Hall of Fame</div>
+                <div class="tab-m" onclick="setMainTab('free', this)">Навчання</div>
+                <div class="tab-m" onclick="setMainTab('timed', this)">Спринт</div>
+                <div class="tab-m" onclick="setMainTab('photo', this)">📸 Фото</div>
+            </div>
+            <div id="subTabs" class="tabs-sub" style="display:none;">
+                <div class="tab-s active" onclick="setSubTab(20, this)">20</div>
+                <div class="tab-s" onclick="setSubTab(50, this)">50</div>
+                <div class="tab-s" onclick="setSubTab(70, this)">70</div>
+                <div class="tab-s" onclick="setSubTab(100, this)">100</div>
+            </div>
+            <div id="leaderboardList" style="max-height: 300px; overflow-y: auto; margin-bottom: 15px;"></div>
+            <button class="menu-btn btn-primary" onclick="showScreen('mainMenu')">В меню</button>
+        </div>
+    </div>
+
+    <script>
+        let tg;
+        let userData = {first_name: "Колега", id: "0"};
+        
+        try {
+            if (window.Telegram && window.Telegram.WebApp) {
+                tg = window.Telegram.WebApp;
+                if (typeof tg.expand === 'function') tg.expand();
+                if (typeof tg.ready === 'function') tg.ready();
+                if (tg.initDataUnsafe && tg.initDataUnsafe.user) {
+                    userData = tg.initDataUnsafe.user;
+                }
+            }
+        } catch (err) {
+            console.log("Telegram init error:", err);
+        }
+
+        const API_URL = "https://script.google.com/macros/s/AKfycbxwXzgTnt_i5oQgmgU7zwwkbGmKDmCPG0QqFWddh3mWSv-PvzxtRns5eF78hEZllhAy/exec";
+        let questions = [], currentIndex = 0, score = 0, mode = '', timerInterval, allLeaders = [];
+        let currentSprintScore = 0, currentMainTab = 'xp', currentSubTab = 20, timeLeft = 15;
+
+        function showScreen(screenId) {
+            const screens = ['mainMenu', 'quizMenuContainer', 'setupScreen', 'quizContainer', 'leaderboardContainer', 'cleaningContainer', 'deliveryContainer', 'productContainer', 'categoryViewContainer', 'articleViewContainer'];
+            screens.forEach(s => {
+                let el = document.getElementById(s);
+                if (el) el.style.display = 'none';
+            });
+            let target = document.getElementById(screenId);
+            if (target) target.style.display = 'block';
+        }
+
+        // ==========================================
+        // БАЗА ЗНАНЬ (ПІЦА З ТАБЛИЦЬ)
+        // ==========================================
+        const productData = {
+            kitchen: {
+                title: "🍕 Меню Піци",
+                items: [
+                    { 
+                        name: "BBQ Salami", 
+                        content: "<b>Вага:</b> 600г<br><br><b>Опис:</b> На повітряне ферментоване тісто додаємо томатний соус та багато тягучої моцарели. Щедро посипаємо пепероні, зверху додаємо фіолетову цибулю кільцями та завершуємо глазур'ю Texas BBQ.<br><br><b>Склад:</b> тісто для піци ферментоване, томатний соус, ковбаса пепероні, фіолетова цибуля, глазур bbq Texas, сир моцарелла.<br><br><span style='color:var(--brand-red); font-size:12px;'><b>Алергени:</b> глютен, молоковмісні.<br><i>Ідеально з пивом MAD Brewger - Jagger Lager</i></span>" 
+                    },
+                    { 
+                        name: "Chorizo", 
+                        content: "<b>Вага:</b> 600г<br><br><b>Опис:</b> Повітряне ферментоване тісто, томатна основа, тягуча моцарела та пряне чорізо. Додаємо мариновану фіолетову цибулю й завершуємо медовою глазур'ю BBQ з легким димним акцентом.<br><br><b>Склад:</b> тісто для піци ферментоване, моцарела, ковбаса чорізо, томатний соус, олія соняшникова, цибуля маринована та глазур барбек'ю.<br><br><span style='color:var(--brand-red); font-size:12px;'><b>Алергени:</b> глютен, молоковмісні.<br><i>Ідеально з Clover Club</i></span>" 
+                    },
+                    { 
+                        name: "Прошутто-Крудо Брі", 
+                        content: "<b>Вага:</b> 500г<br><br><b>Опис:</b> Ферментоване тісто, ніжні вершки, тягуча моцарела і ароматний пармезан. Додаємо трюфельну пасту, прошутто, кремовий брі та пікантні каперси. Смак, від якого хочеться закрити очі і насолоджуватися кожним шматочком!<br><br><b>Склад:</b> тісто для піци ферментоване, вершки, сир моцарелла, сир пармезан, паста трюфельна, прошутто, сир Брі, каперси.<br><br><span style='color:var(--brand-red); font-size:12px;'><b>Алергени:</b> лактоза, глютен.</span>" 
+                    },
+                    { 
+                        name: "Vitello", 
+                        content: "<b>Вага:</b> 550г<br><br><b>Опис:</b> Ніжний ростбіф, класичний соус тонато з тунцем та анчоусами, каперси та пармезан на ферментованому бульбашковому тісті.<br><br><b>Склад:</b> Тісто для піци ферментоване, вершки, сир моцарелла, Пастрамі з яловичини, каперси мариновані, черрі ферментовані, соус Тонато (тунець консервований, анчоуси, каперси, майонез яєчний, соус ворчестер, цибуля зелена, сир пармезан).<br><br><span style='color:var(--brand-red); font-size:12px;'><b>Алергени:</b> глютен, лактоза, соя, риба і морепродукти, ракоподібні.<br><i>Ідеально з пивом MAD Brewger - Jagger Lager</i></span>" 
+                    },
+                    { 
+                        name: "Bacon & Parm", 
+                        content: "<b>Вага:</b> 480г<br><br><b>Опис:</b> Ферментоване тісто, томатний соус, тягуча моцарела, соковитий сирокопчений бекон і щедра стружка пармезану. Завершуємо все ароматною пудрою з бекону для глибшого, хрусткого смаку.<br><br><b>Склад:</b> тісто для піци ферментоване, соус томатний для піци, сир моцарелла, бекон сирокопчений, сир пармезан, пудра з бекону.<br><br><span style='color:var(--brand-red); font-size:12px;'><b>Алергени:</b> лактоза, глютен.<br><i>Ідеально з пивом MAD Brewger - Jagger Lager</i></span>" 
+                    },
+                    { 
+                        name: "Чізес Краст 2.0", 
+                        content: "<b>Вага:</b> 460г<br><br><b>Опис:</b> Оновлена чізест краст, 4 сири: 1) пармезан, 2) горгонзола, 3) моцарела, 4) чедер + гострий мед та муштарда з айви! Той самий бульбашковий борт та супер тягуча начинка.<br><br><b>Склад:</b> Тісто для піци ферментоване, соус бешамель вершковий, сир горгонзола Дольче, сир горгонзолла Піканте, сир чедддер, сир мацарелла, сир пармезан, Муштарда з айви (айва, гірчиця, оцет винний, горіх фісташка, гострий мед).<br><br><span style='color:var(--brand-red); font-size:12px;'><b>Алергени:</b> Молоковмісні продукти, риба, мед.</span>" 
+                    },
+                    { 
+                        name: "Peperoni Brooklyn", 
+                        content: "<b>Вага:</b> 510г<br><br><b>Опис:</b> Спайсі пепероні з перцем халапеньйо та пармезаном + соус до бортів 'Томат-пармезан'.<br><br><b>Склад:</b> Соус на основі: томатна паста (пульпа з спеціями), моцарела, папероні, перець халапеньо, пармезан.<br><br><span style='color:var(--brand-red); font-size:12px;'><b>Алергени:</b> глютен, молоковмісні продукти.</span>" 
+                    },
+                    { 
+                        name: "Марго зі страчателою та томатами", 
+                        content: "<b>Вага:</b> 560г<br><br><b>Опис:</b> Страчателла власного виробництва з квашеними чері на томатному соусі з моцареллою, пармезановим крашем та свіжим базиліком + соус до бортів 'Томат-пармезан'.<br><br><b>Склад:</b> Соус на основі: томатний та моцарела, страчателла, квашені томати, пармезан, базилік.<br><br><span style='color:var(--brand-red); font-size:12px;'><b>Алергени:</b> глютен, молоковмісні продукти.</span>" 
+                    },
+                    { 
+                        name: "Мортаделла-страчателла", 
+                        content: "<b>Вага:</b> 520г<br><br><b>Опис:</b> Багато мортаделли та страчателли власного виробництва у поєднанні з сирним соусом, крашем фісташок та базиліком + соус до бортів 'Лимон-гірчиця'.<br><br><b>Склад:</b> Соус на основі: вершки та сирний соус(чедер), моцарела, мортаделла, страчателла, краш фісташок, пармезан, базилік.<br><br><span style='color:var(--brand-red); font-size:12px;'><b>Алергени:</b> глютен, молоковмісні продукти, горіхи.</span>" 
+                    },
+                    { 
+                        name: "Карбонара by Emily", 
+                        content: "<b>Вага:</b> 490г<br><br><b>Опис:</b> Підкопчений бекон у сирному соусі з зеленою цибулею і пармезаном, + соус до бортів 'Лимон-гірчиця'. Все, як вчила бабця!<br><br><b>Склад:</b> Соус на основі: сирний, моцарела, бекон, зелена цибуля, пармезан.<br><br><span style='color:var(--brand-red); font-size:12px;'><b>Алергени:</b> глютен, молоковмісні продукти.</span>" 
+                    },
+                    { 
+                        name: "Chicken Caesar", 
+                        content: "<b>Вага:</b> 700г<br><br><b>Опис:</b> Апетитна курка сувід, мікс салату з томатами чері, моцарела, соус Цезар + соус для бортиків 'Лимон-гірчиця'.<br><br><b>Склад:</b> Моцарела, на основу іде соус з вершків, мікс салат, чері, соус цезар, курка сувід, пармезан.<br><br><span style='color:var(--brand-red); font-size:12px;'><b>Алергени:</b> глютен, риба, яйця, молоковмісні продукти.</span>" 
+                    },
+                    { 
+                        name: "Бурата-прошуто", 
+                        content: "<b>Вага:</b> 700г<br><br><b>Опис:</b> Дуже багато прошуто та буррата власного виробництва зі свіжою руколою та чері на томатному соусі з моцарелою, поливається песто та посипається пармезаном + соус до бортів томат-пармезан.<br><br><b>Склад:</b> томатна паста, моцарела, прошуто, помідори коктейльні (чері), рукола, бурата, соус песто, пармезан.<br><br><span style='color:var(--brand-red); font-size:12px;'><b>Алергени:</b> глютен, молоковмісні продукти, горіхи.</span>" 
+                    },
+                    { 
+                        name: "Andriano", 
+                        content: "<b>Вага:</b> 650г<br><br><b>Опис:</b> Хрумка картопля фрі та багато мисливських ковбасок у соусі BBQ, пармезан та крафтова моцарела, зелена цибуля + соус до бортів 'Томат-пармезан'.<br><br><b>Склад:</b> Соус на основу: BBQ, моцарела, мисливські ковбаски, картопля фрі, зелена цибуля, пармезан.<br><br><span style='color:var(--brand-red); font-size:12px;'><b>Алергени:</b> глютен, молоковмісні продукти.</span>" 
+                    },
+                    { 
+                        name: "4 Meat", 
+                        content: "<b>Вага:</b> 655г<br><br><b>Опис:</b> Мега м'ясна піца яка поєднює в собі 4 види м'яса, а саме - Прошуто котто, чорізо, шинка та бекон в томатному соусі + гострий мед, з хрумкою руколою, справжня very meat pizza + соус до бортиків 'Томат-пармезан'.<br><br><b>Склад:</b> Чорізо, прошуто котто, бекон, шинка, основа томатна з моцарелою, соус гострий мед, рукола.<br><br><span style='color:var(--brand-red); font-size:12px;'><b>Алергени:</b> глютен, молоковмісні продукти, мед.</span>" 
+                    },
+                    { 
+                        name: "Кальцоне", 
+                        content: "<b>Вага:</b> 490г<br><br><b>Опис:</b> Наше кальцоне – об'єднує в собі ніжну моцарелу, соковите папероні та бекон, в томатній пасті, з пармезаном та свіжим базиліком. Подається гарячим, із хрусткою скоринкою, яка приховує усі ці смачні інгредієнти всередині.<br><br><b>Склад:</b> моцарела, папероні, бекон, томатна паста, пармезан, базилік.<br><br><span style='color:var(--brand-red); font-size:12px;'><b>Алергени:</b> глютен, молоковмісні продукти.</span>" 
+                    },
+                    { 
+                        name: "King Prawn Pizza", 
+                        content: "<b>Вага:</b> 650г<br><br><b>Опис:</b> Королівська креветка в устричному соусі, моцарела, соус спайсі, чері, рукола та лимон гриль + соус до бортів лимон-гірчиця.<br><br><b>Склад:</b> креветка в устричному, соус спайс, рукола, лимон, моцарела, чері, пармезан.<br><br><span style='color:var(--brand-red); font-size:12px;'><b>Алергени:</b> глютен, молоковмісні продукти, морепродукти.</span>" 
+                    }
+                ]
+            },
+            bar: {
+                title: "🍹 Бар",
+                items: [
+                    { 
+                        name: "Апероль Шприц", 
+                        content: "<b>Бокал:</b> Винний<br><br><b>Пропорції:</b><br>- 100 мл Просекко<br>- 50 мл Апероль<br>- 20 мл Содова<br><br><b>Приготування:</b> Повний бокал льоду, додати інгредієнти, перемішати барною ложкою. Прикраса - слайс апельсина." 
+                    }
+                ]
+            },
+            service: {
+                title: "📋 Стандарти та Сервіс",
+                items: [
+                    { 
+                        name: "Чек-лист відкриття", 
+                        content: "<b>До 10:00 потрібно:</b><br>1. Увімкнути світло та фонову музику.<br>2. Перевірити касу.<br>3. Протерти всі столи вологою ганчіркою.<br>4. Перевірити чистоту вбиральні." 
+                    }
+                ]
+            }
+        };
+
+        let currentCategoryId = '';
+
+        function openCategory(catId) {
+            currentCategoryId = catId;
+            const data = productData[catId];
+            document.getElementById('categoryTitle').innerText = data.title;
+            
+            const listContainer = document.getElementById('categoryList');
+            listContainer.innerHTML = data.items.map((item, index) => `
+                <button class="menu-btn btn-secondary" style="padding: 14px; text-align: left; font-size: 15px; font-weight: normal; border: 1px solid rgba(255,255,255,0.05);" onclick="openArticle(${index})">
+                    ${item.name}
+                </button>
+            `).join('');
+            
+            showScreen('categoryViewContainer');
+        }
+
+        function openArticle(index) {
+            const item = productData[currentCategoryId].items[index];
+            document.getElementById('articleTitle').innerText = item.name;
+            document.getElementById('articleContent').innerHTML = item.content;
+            showScreen('articleViewContainer');
+        }
+
+        // ==========================================
+        // ЛОГІКА МОДУЛЯ ЗАМИТТЯ
+        // ==========================================
+        let cleaningPhotosArray = [];
+
+        function handleNewPhotos(event) {
+            const files = Array.from(event.target.files);
+            if (files.length === 0) return;
+            
+            if (cleaningPhotosArray.length + files.length > 10) { 
+                alert("Максимум 10 фото!"); 
+                event.target.value = ''; 
+                return; 
+            }
+            
+            files.forEach(file => cleaningPhotosArray.push(file));
+            event.target.value = ''; 
+            renderPhotoGallery();
+            updateCleaningBtnState();
+        }
+
+        function removePhoto(index) {
+            cleaningPhotosArray.splice(index, 1);
+            renderPhotoGallery();
+            updateCleaningBtnState();
+        }
+
+        function renderPhotoGallery() {
+            const gallery = document.getElementById('photoGallery');
+            if (!gallery) return;
+            gallery.innerHTML = cleaningPhotosArray.map((file, i) => `
+                <div style="position: relative; aspect-ratio: 1/1; border-radius: 8px; overflow: hidden; border: 1px solid rgba(255,255,255,0.1);">
+                    <img src="${URL.createObjectURL(file)}" style="width:100%; height:100%; object-fit:cover;">
+                    <div onclick="removePhoto(${i})" style="position:absolute; top:2px; right:2px; background:var(--brand-red); color:white; border-radius:50%; width:18px; height:18px; font-size:10px; display:flex; align-items:center; justify-content:center; cursor: pointer;">✕</div>
+                </div>
+            `).join('');
+            document.getElementById('photoCountText').innerText = `${cleaningPhotosArray.length} / 10 (мін. 3)`;
+        }
+
+        function updateCleaningBtnState() {
+            const checkedBoxes = document.querySelectorAll('#zonesCheckboxes input:checked');
+            const btn = document.getElementById('submitCleaningBtn');
+            if (!btn) return;
+            if (cleaningPhotosArray.length >= 3 && checkedBoxes.length > 0) {
+                btn.style.opacity = '1'; btn.style.pointerEvents = 'auto';
+            } else {
+                btn.style.opacity = '0.4'; btn.style.pointerEvents = 'none';
+            }
+        }
+
+        const zonesContainer = document.getElementById('zonesCheckboxes');
+        if (zonesContainer) zonesContainer.addEventListener('change', updateCleaningBtnState);
+
+        function compressImage(file, maxWidth = 1024, quality = 0.7) {
+            return new Promise((resolve, reject) => {
+                const reader = new FileReader();
+                reader.readAsDataURL(file);
+                reader.onload = event => {
+                    const img = new Image();
+                    img.src = event.target.result;
+                    img.onload = () => {
+                        let width = img.width;
+                        let height = img.height;
+                        if (width > maxWidth) {
+                            height = Math.round((height * maxWidth) / width);
+                            width = maxWidth;
+                        }
+                        const canvas = document.createElement('canvas');
+                        canvas.width = width;
+                        canvas.height = height;
+                        const ctx = canvas.getContext('2d');
+                        ctx.drawImage(img, 0, 0, width, height);
+                        const compressedBase64 = canvas.toDataURL('image/jpeg', quality).split(',')[1];
+                        resolve(compressedBase64);
+                    };
+                    img.onerror = error => reject(error);
+                };
+                reader.onerror = error => reject(error);
+            });
+        }
+
+        async function submitCleaningReport() {
+            const btn = document.getElementById('submitCleaningBtn');
+            btn.innerText = "ВІДПРАВКА..."; btn.style.opacity = '0.5'; btn.style.pointerEvents = 'none';
+            
+            const zones = Array.from(document.querySelectorAll('#zonesCheckboxes input:checked')).map(cb => cb.value);
+            let photoBase64Array = [];
+
+            try {
+                for (let file of cleaningPhotosArray) {
+                    const base64 = await compressImage(file, 800, 0.6); 
+                    photoBase64Array.push({ mimeType: 'image/jpeg', data: base64 });
+                }
+
+                await fetch(API_URL, { method: 'POST', body: JSON.stringify({
+                    action: "cleaningReport", name: userData.first_name, zones: zones, photos: photoBase64Array
+                })});
+                
+                if (tg && typeof tg.HapticFeedback !== 'undefined') tg.HapticFeedback.notificationOccurred('success');
+                alert("Замито! 🚀");
+                
+                document.querySelectorAll('#zonesCheckboxes input:checked').forEach(cb => cb.checked = false);
+                cleaningPhotosArray = [];
+                renderPhotoGallery();
+                updateCleaningBtnState();
+                showScreen('mainMenu');
+                btn.innerText = "ЗАМИТИ ЗОНУ"; 
+            } catch (e) { 
+                alert("Помилка відправки. Можливо поганий інтернет."); 
+                btn.innerText = "ЗАМИТИ ЗОНУ"; 
+                btn.style.opacity = '1'; 
+                btn.style.pointerEvents = 'auto';
+            }
+        }
+
+        // ==========================================
+        // ІСНУЮЧА ЛОГІКА ВІКТОРИН ТА РЕЙТИНГІВ
+        // ==========================================
+        function getRankInfo(xp) {
+            if (xp >= 1501) return "🔥 Emily Legend";
+            if (xp >= 701) return "🕴️ Pizza Don";
+            if (xp >= 301) return "💼 Consigliere"; 
+            if (xp >= 101) return "🗽 Brooklyn Local";
+            return "🐣 Стажерчик";
+        }
+
+        async function initApp() {
+            let nameEl = document.getElementById('userName');
+            if (nameEl) nameEl.innerText = "Hi, " + userData.first_name + "!";
+            
+            showScreen('mainMenu');
+            try {
+                allLeaders = await fetch(API_URL + "?action=leaderboard").then(r => r.json());
+                let me = allLeaders.find(l => String(l.tg_id) === String(userData.id)) || {xp: 0, total_asked: 0};
+                let rankEl = document.getElementById('rankDisplay');
+                let statsEl = document.getElementById('statsDisplay');
+                if (rankEl) rankEl.innerText = getRankInfo(me.xp);
+                if (statsEl) statsEl.innerText = `XP: ${me.xp} (з ${me.total_asked} питань)`;
+            } catch(e) {}
+        }
+        
+        initApp();
+
+        function openSetup(m) { 
+            mode = m; 
+            showScreen('setupScreen');
+            document.getElementById('setupTitle').innerText = (m === 'photo') ? "Фото-тест" : "Дистанція";
+        }
+
+        async function prepareQuiz(count) {
+            showScreen('quizContainer');
+            document.getElementById('questionText').innerText = "Завантаження...";
+            try {
+                let data = await fetch(API_URL).then(r => r.json());
+                if (mode === 'photo') {
+                    questions = data.questions.filter(q => q.photo && q.photo.length > 5);
+                } else {
+                    questions = data.questions;
+                }
+                questions = questions.sort(() => Math.random() - 0.5).slice(0, count);
+                if(questions.length === 0) { alert("Питань немає!"); showScreen('mainMenu'); return; }
+                startQuiz();
+            } catch (e) {
+                alert("Помилка завантаження бази.");
+                showScreen('mainMenu');
+            }
+        }
+
+        async function startAssessment() {
+            if(!confirm("Це офіційна атестація!")) return;
+            mode = 'exam';
+            showScreen('quizContainer');
+            try {
+                let data = await fetch(API_URL).then(r => r.json());
+                questions = data.questions.sort(() => Math.random() - 0.5);
+                startQuiz();
+            } catch(e) {
+                alert("Помилка бази.");
+                showScreen('mainMenu');
+            }
+        }
+
+        function startQuiz() { currentIndex = 0; score = 0; currentSprintScore = 0; showQuestion(); }
+
+        function showQuestion() {
+            clearInterval(timerInterval);
+            if (currentIndex >= questions.length) { finishQuiz(); return; }
+            let q = questions[currentIndex];
+            document.getElementById('progressText').innerText = (currentIndex + 1) + " / " + questions.length;
+            document.getElementById('questionText').innerText = q.question;
+            const imgEl = document.getElementById('questionImage');
+            if (q.photo && q.photo.length > 5) { imgEl.src = q.photo; imgEl.style.display = "block"; } else { imgEl.style.display = "none"; }
+            let html = "";
+            q.options.forEach((opt, i) => { html += `<button id="btn-${i+1}" class="menu-btn btn-secondary" onclick="checkAnswer(${i+1}, ${q.correct_answer})">${opt}</button>`; });
+            document.getElementById('optionsContainer').innerHTML = html;
+            if (mode === 'timed') {
+                timeLeft = 15;
+                document.getElementById('timerDisplay').innerText = "⏱ " + timeLeft;
+                timerInterval = setInterval(() => { 
+                    timeLeft--; 
+                    document.getElementById('timerDisplay').innerText = "⏱ " + timeLeft; 
+                    if (timeLeft <= 0) { checkAnswer(0, q.correct_answer); } 
+                }, 1000);
+            }
+        }
+
+        function checkAnswer(sel, corr) {
+            clearInterval(timerInterval);
+            const btns = document.querySelectorAll('#optionsContainer button');
+            btns.forEach(b => b.classList.add('btn-disabled'));
+            if (sel == corr) {
+                score++;
+                if(mode === 'timed') currentSprintScore += (100 + (timeLeft * 10));
+                document.getElementById('btn-' + sel)?.classList.add('btn-correct');
+                if(tg && tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('success');
+            } else {
+                if (sel != 0) document.getElementById('btn-' + sel)?.classList.add('btn-incorrect');
+                document.getElementById('btn-' + corr)?.classList.add('btn-correct');
+                if(tg && tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('error');
+            }
+            setTimeout(() => { currentIndex++; showQuestion(); }, 750);
+        }
+
+        async function finishQuiz() {
+            let percent = Math.round((score / questions.length) * 100);
+            document.getElementById('progressText').innerText = "Saving progress...";
+            try {
+                await fetch(API_URL, { method: 'POST', body: JSON.stringify({ 
+                    tg_id: userData.id, name: userData.first_name, score: percent, 
+                    sprint_score: currentSprintScore, mode: mode, 
+                    asked_count: questions.length, correct_count: score 
+                })});
+            } catch(e) {}
+            let resultText = (mode === 'timed') ? `🔥 Sprint Score: ${currentSprintScore}` : `Finished! ${percent}%`;
+            document.getElementById('questionText').innerHTML = `${resultText}<br><small>+${score} XP to Hall of Fame</small>`;
+            document.getElementById('optionsContainer').innerHTML = `<button class="menu-btn btn-primary" onclick="showScreen('mainMenu')">В меню</button>`;
+            document.getElementById('questionImage').style.display = 'none';
+            document.getElementById('timerDisplay').innerText = "";
+        }
+
+        function showLeaderboard() {
+            showScreen('leaderboardContainer');
+            renderLeaders();
+        }
+
+        function setMainTab(tab, el) {
+            currentMainTab = tab;
+            document.querySelectorAll('.tab-m').forEach(t => t.classList.remove('active'));
+            el.classList.add('active');
+            let sub = document.getElementById('subTabs');
+            if (sub) sub.style.display = (tab === 'free' || tab === 'timed') ? 'flex' : 'none';
+            renderLeaders();
+        }
+
+        function setSubTab(val, el) {
+            currentSubTab = val;
+            document.querySelectorAll('.tab-s').forEach(t => t.classList.remove('active'));
+            el.classList.add('active');
+            renderLeaders();
+        }
+
+        function renderLeaders() {
+            let list = [...allLeaders];
+            let html = "";
+            if (currentMainTab === 'xp') {
+                list.sort((a,b) => b.xp - a.xp);
+                html = list.map((l, i) => `<div class="leader-item"><span>${i+1}. ${l.name}</span><b>${l.xp} XP</b></div>`).join('');
+            } else if (currentMainTab === 'free') {
+                let key = 't' + currentSubTab;
+                list = list.filter(l => l[key] > 0).sort((a,b) => b[key] - a[key]);
+                html = list.map((l, i) => `<div class="leader-item"><span>${i+1}. ${l.name}</span><b>${l[key]}%</b></div>`).join('');
+            } else if (currentMainTab === 'timed') {
+                let key = 's' + currentSubTab;
+                list = list.filter(l => l[key] > 0).sort((a,b) => b[key] - a[key]);
+                html = list.map((l, i) => `<div class="leader-item"><span>${i+1}. ${l.name}</span><b>${l[key]} pts</b></div>`).join('');
+            } else if (currentMainTab === 'photo') {
+                list = list.filter(l => l.photo > 0).sort((a,b) => b.photo - a.photo);
+                html = list.map((l, i) => `<div class="leader-item"><span>${i+1}. ${l.name}</span><b>${l.photo}%</b></div>`).join('');
+            }
+            let board = document.getElementById('leaderboardList');
+            if(board) board.innerHTML = html || "<p style='font-size:12px; color:#555;'>No records yet</p>";
+        }
+    </script>
+</body>
+</html>
