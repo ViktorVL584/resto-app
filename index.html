@@ -92,7 +92,7 @@
             <div style="background: rgba(255,255,255,0.03); padding: 12px; border-radius: 18px; margin: 15px 0; border: 1px solid rgba(226,24,54,0.1);">
                 <div id="photoGallery" style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin-bottom: 12px;"></div>
                 <button class="menu-btn btn-secondary" style="margin:0; border: 1px dashed var(--brand-red); font-size: 13px;" onclick="document.getElementById('hiddenPhotoInput').click()">📸 Додати фото</button>
-                <input type="file" id="hiddenPhotoInput" accept="image/*" style="display: none;" onchange="handleNewPhotos(event)">
+                <input type="file" id="hiddenPhotoInput" accept="image/*" multiple style="display: none;" onchange="handleNewPhotos(event)">
                 <div id="photoCountText" style="margin-top: 8px; font-size: 10px; color: var(--text-muted);">0 / 10 (мін. 3)</div>
             </div>
 
@@ -180,15 +180,22 @@
             if (target) target.style.display = 'block';
         }
 
-        // --- ЛОГІКА МОДУЛЯ ЗАМИТТЯ (ЗІ СТИСНЕННЯМ ФОТО) ---
+        // --- ЛОГІКА МОДУЛЯ ЗАМИТТЯ (З ПІДТРИМКОЮ МАСОВИХ ФОТО) ---
         let cleaningPhotosArray = [];
 
         function handleNewPhotos(event) {
-            const file = event.target.files[0];
-            if (!file) return;
-            if (cleaningPhotosArray.length >= 10) { alert("Макс. 10 фото"); return; }
+            // Тепер забираємо всі файли, які вибрав юзер (а не тільки перший)
+            const files = Array.from(event.target.files);
+            if (files.length === 0) return;
             
-            cleaningPhotosArray.push(file);
+            if (cleaningPhotosArray.length + files.length > 10) { 
+                alert("Максимум 10 фото загалом!"); 
+                event.target.value = ''; 
+                return; 
+            }
+            
+            // Додаємо всі нові фотки в наш масив
+            files.forEach(file => cleaningPhotosArray.push(file));
             event.target.value = ''; 
             renderPhotoGallery();
             updateCleaningBtnState();
@@ -275,7 +282,14 @@
                 
                 if (tg && typeof tg.HapticFeedback !== 'undefined') tg.HapticFeedback.notificationOccurred('success');
                 alert("Замито! 🚀");
-                location.reload();
+                
+                // Очищаємо все після успішної відправки і повертаємо в меню
+                document.querySelectorAll('#zonesCheckboxes input:checked').forEach(cb => cb.checked = false);
+                cleaningPhotosArray = [];
+                renderPhotoGallery();
+                updateCleaningBtnState();
+                showScreen('mainMenu');
+                btn.innerText = "ЗАМИТИ ЗОНУ"; 
             } catch (e) { 
                 alert("Помилка відправки. Можливо поганий інтернет."); 
                 btn.innerText = "ЗАМИТИ ЗОНУ"; 
