@@ -42,7 +42,7 @@
         .tab-s.active { border-color: var(--brand-red); color: white; }
         .leader-item { display: flex; justify-content: space-between; padding: 12px 8px; border-bottom: 1px solid #222; font-size: 12px; }
         
-        #quizMenuContainer, #setupScreen, #quizContainer, #leaderboardContainer, #cleaningContainer, #deliveryContainer, #productContainer { display: none; }
+        #quizMenuContainer, #setupScreen, #quizContainer, #leaderboardContainer, #cleaningContainer, #deliveryContainer, #productContainer, #categoryViewContainer, #articleViewContainer { display: none; }
     </style>
 </head>
 <body>
@@ -100,14 +100,45 @@
             <button class="menu-btn btn-danger" style="margin-top:5px; border:none; font-size: 12px;" onclick="showScreen('mainMenu')">Скасувати</button>
         </div>
 
-        <div id="deliveryContainer">
-            <h2 style="margin-top:0;">📦 Доставки</h2>
-            <p style="color:var(--text-muted); font-size: 12px;">Модуль у розробці...</p>
-            <button class="menu-btn btn-secondary" onclick="showScreen('mainMenu')">Назад</button>
+        <div id="productContainer">
+            <h2 style="margin-top:0; color: white; font-size: 22px;">📚 Продакт</h2>
+            <p style="font-size: 11px; color: var(--text-muted); margin-bottom: 15px;">База знань та стандарти Emily</p>
+
+            <div style="display: flex; flex-direction: column; gap: 10px;">
+                <button class="menu-btn btn-secondary" style="display: flex; align-items: center; justify-content: space-between; padding: 16px; text-align: left;" onclick="openCategory('kitchen')">
+                    <span style="font-size: 16px;">🍕 Кухня</span>
+                    <span style="color: var(--text-muted); font-size: 14px;">➔</span>
+                </button>
+                
+                <button class="menu-btn btn-secondary" style="display: flex; align-items: center; justify-content: space-between; padding: 16px; text-align: left;" onclick="openCategory('bar')">
+                    <span style="font-size: 16px;">🍹 Бар</span>
+                    <span style="color: var(--text-muted); font-size: 14px;">➔</span>
+                </button>
+
+                <button class="menu-btn btn-secondary" style="display: flex; align-items: center; justify-content: space-between; padding: 16px; text-align: left;" onclick="openCategory('service')">
+                    <span style="font-size: 16px;">📋 Стандарти та Сервіс</span>
+                    <span style="color: var(--text-muted); font-size: 14px;">➔</span>
+                </button>
+            </div>
+
+            <button class="menu-btn btn-danger" style="margin-top:15px; border:none; font-size: 12px;" onclick="showScreen('mainMenu')">Назад в меню</button>
         </div>
 
-        <div id="productContainer">
-            <h2 style="margin-top:0;">📚 Продакт</h2>
+        <div id="categoryViewContainer">
+            <h2 id="categoryTitle" style="margin-top:0; color: white; font-size: 20px;">Назва категорії</h2>
+            <div id="categoryList" style="display: flex; flex-direction: column; gap: 8px; margin-bottom: 15px; max-height: 400px; overflow-y: auto;">
+                </div>
+            <button class="menu-btn btn-danger" style="margin-top:5px; border:none; font-size: 12px;" onclick="showScreen('productContainer')">Назад до розділів</button>
+        </div>
+
+        <div id="articleViewContainer">
+            <h2 id="articleTitle" style="margin-top:0; color: white; font-size: 20px; text-align: left; border-bottom: 1px solid #333; padding-bottom: 10px;">Назва статті</h2>
+            <div id="articleContent" style="background: rgba(255,255,255,0.03); padding: 15px; border-radius: 15px; color: #ddd; font-size: 14px; text-align: left; margin-bottom: 15px; line-height: 1.6; max-height: 450px; overflow-y: auto;">
+                </div>
+            <button class="menu-btn btn-danger" style="margin-top:5px; border:none; font-size: 12px;" onclick="showScreen('categoryViewContainer')">Назад до списку</button>
+        </div>
+        <div id="deliveryContainer">
+            <h2 style="margin-top:0;">📦 Доставки</h2>
             <p style="color:var(--text-muted); font-size: 12px;">Модуль у розробці...</p>
             <button class="menu-btn btn-secondary" onclick="showScreen('mainMenu')">Назад</button>
         </div>
@@ -170,8 +201,9 @@
         let questions = [], currentIndex = 0, score = 0, mode = '', timerInterval, allLeaders = [];
         let currentSprintScore = 0, currentMainTab = 'xp', currentSubTab = 20, timeLeft = 15;
 
+        // ФУНКЦІЯ НАВІГАЦІЇ
         function showScreen(screenId) {
-            const screens = ['mainMenu', 'quizMenuContainer', 'setupScreen', 'quizContainer', 'leaderboardContainer', 'cleaningContainer', 'deliveryContainer', 'productContainer'];
+            const screens = ['mainMenu', 'quizMenuContainer', 'setupScreen', 'quizContainer', 'leaderboardContainer', 'cleaningContainer', 'deliveryContainer', 'productContainer', 'categoryViewContainer', 'articleViewContainer'];
             screens.forEach(s => {
                 let el = document.getElementById(s);
                 if (el) el.style.display = 'none';
@@ -180,21 +212,90 @@
             if (target) target.style.display = 'block';
         }
 
-        // --- ЛОГІКА МОДУЛЯ ЗАМИТТЯ (З ПІДТРИМКОЮ МАСОВИХ ФОТО) ---
+        // ==========================================
+        // БАЗА ЗНАНЬ (ПРОДАКТ) - ТУТ ДОДАВАТИ ТЕКСТИ
+        // ==========================================
+        const productData = {
+            kitchen: {
+                title: "🍕 Кухня",
+                items: [
+                    { 
+                        name: "Піца Маргарита", 
+                        content: "<b>Склад:</b><br>- Тісто (250г)<br>- Соус Пелаті (80г)<br>- Моцарела (100г)<br>- Базилік, оливкова олія.<br><br><b>Вихід:</b> 450г<br><b>Час приготування:</b> 7 хв." 
+                    },
+                    { 
+                        name: "Бургер Класичний", 
+                        content: "<b>Склад:</b><br>- Булочка Бріош<br>- Котлета яловича (150г)<br>- Чеддер, томати, айсберг<br>- Соус фірмовий." 
+                    }
+                ]
+            },
+            bar: {
+                title: "🍹 Бар",
+                items: [
+                    { 
+                        name: "Апероль Шприц", 
+                        content: "<b>Бокал:</b> Винний<br><br><b>Пропорції:</b><br>- 100 мл Просекко<br>- 50 мл Апероль<br>- 20 мл Содова<br><br><b>Приготування:</b> Повний бокал льоду, додати інгредієнти, перемішати барною ложкою. Прикраса - слайс апельсина." 
+                    },
+                    { 
+                        name: "Еспресо / Американо", 
+                        content: "<b>Еспресо:</b><br>Закладка кави: 18г.<br>Час екстракції: 25-28 сек.<br>Вихід: 36г.<br><br><b>Американо:</b><br>Еспресо (36г) + Окріп (120 мл)." 
+                    }
+                ]
+            },
+            service: {
+                title: "📋 Стандарти та Сервіс",
+                items: [
+                    { 
+                        name: "Чек-лист відкриття залу", 
+                        content: "<b>До 10:00 потрібно:</b><br>1. Увімкнути світло та фонову музику.<br>2. Перевірити касу (розмін).<br>3. Натерти прибори (мінімум 50 комплектів).<br>4. Протерти всі столи вологою ганчіркою.<br>5. Перевірити чистоту вбиральні (папір, мило)." 
+                    },
+                    { 
+                        name: "Правила обслуговування", 
+                        content: "<b>Правило 5 хвилин:</b><br>Гості мають отримати меню протягом 1 хвилини після посадки. Напої виносяться не пізніше ніж через 5 хвилин.<br><br><b>Конфлікти:</b><br>У разі скарги на страву - негайно забрати страву, вибачитись та повідомити менеджера." 
+                    }
+                ]
+            }
+        };
+
+        let currentCategoryId = '';
+
+        function openCategory(catId) {
+            currentCategoryId = catId;
+            const data = productData[catId];
+            document.getElementById('categoryTitle').innerText = data.title;
+            
+            const listContainer = document.getElementById('categoryList');
+            listContainer.innerHTML = data.items.map((item, index) => `
+                <button class="menu-btn btn-secondary" style="padding: 14px; text-align: left; font-size: 15px; font-weight: normal; border: 1px solid rgba(255,255,255,0.05);" onclick="openArticle(${index})">
+                    ${item.name}
+                </button>
+            `).join('');
+            
+            showScreen('categoryViewContainer');
+        }
+
+        function openArticle(index) {
+            const item = productData[currentCategoryId].items[index];
+            document.getElementById('articleTitle').innerText = item.name;
+            document.getElementById('articleContent').innerHTML = item.content;
+            showScreen('articleViewContainer');
+        }
+
+        // ==========================================
+        // ЛОГІКА МОДУЛЯ ЗАМИТТЯ (З МАСОВИМИ ФОТО)
+        // ==========================================
         let cleaningPhotosArray = [];
 
         function handleNewPhotos(event) {
-            // Тепер забираємо всі файли, які вибрав юзер (а не тільки перший)
             const files = Array.from(event.target.files);
             if (files.length === 0) return;
             
             if (cleaningPhotosArray.length + files.length > 10) { 
-                alert("Максимум 10 фото загалом!"); 
+                alert("Максимум 10 фото!"); 
                 event.target.value = ''; 
                 return; 
             }
             
-            // Додаємо всі нові фотки в наш масив
             files.forEach(file => cleaningPhotosArray.push(file));
             event.target.value = ''; 
             renderPhotoGallery();
@@ -233,7 +334,6 @@
         const zonesContainer = document.getElementById('zonesCheckboxes');
         if (zonesContainer) zonesContainer.addEventListener('change', updateCleaningBtnState);
 
-        // ФУНКЦІЯ СТИСНЕННЯ ФОТО
         function compressImage(file, maxWidth = 1024, quality = 0.7) {
             return new Promise((resolve, reject) => {
                 const reader = new FileReader();
@@ -270,9 +370,8 @@
             let photoBase64Array = [];
 
             try {
-                // Стискаємо кожне фото перед відправкою
                 for (let file of cleaningPhotosArray) {
-                    const base64 = await compressImage(file, 800, 0.6); // 800px, 60% якості - ідеально для звіту
+                    const base64 = await compressImage(file, 800, 0.6); 
                     photoBase64Array.push({ mimeType: 'image/jpeg', data: base64 });
                 }
 
@@ -283,7 +382,6 @@
                 if (tg && typeof tg.HapticFeedback !== 'undefined') tg.HapticFeedback.notificationOccurred('success');
                 alert("Замито! 🚀");
                 
-                // Очищаємо все після успішної відправки і повертаємо в меню
                 document.querySelectorAll('#zonesCheckboxes input:checked').forEach(cb => cb.checked = false);
                 cleaningPhotosArray = [];
                 renderPhotoGallery();
@@ -298,7 +396,9 @@
             }
         }
 
-        // --- ІСНУЮЧА ЛОГІКА ВІКТОРИН ---
+        // ==========================================
+        // ІСНУЮЧА ЛОГІКА ВІКТОРИН ТА РЕЙТИНГІВ
+        // ==========================================
         function getRankInfo(xp) {
             if (xp >= 1501) return "🔥 Emily Legend";
             if (xp >= 701) return "🕴️ Pizza Don";
