@@ -25,15 +25,12 @@
         .btn-danger { background: none; border: 1px solid var(--brand-red); color: var(--brand-red); }
         .btn-correct { background-color: #28a745 !important; box-shadow: 0 0 15px rgba(40, 167, 69, 0.6) !important; color: white; }
         .btn-disabled { pointer-events: none; opacity: 0.8; }
-        
-        /* НОВА СТРИМАНА КНОПКА */
         .btn-solid { background-color: #2b2b2b; color: white; border: 1px solid #555; }
         .btn-solid:active { background-color: #3b3b3b; }
         
         .checkbox-list { text-align: left; background: #1a1a1a; padding: 15px; border-radius: 15px; margin-bottom: 15px; }
         .checkbox-label { display: flex; align-items: center; gap: 10px; margin-bottom: 12px; font-size: 13px; color: #ddd; }
         .checkbox-label input { width: 18px; height: 18px; accent-color: var(--brand-red); }
-        .checkbox-label:last-child { margin-bottom: 0; }
         
         .tabs-main { display: flex; gap: 3px; margin-bottom: 10px; background: #111; padding: 4px; border-radius: 12px; }
         .tab-m { flex: 1; font-size: 8px; padding: 8px 1px; border-radius: 8px; cursor: pointer; color: var(--text-muted); text-transform: uppercase; font-weight: 700; }
@@ -43,7 +40,6 @@
         .tab-s.active { border-color: var(--brand-red); color: white; }
         .leader-item { display: flex; justify-content: space-between; padding: 12px 8px; border-bottom: 1px solid #222; font-size: 12px; }
         
-        /* СВАЙП-КАРТКИ */
         .swipe-container { position: relative; width: 100%; height: 65vh; max-height: 550px; margin-bottom: 15px; perspective: 1000px; }
         .swipe-card { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: #1a1a1a; border-radius: 20px; border: 1px solid rgba(226, 24, 54, 0.2); box-shadow: 0 10px 20px rgba(0,0,0,0.5); display: flex; flex-direction: column; overflow: hidden; will-change: transform; transform-origin: 50% 100%; }
         .card-img-container { width: 100%; height: 42%; background: #0a0a0a; display: flex; align-items: center; justify-content: center; border-bottom: 1px solid rgba(255, 255, 255, 0.05); }
@@ -62,9 +58,8 @@
         .hint-btn:active { transform: scale(0.9); background: rgba(226,24,54,0.2); }
         .category-badge { display: inline-block; background: #E21836; color: white; padding: 5px 12px; border-radius: 20px; font-size: 12px; font-weight: bold; margin-bottom: 10px; box-shadow: 0 0 10px rgba(226,24,54,0.5); }
 
-        /* ЗОНИ, ХРОНОЛОГІЯ ТА ПРОФІЛЬ */
         .queue-box { background: rgba(226, 24, 54, 0.1); border: 1px solid var(--brand-red); border-radius: 15px; padding: 12px; margin-bottom: 20px; text-align: left; }
-        .queue-item { display: flex; justify-content: space-between; font-size: 12px; padding: 8px 0; border-bottom: 1px dashed rgba(255,255,255,0.1); }
+        .queue-item { display: flex; justify-content: space-between; font-size: 12px; padding: 8px 0; border-bottom: 1px dashed rgba(255,255,255,0.05); }
         .queue-item:last-child { border-bottom: none; }
         
         .history-card { background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.05); border-radius: 15px; margin-bottom: 12px; overflow: hidden; text-align: left; }
@@ -79,7 +74,7 @@
 
         .profile-stat { background: #1a1a1a; border-radius: 15px; padding: 15px; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; border: 1px solid rgba(255,255,255,0.05); }
 
-        #quizMenuContainer, #setupScreen, #quizContainer, #leaderboardContainer, #cleaningContainer, #zonesMenuContainer, #zonesHistoryContainer, #zonesInputContainer, #zonesQueueContainer, #productCategoriesContainer, #swipeViewContainer, #deliveryContainer, #profileContainer { display: none; }
+        #quizMenuContainer, #setupScreen, #quizContainer, #leaderboardContainer, #cleaningContainer, #zonesMenuContainer, #zonesHistoryContainer, #zonesInputContainer, #zonesQueueContainer, #productCategoriesContainer, #swipeViewContainer, #deliveryContainer, #profileContainer, #reviewsContainer { display: none; }
     </style>
 </head>
 <body>
@@ -88,6 +83,7 @@
         <div id="mainMenu">
             <div class="neon-logo">Emily</div>
             <div class="logo-sub">Brooklyn Pizza</div>
+            <h1 id="userName" style="font-size: 18px; margin:0 0 15px 0;">Welcome!</h1>
             
             <div class="grid-menu">
                 <button class="grid-btn" onclick="showScreen('quizMenuContainer')"><i>📝</i>Тести</button>
@@ -107,9 +103,20 @@
             <h3 id="profileName" style="margin: 0 0 5px 0; font-size: 22px;">Ім'я</h3>
             <div id="profileRank" style="color: #ffcc00; font-weight: bold; font-size: 14px; margin-bottom: 20px;">Ранг</div>
 
+            <div class="profile-stat" style="flex-direction: column; align-items: flex-start; gap: 10px; border-color: var(--brand-red);">
+                <div style="display: flex; justify-content: space-between; width: 100%;">
+                    <span style="color: var(--text-muted); font-size: 13px;">Google Відгуки (місяць):</span>
+                    <b style="font-size: 16px; color: white;"><span id="profileReviewsCount">0</span> / 15</b>
+                </div>
+                <div style="width: 100%; background: #333; height: 8px; border-radius: 4px; overflow: hidden;">
+                    <div id="reviewsProgressBar" style="width: 0%; height: 100%; background: #28a745; transition: width 0.3s;"></div>
+                </div>
+                <button class="menu-btn btn-secondary" style="margin: 5px 0 0 0; padding: 10px; font-size: 12px; border: 1px dashed var(--brand-red);" onclick="showScreen('reviewsContainer')">📸 Додати скріни відгуків</button>
+            </div>
+
             <div class="profile-stat">
                 <span style="color: var(--text-muted); font-size: 13px;">Відпрацьовано змін:</span>
-                <b id="profileShifts" style="font-size: 16px; color: var(--brand-red);">0</b>
+                <b id="profileShifts" style="font-size: 16px; color: white;">0</b>
             </div>
             <div class="profile-stat">
                 <span style="color: var(--text-muted); font-size: 13px;">Всього XP:</span>
@@ -119,18 +126,34 @@
                 <span style="color: var(--text-muted); font-size: 13px;">Пройдено тестів:</span>
                 <b id="profileTests" style="font-size: 16px; color: white;">0</b>
             </div>
+            <div class="profile-stat">
+                <span style="color: var(--text-muted); font-size: 13px;">Правильних відповідей:</span>
+                <b id="profileAccuracy" style="font-size: 16px; color: #ffcc00;">0%</b>
+            </div>
+
             <button class="menu-btn btn-danger" style="margin-top:15px; border:none; font-size: 12px;" onclick="showScreen('mainMenu')">Назад в меню</button>
+        </div>
+
+        <div id="reviewsContainer">
+            <h2 style="margin-top:0; color: white; font-size: 22px;">⭐️ Відгуки</h2>
+            <p style="font-size: 11px; color: var(--text-muted); margin-bottom: 15px;">Додай скріншоти нових відгуків з Google Maps</p>
+            <div style="background: rgba(255,255,255,0.03); padding: 12px; border-radius: 18px; margin: 15px 0; border: 1px solid rgba(226,24,54,0.1);">
+                <div id="reviewGallery" style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin-bottom: 12px;"></div>
+                <button class="menu-btn btn-secondary" style="margin:0; border: 1px dashed #ffcc00; font-size: 13px; color: #ffcc00;" onclick="document.getElementById('hiddenReviewInput').click()">📸 Завантажити скріни</button>
+                <input type="file" id="hiddenReviewInput" accept="image/*" multiple style="display: none;" onchange="handleReviewPhotos(event)">
+                <div id="reviewCountText" style="margin-top: 8px; font-size: 10px; color: var(--text-muted);">0 фото (макс. 10 за раз)</div>
+            </div>
+            <button class="menu-btn btn-correct" id="submitReviewsBtn" onclick="submitReviewsReport()" style="opacity: 0.4; pointer-events: none; padding: 18px;">ВІДПРАВИТИ</button>
+            <button class="menu-btn btn-danger" style="margin-top:5px; border:none; font-size: 12px;" onclick="openProfile()">Скасувати</button>
         </div>
 
         <div id="zonesMenuContainer">
             <h2 style="margin-top:0; color: white;">🪑 Управління зонами</h2>
             <p style="font-size: 11px; color: var(--text-muted); margin-bottom: 20px;">Обери потрібний розділ</p>
-            
             <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 12px;">
                 <button class="menu-btn btn-secondary" style="margin:0; font-size:13px; padding:20px 10px;" onclick="openZonesHistory()">📜 Хронологія</button>
                 <button class="menu-btn btn-secondary" style="margin:0; font-size:13px; padding:20px 10px; border-color:var(--brand-red);" onclick="openZonesInput()">✍️ Внести зони</button>
             </div>
-            
             <div style="display: flex; justify-content: center; margin-bottom: 20px;">
                 <button class="menu-btn btn-primary" style="width: 70%; padding: 18px;" onclick="openZonesQueue()">🛋 Черга (Дивани)</button>
             </div>
@@ -149,9 +172,7 @@
                 <label style="font-size: 12px; color: var(--text-muted); font-weight: bold;">Дата зміни:</label>
                 <input type="date" id="shiftDateInput" style="width: 100%; padding: 10px; border-radius: 8px; border: 1px solid #444; background: #111; color: white; margin-top: 5px; font-family: 'Montserrat'; box-sizing: border-box;">
             </div>
-            
             <div id="dynamicAssignmentsList" style="text-align: left; max-height: 250px; overflow-y: auto; padding-right: 5px; margin-bottom: 10px;"></div>
-            
             <button class="menu-btn btn-secondary" style="font-size: 12px; padding: 10px; border: 1px dashed #555;" onclick="addAssignmentRow()">+ Додати офіціанта</button>
             <button class="menu-btn btn-solid" id="saveZonesBtn" style="margin-top:15px;" onclick="saveStructuredZones()">ВНЕСТИ</button>
             <button class="menu-btn btn-danger" style="margin-top:5px; border:none; font-size: 12px;" onclick="showScreen('zonesMenuContainer')">Скасувати</button>
@@ -169,7 +190,7 @@
 
         <div id="deliveryContainer">
             <h2 style="margin-top:0;">📦 Доставки</h2>
-            <p style="color:var(--text-muted); font-size: 12px;">Модуль у розробці. Тут буде контроль пакування та видачі.</p>
+            <p style="color:var(--text-muted); font-size: 12px;">Модуль у розробці.</p>
             <button class="menu-btn btn-secondary" onclick="showScreen('mainMenu')">Назад</button>
         </div>
 
@@ -182,9 +203,27 @@
             <button class="menu-btn btn-secondary" style="margin-top:20px; border:none;" onclick="showScreen('mainMenu')">Назад</button>
         </div>
 
+        <div id="setupScreen">
+            <h1 id="setupTitle">Дистанція</h1>
+            <div id="distOptions">
+                <button class="menu-btn btn-secondary" onclick="prepareQuiz(20)">20 питань</button>
+                <button class="menu-btn btn-secondary" onclick="prepareQuiz(50)">50 питань</button>
+                <button class="menu-btn btn-secondary" onclick="prepareQuiz(70)">70 питань</button>
+                <button class="menu-btn btn-secondary" onclick="prepareQuiz(100)">100 питань</button>
+            </div>
+            <button class="menu-btn btn-danger" onclick="showScreen('quizMenuContainer')">Назад</button>
+        </div>
+
+        <div id="quizContainer">
+            <img id="questionImage" src="" alt="" style="width: 100%; border-radius: 15px; margin-bottom: 15px; display: none; object-fit: cover; max-height: 180px;">
+            <p id="progressText" style="color: var(--brand-red); font-weight: bold; font-size: 11px; margin:0;"></p>
+            <div id="questionText" style="font-weight: 700; margin: 15px 0; font-size: 16px;"></div>
+            <div id="optionsContainer"></div>
+            <div id="timerDisplay" style="color: var(--brand-red); font-weight: bold; margin-top: 10px; font-size: 20px;"></div>
+        </div>
+
         <div id="cleaningContainer">
             <h2 style="margin-top:0; color: white; font-size: 22px;">🧴 Замиття зони</h2>
-            <p style="font-size: 11px; color: var(--text-muted); margin-bottom: 15px;">Обери номери зон та додай фото</p>
             <div class="checkbox-list" id="zonesCheckboxes" style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
                 <label class="checkbox-label"><input type="checkbox" value="1-7"> 1-7</label>
                 <label class="checkbox-label"><input type="checkbox" value="8-14"> 8-14</label>
@@ -207,7 +246,6 @@
 
         <div id="productCategoriesContainer">
             <h2 style="margin-top:0; color: white; font-size: 22px;">📚 Продакт</h2>
-            <p style="font-size: 11px; color: var(--text-muted); margin-bottom: 15px;">Обери розділ для вивчення</p>
             <div id="dynamicCategoryList" style="display: flex; flex-direction: column; gap: 10px; max-height: 60vh; overflow-y: auto;"></div>
             <button class="menu-btn btn-danger" style="margin-top:15px; border:none; font-size: 12px;" onclick="showScreen('mainMenu')">Назад в меню</button>
         </div>
@@ -223,25 +261,6 @@
                 <button class="hint-btn" onclick="forceSwipe(1)">➡️</button>
             </div>
             <button class="menu-btn btn-danger" style="margin-top:5px; border:none; font-size: 12px;" onclick="showScreen('productCategoriesContainer')">Вийти з режиму</button>
-        </div>
-
-        <div id="setupScreen">
-            <h1 id="setupTitle">Дистанція</h1>
-            <div id="distOptions">
-                <button class="menu-btn btn-secondary" onclick="prepareQuiz(20)">20 питань</button>
-                <button class="menu-btn btn-secondary" onclick="prepareQuiz(50)">50 питань</button>
-                <button class="menu-btn btn-secondary" onclick="prepareQuiz(70)">70 питань</button>
-                <button class="menu-btn btn-secondary" onclick="prepareQuiz(100)">100 питань</button>
-            </div>
-            <button class="menu-btn btn-danger" onclick="showScreen('quizMenuContainer')">Назад</button>
-        </div>
-
-        <div id="quizContainer">
-            <img id="questionImage" src="" alt="" style="width: 100%; border-radius: 15px; margin-bottom: 15px; display: none; object-fit: cover; max-height: 180px;">
-            <p id="progressText" style="color: var(--brand-red); font-weight: bold; font-size: 11px; margin:0;"></p>
-            <div id="questionText" style="font-weight: 700; margin: 15px 0; font-size: 16px;"></div>
-            <div id="optionsContainer"></div>
-            <div id="timerDisplay" style="color: var(--brand-red); font-weight: bold; margin-top: 10px; font-size: 20px;"></div>
         </div>
 
         <div id="leaderboardContainer">
@@ -275,14 +294,17 @@
 
         const API_URL = "https://script.google.com/macros/s/AKfycbxwXzgTnt_i5oQgmgU7zwwkbGmKDmCPG0QqFWddh3mWSv-PvzxtRns5eF78hEZllhAy/exec";
         
-        let questions = [], allLeaders = [], menuItems = [], globalHistoryRaw = [], globalStats = {};
+        let questions = [], allLeaders = [], menuItems = [], globalHistoryRaw = [], globalStats = {}, globalReviews = {};
         let currentIndex = 0, score = 0, mode = '', timerInterval;
         let currentSprintScore = 0, currentMainTab = 'xp', currentSubTab = 20, timeLeft = 15;
         let flatMenuArray = [], swipeCurrentIndex = 0;
         let globalSofaQueue = {};
 
+        // ЖОРСТКИЙ СПИСОК (АБИ ЗАВЖДИ БУВ ДОСТУПНИЙ)
+        const fixedStaffList = ["Лащук Віктор", "Пашко Ангеліна", "Цибуляк Ірина", "Павлик Марта", "Юстина Білогруд", "Олег Баб'як", "Юлія", "Кулик Дарія"];
+
         function showScreen(screenId) {
-            const screens = ['mainMenu', 'quizMenuContainer', 'setupScreen', 'quizContainer', 'leaderboardContainer', 'cleaningContainer', 'zonesMenuContainer', 'zonesHistoryContainer', 'zonesInputContainer', 'zonesQueueContainer', 'productCategoriesContainer', 'swipeViewContainer', 'deliveryContainer', 'profileContainer'];
+            const screens = ['mainMenu', 'quizMenuContainer', 'setupScreen', 'quizContainer', 'leaderboardContainer', 'cleaningContainer', 'zonesMenuContainer', 'zonesHistoryContainer', 'zonesInputContainer', 'zonesQueueContainer', 'productCategoriesContainer', 'swipeViewContainer', 'deliveryContainer', 'profileContainer', 'reviewsContainer'];
             screens.forEach(s => { let el = document.getElementById(s); if (el) el.style.display = 'none'; });
             let target = document.getElementById(screenId);
             if (target) target.style.display = 'block';
@@ -299,18 +321,16 @@
         async function initApp() {
             document.getElementById('userName').innerText = "Hi, " + userData.first_name + "!";
             showScreen('mainMenu');
-            
-            // Авто-реєстрація
             fetch(API_URL, { method: 'POST', body: JSON.stringify({ action: "registerUser", tg_id: userData.id, name: userData.first_name }) });
 
             try {
                 let response = await fetch(API_URL + "?action=init").then(r => r.json());
-                if(response.questions) questions = response.questions;
                 if(response.menu) menuItems = response.menu;
                 if(response.leaders) allLeaders = response.leaders;
                 if(response.sofaQueue) globalSofaQueue = response.sofaQueue;
                 if(response.zoneHistory) globalHistoryRaw = response.zoneHistory;
                 if(response.stats) globalStats = response.stats;
+                if(response.reviews) globalReviews = response.reviews;
                 
                 let me = allLeaders.find(l => String(l.tg_id) === String(userData.id)) || {name: userData.first_name, xp: 0, total_asked: 0};
                 window.myStats = me; 
@@ -318,9 +338,7 @@
         }
         initApp();
 
-        // ==========================================
         // ПРОФІЛЬ
-        // ==========================================
         function openProfile() {
             let me = window.myStats || {name: userData.first_name, xp: 0, total_asked: 0};
             document.getElementById('profileName').innerText = me.name;
@@ -329,159 +347,136 @@
             document.getElementById('profileXp').innerText = me.xp;
             document.getElementById('profileTests').innerText = me.total_asked;
             
+            let accuracy = me.total_asked > 0 ? Math.round((me.xp / me.total_asked) * 100) : 0;
+            document.getElementById('profileAccuracy').innerText = accuracy + "%";
+
             let shiftsCount = (globalStats && globalStats[me.name]) ? globalStats[me.name].shifts : 0;
             document.getElementById('profileShifts').innerText = shiftsCount;
-            
+
+            let reviewsCount = globalReviews[me.name] || 0;
+            document.getElementById('profileReviewsCount').innerText = reviewsCount;
+            let percent = Math.min(100, (reviewsCount / 15) * 100);
+            document.getElementById('reviewsProgressBar').style.width = percent + '%';
             showScreen('profileContainer');
         }
 
-        // ==========================================
-        // ЗОНИ: ХРОНОЛОГІЯ, ВВІД ТА ЧЕРГА
-        // ==========================================
+        // ВІДГУКИ
+        let reviewPhotosArray = [];
+        function handleReviewPhotos(event) {
+            const files = Array.from(event.target.files);
+            if (files.length === 0) return;
+            if (reviewPhotosArray.length + files.length > 10) { alert("Максимум 10 фото за один раз!"); event.target.value = ''; return; }
+            files.forEach(file => reviewPhotosArray.push(file)); event.target.value = ''; renderReviewGallery(); updateReviewBtnState();
+        }
+        function removeReviewPhoto(index) { reviewPhotosArray.splice(index, 1); renderReviewGallery(); updateReviewBtnState(); }
+        function renderReviewGallery() {
+            const gallery = document.getElementById('reviewGallery'); if (!gallery) return;
+            gallery.innerHTML = reviewPhotosArray.map((file, i) => `
+                <div style="position: relative; aspect-ratio: 1/1; border-radius: 8px; overflow: hidden; border: 1px solid rgba(255,255,255,0.1);">
+                    <img src="${URL.createObjectURL(file)}" style="width:100%; height:100%; object-fit:cover;">
+                    <div onclick="removeReviewPhoto(${i})" style="position:absolute; top:2px; right:2px; background:var(--brand-red); color:white; border-radius:50%; width:18px; height:18px; font-size:10px; display:flex; align-items:center; justify-content:center; cursor:pointer;">✕</div>
+                </div>
+            `).join('');
+            document.getElementById('reviewCountText').innerText = `${reviewPhotosArray.length} фото (макс. 10 за раз)`;
+        }
+        function updateReviewBtnState() {
+            const btn = document.getElementById('submitReviewsBtn');
+            if (reviewPhotosArray.length > 0) { btn.style.opacity = '1'; btn.style.pointerEvents = 'auto'; } 
+            else { btn.style.opacity = '0.4'; btn.style.pointerEvents = 'none'; }
+        }
+
+        async function submitReviewsReport() {
+            const btn = document.getElementById('submitReviewsBtn'); btn.innerText = "ВІДПРАВКА..."; btn.style.opacity = '0.5'; btn.style.pointerEvents = 'none';
+            let photoBase64Array = [];
+            try {
+                for (let file of reviewPhotosArray) { const base64 = await compressImage(file, 800, 0.6); photoBase64Array.push({ mimeType: 'image/jpeg', data: base64 }); }
+                await fetch(API_URL, { method: 'POST', body: JSON.stringify({ action: "submitReviews", name: userData.first_name, photos: photoBase64Array })});
+                if (tg && tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('success'); alert("Відгуки зараховано! 🚀");
+                if (!globalReviews[userData.first_name]) globalReviews[userData.first_name] = 0; globalReviews[userData.first_name] += reviewPhotosArray.length;
+                reviewPhotosArray = []; renderReviewGallery(); updateReviewBtnState(); openProfile(); btn.innerText = "ВІДПРАВИТИ"; 
+            } catch (e) { alert("Помилка відправки."); btn.innerText = "ВІДПРАВИТИ"; btn.style.opacity = '1'; btn.style.pointerEvents = 'auto'; }
+        }
+
+        // ЗОНИ І ХРОНОЛОГІЯ
         function openZonesHistory() {
             let grouped = {};
-            globalHistoryRaw.forEach(item => {
-                if(!grouped[item.date]) grouped[item.date] = [];
-                grouped[item.date].push(item);
-            });
-
+            globalHistoryRaw.forEach(item => { if(!grouped[item.date]) grouped[item.date] = []; grouped[item.date].push(item); });
             let hHtml = "";
             let dates = Object.keys(grouped).sort((a,b) => {
-                let pa = a.split('.'), pb = b.split('.');
-                return new Date(pb[2], pb[1]-1, pb[0]) - new Date(pa[2], pa[1]-1, pa[0]);
+                let pa = a.split('.'), pb = b.split('.'); return new Date(pb[2], pb[1]-1, pb[0]) - new Date(pa[2], pa[1]-1, pa[0]);
             });
-
             if (dates.length === 0) hHtml = "<p style='color:#777; font-size:12px;'>Хронологія пуста</p>";
             else {
                 dates.forEach(d => {
                     hHtml += `<div class="history-card"><div class="history-date">📅 ${d}</div>`;
-                    grouped[d].forEach(row => {
-                        hHtml += `<div class="history-row"><span>${row.name}</span> <b style="color:var(--brand-red);">${row.zone}</b></div>`;
-                    });
+                    grouped[d].forEach(row => { hHtml += `<div class="history-row"><span>${row.name}</span> <b style="color:var(--brand-red);">${row.zone}</b></div>`; });
                     hHtml += `</div>`;
                 });
             }
-            document.getElementById('historyListDisplay').innerHTML = hHtml;
-            showScreen('zonesHistoryContainer');
+            document.getElementById('historyListDisplay').innerHTML = hHtml; showScreen('zonesHistoryContainer');
         }
 
         function openZonesInput() {
             document.getElementById('shiftDateInput').valueAsDate = new Date();
-            document.getElementById('dynamicAssignmentsList').innerHTML = "";
-            addAssignmentRow(); // Додаємо один порожній рядок одразу
-            addAssignmentRow();
-            showScreen('zonesInputContainer');
+            document.getElementById('dynamicAssignmentsList').innerHTML = ""; addAssignmentRow(); addAssignmentRow(); showScreen('zonesInputContainer');
         }
 
         function addAssignmentRow() {
             let staffOptions = "<option value='' disabled selected>Оберіть ім'я</option>";
-            allLeaders.forEach(l => { staffOptions += `<option value="${l.name}">${l.name}</option>`; });
-            
-            let div = document.createElement('div');
-            div.className = 'assign-row';
-            div.innerHTML = `
-                <select class="staff-select">${staffOptions}</select>
-                <input type="text" class="zone-input" placeholder="Напр: 22-28 або ЛБ">
-                <button class="del-btn" onclick="this.parentElement.remove()">✕</button>
-            `;
+            fixedStaffList.forEach(name => { staffOptions += `<option value="${name}">${name}</option>`; });
+            let div = document.createElement('div'); div.className = 'assign-row';
+            div.innerHTML = `<select class="staff-select">${staffOptions}</select><input type="text" class="zone-input" placeholder="Напр: 22-28"><button class="del-btn" onclick="this.parentElement.remove()">✕</button>`;
             document.getElementById('dynamicAssignmentsList').appendChild(div);
         }
 
         async function saveStructuredZones() {
-            const btn = document.getElementById('saveZonesBtn');
-            const dateVal = document.getElementById('shiftDateInput').value;
+            const btn = document.getElementById('saveZonesBtn'); const dateVal = document.getElementById('shiftDateInput').value;
             if(!dateVal) return alert("Обери дату!");
-            
-            let assignments = [];
-            let rows = document.querySelectorAll('.assign-row');
-            rows.forEach(r => {
-                let name = r.querySelector('.staff-select').value;
-                let zone = r.querySelector('.zone-input').value.trim();
-                if(name && zone) assignments.push({name: name, zone: zone});
-            });
-
+            let assignments = []; let rows = document.querySelectorAll('.assign-row');
+            rows.forEach(r => { let name = r.querySelector('.staff-select').value; let zone = r.querySelector('.zone-input').value.trim(); if(name && zone) assignments.push({name: name, zone: zone}); });
             if(assignments.length === 0) return alert("Додай хоча б одну зону!");
-
             btn.innerText = "ЗБЕРЕЖЕННЯ..."; btn.style.opacity = '0.5'; btn.style.pointerEvents = 'none';
-
             try {
-                await fetch(API_URL, { method: 'POST', body: JSON.stringify({
-                    action: "saveStructuredZones", date: dateVal, assignments: assignments
-                })});
-                if (tg && typeof tg.HapticFeedback !== 'undefined') tg.HapticFeedback.notificationOccurred('success');
-                alert("Зони успішно внесено!");
-                
-                let parts = dateVal.split('-');
-                let fDate = `${parts[2]}.${parts[1]}.${parts[0]}`;
-                assignments.forEach(a => { globalHistoryRaw.push({date: fDate, name: a.name, zone: a.zone}); });
-                
-                showScreen('zonesMenuContainer');
+                await fetch(API_URL, { method: 'POST', body: JSON.stringify({ action: "saveStructuredZones", date: dateVal, assignments: assignments })});
+                if (tg && tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('success'); alert("Зони успішно внесено!");
+                let parts = dateVal.split('-'); let fDate = `${parts[2]}.${parts[1]}.${parts[0]}`;
+                assignments.forEach(a => { globalHistoryRaw.push({date: fDate, name: a.name, zone: a.zone}); }); showScreen('zonesMenuContainer');
             } catch (e) { alert("Помилка збереження."); }
-            
             btn.innerText = "ВНЕСТИ"; btn.style.opacity = '1'; btn.style.pointerEvents = 'auto';
         }
 
         function openZonesQueue() {
-            let staffNames = allLeaders.map(l => l.name);
-            if(staffNames.length === 0) staffNames = ['Віктор', 'Ангеліна', 'Юстина', 'Юлія']; // фолбек
-
-            let nextWeekends = [];
-            let d = new Date();
-            while(nextWeekends.length < 8) {
-                if(d.getDay() === 0 || d.getDay() === 6) { nextWeekends.push(new Date(d)); }
-                d.setDate(d.getDate() + 1);
-            }
-            
+            let nextWeekends = []; let d = new Date();
+            while(nextWeekends.length < 8) { if(d.getDay() === 0 || d.getDay() === 6) { nextWeekends.push(new Date(d)); } d.setDate(d.getDate() + 1); }
             let queueArr = [];
-            for (let waiter of staffNames) {
-                let dateStr = globalSofaQueue[waiter] || "Не було";
-                let sortVal = 0;
-                if (dateStr !== "Не було") {
-                    let parts = dateStr.split('.');
-                    if(parts.length === 3) sortVal = new Date(parts[2], parts[1]-1, parts[0]).getTime();
-                }
+            for (let waiter of fixedStaffList) {
+                let dateStr = globalSofaQueue[waiter] || "Не було"; let sortVal = 0;
+                if (dateStr !== "Не було") { let parts = dateStr.split('.'); if(parts.length === 3) sortVal = new Date(parts[2], parts[1]-1, parts[0]).getTime(); }
                 queueArr.push({ name: waiter, sortVal: sortVal });
             }
             queueArr.sort((a, b) => a.sortVal - b.sortVal);
-            
-            let qHtml = "";
-            let days = ['Нд', 'Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб'];
-            let months = ['січ', 'лют', 'бер', 'квіт', 'трав', 'черв', 'лип', 'серп', 'вер', 'жовт', 'лист', 'груд'];
-
+            let qHtml = ""; let days = ['Нд', 'Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб']; let months = ['січ', 'лют', 'бер', 'квіт', 'трав', 'черв', 'лип', 'серп', 'вер', 'жовт', 'лист', 'груд'];
             nextWeekends.forEach((date, i) => {
-                let staffName = queueArr[i % queueArr.length].name;
-                let dateStr = `${date.getDate()} ${months[date.getMonth()]} (${days[date.getDay()]})`;
+                let staffName = queueArr[i % queueArr.length].name; let dateStr = `${date.getDate()} ${months[date.getMonth()]} (${days[date.getDay()]})`;
                 qHtml += `<div class="queue-item"><span>📅 ${dateStr}</span><b style="color:white;">${staffName}</b></div>`;
             });
-            document.getElementById('sofaScheduleList').innerHTML = qHtml;
-            showScreen('zonesQueueContainer');
+            document.getElementById('sofaScheduleList').innerHTML = qHtml; showScreen('zonesQueueContainer');
         }
 
         // ==========================================
         // ПРОДАКТ (СВАЙПИ)
         // ==========================================
         function openProductMenu() {
-            if (menuItems.length === 0) { alert("Завантажуємо меню з бази... Спробуй через секунду."); return; }
-            let categories = [...new Set(menuItems.map(item => item.category))];
-            let html = "";
-            categories.forEach(cat => {
-                let count = menuItems.filter(i => i.category === cat).length;
-                html += `
-                    <button class="menu-btn btn-secondary" style="display: flex; align-items: center; justify-content: space-between; padding: 16px; text-align: left;" onclick="startSwipeMode('${cat}')">
-                        <span style="font-size: 16px; font-weight: bold;">🍽 ${cat} <span style="font-size: 12px; color: var(--text-muted); font-weight: normal;">(${count})</span></span>
-                        <span style="color: var(--brand-red); font-size: 14px;">➔</span>
-                    </button>
-                `;
-            });
-            document.getElementById('dynamicCategoryList').innerHTML = html || "<p>Меню пусте</p>";
-            showScreen('productCategoriesContainer');
+            if (menuItems.length === 0) { alert("База продуктів завантажується... Спробуй через секунду."); return; }
+            let categories = [...new Set(menuItems.map(item => item.category))]; let html = "";
+            categories.forEach(cat => { let count = menuItems.filter(i => i.category === cat).length; html += `<button class="menu-btn btn-secondary" style="display: flex; align-items: center; justify-content: space-between; padding: 16px; text-align: left;" onclick="startSwipeMode('${cat}')"><span style="font-size: 16px; font-weight: bold;">🍽 ${cat} <span style="font-size: 12px; color: var(--text-muted); font-weight: normal;">(${count})</span></span><span style="color: var(--brand-red); font-size: 14px;">➔</span></button>`; });
+            document.getElementById('dynamicCategoryList').innerHTML = html || "<p>Меню пусте</p>"; showScreen('productCategoriesContainer');
         }
 
         function startSwipeMode(startCategory) {
             flatMenuArray = menuItems.sort((a, b) => {
                 if(a.category === startCategory && b.category !== startCategory) return -1;
-                if(a.category !== startCategory && b.category === startCategory) return 1;
-                return a.category.localeCompare(b.category);
+                if(a.category !== startCategory && b.category === startCategory) return 1; return a.category.localeCompare(b.category);
             });
             swipeCurrentIndex = 0; renderSwipeCard(); showScreen('swipeViewContainer');
         }
@@ -489,91 +484,49 @@
         function renderSwipeCard() {
             if (swipeCurrentIndex < 0) swipeCurrentIndex = 0;
             if (swipeCurrentIndex >= flatMenuArray.length) { alert("Ти переглянув все меню!"); showScreen('productCategoriesContainer'); return; }
-
-            const item = flatMenuArray[swipeCurrentIndex];
-            const card = document.getElementById('swipeCard');
-            document.getElementById('currentSwipeCategory').innerText = item.category;
-            document.getElementById('swipeProgressText').innerText = `${swipeCurrentIndex + 1} / ${flatMenuArray.length}`;
-
+            const item = flatMenuArray[swipeCurrentIndex]; const card = document.getElementById('swipeCard');
+            document.getElementById('currentSwipeCategory').innerText = item.category; document.getElementById('swipeProgressText').innerText = `${swipeCurrentIndex + 1} / ${flatMenuArray.length}`;
             let peppers = "";
             if (item.spicy) {
                 let spiceStr = String(item.spicy);
                 if (spiceStr.includes('🌶')) peppers = spiceStr; 
-                else {
-                    let num = parseInt(spiceStr);
-                    if (!isNaN(num) && num > 0) { for(let p=0; p<num; p++) peppers += "🌶️"; } 
-                    else peppers = spiceStr; 
-                }
+                else { let num = parseInt(spiceStr); if (!isNaN(num) && num > 0) { for(let p=0; p<num; p++) peppers += "🌶️"; } else peppers = spiceStr; }
             }
-
             let photoHtml = item.photo ? `<div class="card-img-container"><img src="${item.photo}"></div>` : `<div class="card-img-container"><div class="card-img-placeholder">🍽</div></div>`;
-
-            card.innerHTML = `
-                ${photoHtml}
-                <div class="card-body">
-                    <div class="card-title-row">
-                        <div>
-                            <h2 class="card-title">${item.name}</h2>
-                            ${peppers ? `<div class="card-spicy">Гострота: ${peppers}</div>` : ''}
-                        </div>
-                        ${item.weight ? `<div class="card-weight">${item.weight}</div>` : ''}
-                    </div>
-                    ${item.desc ? `<div class="card-info-block"><span class="card-info-title">📖 Смачний опис:</span>${item.desc}</div>` : ''}
-                    ${item.ingredients ? `<div class="card-info-block"><span class="card-info-title">🧀 Склад:</span>${item.ingredients}</div>` : ''}
-                    ${item.allergens ? `<div class="card-allergens">⚠️ Алергени: ${item.allergens}</div>` : ''}
-                </div>
-            `;
+            card.innerHTML = `${photoHtml}<div class="card-body"><div class="card-title-row"><div><h2 class="card-title">${item.name}</h2>${peppers ? `<div class="card-spicy">Гострота: ${peppers}</div>` : ''}</div>${item.weight ? `<div class="card-weight">${item.weight}</div>` : ''}</div>${item.desc ? `<div class="card-info-block"><span class="card-info-title">📖 Смачний опис:</span>${item.desc}</div>` : ''}${item.ingredients ? `<div class="card-info-block"><span class="card-info-title">🧀 Склад:</span>${item.ingredients}</div>` : ''}${item.allergens ? `<div class="card-allergens">⚠️ Алергени: ${item.allergens}</div>` : ''}</div>`;
             card.style.transition = 'none'; card.style.transform = 'translateX(0px) rotate(0deg)'; card.style.opacity = '1';
         }
 
         function forceSwipe(direction) {
-            const card = document.getElementById('swipeCard');
-            card.style.transition = 'transform 0.3s ease-out, opacity 0.3s';
-            if (direction === 1) { 
-                card.style.transform = `translateX(-120vw) rotate(-15deg)`; card.style.opacity = '0';
-                setTimeout(() => { swipeCurrentIndex++; renderSwipeCard(); }, 300);
-            } else { 
-                if (swipeCurrentIndex === 0) return; 
-                card.style.transform = `translateX(120vw) rotate(15deg)`; card.style.opacity = '0';
-                setTimeout(() => { swipeCurrentIndex--; renderSwipeCard(); }, 300);
-            }
+            const card = document.getElementById('swipeCard'); card.style.transition = 'transform 0.3s ease-out, opacity 0.3s';
+            if (direction === 1) { card.style.transform = `translateX(-120vw) rotate(-15deg)`; card.style.opacity = '0'; setTimeout(() => { swipeCurrentIndex++; renderSwipeCard(); }, 300); } 
+            else { if (swipeCurrentIndex === 0) return; card.style.transform = `translateX(120vw) rotate(15deg)`; card.style.opacity = '0'; setTimeout(() => { swipeCurrentIndex--; renderSwipeCard(); }, 300); }
         }
 
-        const swipeContainer = document.getElementById('swipeContainer');
-        let startX = 0, startY = 0, currentX = 0, isDragging = false;
-
+        const swipeContainer = document.getElementById('swipeContainer'); let startX = 0, startY = 0, currentX = 0, isDragging = false;
         swipeContainer.addEventListener('touchstart', (e) => { startX = e.touches[0].clientX; startY = e.touches[0].clientY; isDragging = true; document.getElementById('swipeCard').style.transition = 'none'; });
         swipeContainer.addEventListener('touchmove', (e) => {
-            if (!isDragging) return;
-            let deltaX = e.touches[0].clientX - startX, deltaY = e.touches[0].clientY - startY;
+            if (!isDragging) return; let deltaX = e.touches[0].clientX - startX, deltaY = e.touches[0].clientY - startY;
             if (Math.abs(deltaY) > Math.abs(deltaX) && Math.abs(deltaX) < 30) { isDragging = false; document.getElementById('swipeCard').style.transform = `translateX(0px) rotate(0deg)`; return; }
             currentX = deltaX; document.getElementById('swipeCard').style.transform = `translateX(${currentX}px) rotate(${currentX * 0.05}deg)`;
         });
         swipeContainer.addEventListener('touchend', (e) => {
-            if (!isDragging) return;
-            isDragging = false;
+            if (!isDragging) return; isDragging = false;
             if (currentX > 80) forceSwipe(-1); else if (currentX < -80) forceSwipe(1);
-            else { let card = document.getElementById('swipeCard'); card.style.transition = 'transform 0.3s ease-out'; card.style.transform = `translateX(0px) rotate(0deg)`; }
-            currentX = 0;
+            else { let card = document.getElementById('swipeCard'); card.style.transition = 'transform 0.3s ease-out'; card.style.transform = `translateX(0px) rotate(0deg)`; } currentX = 0;
         });
 
         // ЗАМИТТЯ
         let cleaningPhotosArray = [];
         function handleNewPhotos(event) {
-            const files = Array.from(event.target.files);
-            if (files.length === 0) return;
+            const files = Array.from(event.target.files); if (files.length === 0) return;
             if (cleaningPhotosArray.length + files.length > 10) { alert("Максимум 10 фото!"); event.target.value = ''; return; }
             files.forEach(file => cleaningPhotosArray.push(file)); event.target.value = ''; renderPhotoGallery(); updateCleaningBtnState();
         }
         function removePhoto(index) { cleaningPhotosArray.splice(index, 1); renderPhotoGallery(); updateCleaningBtnState(); }
         function renderPhotoGallery() {
             const gallery = document.getElementById('photoGallery'); if (!gallery) return;
-            gallery.innerHTML = cleaningPhotosArray.map((file, i) => `
-                <div style="position: relative; aspect-ratio: 1/1; border-radius: 8px; overflow: hidden; border: 1px solid rgba(255,255,255,0.1);">
-                    <img src="${URL.createObjectURL(file)}" style="width:100%; height:100%; object-fit:cover;">
-                    <div onclick="removePhoto(${i})" style="position:absolute; top:2px; right:2px; background:var(--brand-red); color:white; border-radius:50%; width:18px; height:18px; font-size:10px; display:flex; align-items:center; justify-content:center;">✕</div>
-                </div>
-            `).join('');
+            gallery.innerHTML = cleaningPhotosArray.map((file, i) => `<div style="position: relative; aspect-ratio: 1/1; border-radius: 8px; overflow: hidden; border: 1px solid rgba(255,255,255,0.1);"><img src="${URL.createObjectURL(file)}" style="width:100%; height:100%; object-fit:cover;"><div onclick="removePhoto(${i})" style="position:absolute; top:2px; right:2px; background:var(--brand-red); color:white; border-radius:50%; width:18px; height:18px; font-size:10px; display:flex; align-items:center; justify-content:center;">✕</div></div>`).join('');
             document.getElementById('photoCountText').innerText = `${cleaningPhotosArray.length} / 10 (мін. 3)`;
         }
         function updateCleaningBtnState() {
@@ -590,8 +543,7 @@
                     img.onload = () => {
                         let w = img.width, h = img.height; if (w > maxWidth) { h = Math.round((h * maxWidth) / w); w = maxWidth; }
                         const cvs = document.createElement('canvas'); cvs.width = w; cvs.height = h;
-                        const ctx = cvs.getContext('2d'); ctx.drawImage(img, 0, 0, w, h);
-                        resolve(cvs.toDataURL('image/jpeg', quality).split(',')[1]);
+                        const ctx = cvs.getContext('2d'); ctx.drawImage(img, 0, 0, w, h); resolve(cvs.toDataURL('image/jpeg', quality).split(',')[1]);
                     };
                 };
             });
@@ -608,19 +560,36 @@
             } catch (e) { alert("Помилка відправки."); btn.innerText = "ЗАМИТИ ЗОНУ"; btn.style.opacity = '1'; btn.style.pointerEvents = 'auto'; }
         }
 
-        // ВІКТОРИНИ
+        // ==========================================
+        // ВІКТОРИНИ (ВИПРАВЛЕНО: ТЯГНЕ ПИТАННЯ ОНЛАЙН)
+        // ==========================================
         function openSetup(m) { mode = m; showScreen('setupScreen'); document.getElementById('setupTitle').innerText = (m === 'photo') ? "Фото-тест" : "Дистанція"; }
+        
         async function prepareQuiz(count) {
-            showScreen('quizContainer'); if(questions.length === 0) { alert("Питань немає!"); showScreen('mainMenu'); return; }
-            let quizQ = mode === 'photo' ? questions.filter(q => q.photo && q.photo.length > 5) : [...questions];
-            quizQ = quizQ.sort(() => Math.random() - 0.5).slice(0, count); if(quizQ.length === 0) { alert("Питань немає!"); showScreen('mainMenu'); return; }
-            let tempQuestions = [...questions]; questions = quizQ; startQuiz(); questions = tempQuestions; 
+            showScreen('quizContainer'); 
+            document.getElementById('questionText').innerText = "Завантаження питань...";
+            try {
+                let data = await fetch(API_URL + "?action=getQuestions").then(r => r.json());
+                let fetchedQ = data.questions || [];
+                if (mode === 'photo') { fetchedQ = fetchedQ.filter(q => q.photo && q.photo.length > 5); }
+                fetchedQ = fetchedQ.sort(() => Math.random() - 0.5).slice(0, count);
+                if(fetchedQ.length === 0) { alert("Питань немає в базі!"); showScreen('mainMenu'); return; }
+                questions = fetchedQ; startQuiz();
+            } catch (e) { alert("Помилка завантаження бази."); showScreen('mainMenu'); }
         }
+
         async function startAssessment() {
-            if(!confirm("Це офіційна атестація!")) return; mode = 'exam'; showScreen('quizContainer');
-            if(questions.length === 0) { alert("База пуста."); showScreen('mainMenu'); return; }
-            let temp = [...questions]; questions = questions.sort(() => Math.random() - 0.5); startQuiz(); questions = temp;
+            if(!confirm("Це офіційна атестація!")) return; 
+            mode = 'exam'; showScreen('quizContainer');
+            document.getElementById('questionText').innerText = "Завантаження атестації...";
+            try {
+                let data = await fetch(API_URL + "?action=getQuestions").then(r => r.json());
+                questions = (data.questions || []).sort(() => Math.random() - 0.5);
+                if(questions.length === 0) { alert("База пуста."); showScreen('mainMenu'); return; }
+                startQuiz();
+            } catch(e) { alert("Помилка бази."); showScreen('mainMenu'); }
         }
+
         function startQuiz() { currentIndex = 0; score = 0; currentSprintScore = 0; showQuestion(); }
         function showQuestion() {
             clearInterval(timerInterval); if (currentIndex >= questions.length) { finishQuiz(); return; }
