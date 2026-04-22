@@ -150,7 +150,6 @@
     </div>
 
     <script>
-        // БРОНЕБІЙНА ІНІЦІАЛІЗАЦІЯ (Щоб скрипт не падав)
         let tg;
         let userData = {first_name: "Колега", id: "0"};
         
@@ -171,7 +170,6 @@
         let questions = [], currentIndex = 0, score = 0, mode = '', timerInterval, allLeaders = [];
         let currentSprintScore = 0, currentMainTab = 'xp', currentSubTab = 20, timeLeft = 15;
 
-        // Навігація між екранами
         function showScreen(screenId) {
             const screens = ['mainMenu', 'quizMenuContainer', 'setupScreen', 'quizContainer', 'leaderboardContainer', 'cleaningContainer', 'deliveryContainer', 'productContainer'];
             screens.forEach(s => {
@@ -182,7 +180,7 @@
             if (target) target.style.display = 'block';
         }
 
-        // --- ЛОГІКА МОДУЛЯ ЗАМИТТЯ ---
+        // --- ЛОГІКА МОДУЛЯ ЗАМИТТЯ (ЗІ СТИСНЕННЯМ ФОТО) ---
         let cleaningPhotosArray = [];
 
         function handleNewPhotos(event) {
@@ -225,10 +223,36 @@
             }
         }
 
-        // Захищене додавання слухача подій
         const zonesContainer = document.getElementById('zonesCheckboxes');
-        if (zonesContainer) {
-            zonesContainer.addEventListener('change', updateCleaningBtnState);
+        if (zonesContainer) zonesContainer.addEventListener('change', updateCleaningBtnState);
+
+        // ФУНКЦІЯ СТИСНЕННЯ ФОТО
+        function compressImage(file, maxWidth = 1024, quality = 0.7) {
+            return new Promise((resolve, reject) => {
+                const reader = new FileReader();
+                reader.readAsDataURL(file);
+                reader.onload = event => {
+                    const img = new Image();
+                    img.src = event.target.result;
+                    img.onload = () => {
+                        let width = img.width;
+                        let height = img.height;
+                        if (width > maxWidth) {
+                            height = Math.round((height * maxWidth) / width);
+                            width = maxWidth;
+                        }
+                        const canvas = document.createElement('canvas');
+                        canvas.width = width;
+                        canvas.height = height;
+                        const ctx = canvas.getContext('2d');
+                        ctx.drawImage(img, 0, 0, width, height);
+                        const compressedBase64 = canvas.toDataURL('image/jpeg', quality).split(',')[1];
+                        resolve(compressedBase64);
+                    };
+                    img.onerror = error => reject(error);
+                };
+                reader.onerror = error => reject(error);
+            });
         }
 
         async function submitCleaningReport() {
@@ -239,27 +263,21 @@
             let photoBase64Array = [];
 
             try {
+                // Стискаємо кожне фото перед відправкою
                 for (let file of cleaningPhotosArray) {
-                    const base64 = await new Promise((resolve, reject) => {
-                        const reader = new FileReader();
-                        reader.onload = e => resolve(e.target.result.split(',')[1]);
-                        reader.onerror = error => reject(error);
-                        reader.readAsDataURL(file);
-                    });
-                    photoBase64Array.push({ mimeType: file.type, data: base64 });
+                    const base64 = await compressImage(file, 800, 0.6); // 800px, 60% якості - ідеально для звіту
+                    photoBase64Array.push({ mimeType: 'image/jpeg', data: base64 });
                 }
 
                 await fetch(API_URL, { method: 'POST', body: JSON.stringify({
                     action: "cleaningReport", name: userData.first_name, zones: zones, photos: photoBase64Array
                 })});
                 
-                if (tg && typeof tg.HapticFeedback !== 'undefined') {
-                    tg.HapticFeedback.notificationOccurred('success');
-                }
+                if (tg && typeof tg.HapticFeedback !== 'undefined') tg.HapticFeedback.notificationOccurred('success');
                 alert("Замито! 🚀");
                 location.reload();
             } catch (e) { 
-                alert("Помилка відправки. Перевір інтернет."); 
+                alert("Помилка відправки. Можливо поганий інтернет."); 
                 btn.innerText = "ЗАМИТИ ЗОНУ"; 
                 btn.style.opacity = '1'; 
                 btn.style.pointerEvents = 'auto';
@@ -290,7 +308,6 @@
             } catch(e) {}
         }
         
-        // Запускаємо додаток
         initApp();
 
         function openSetup(m) { 
