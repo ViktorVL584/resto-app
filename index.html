@@ -49,6 +49,7 @@
         .card-body { padding: 15px; text-align: left; flex: 1; overflow-y: auto; display: flex; flex-direction: column; gap: 12px; }
         .card-title-row { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 5px; }
         .card-title { font-size: 20px; font-weight: 700; margin: 0; color: white; line-height: 1.2; }
+        .card-spicy { font-size: 14px; margin-top: 4px; color: #ff4757; font-weight: bold; }
         .card-weight { font-size: 12px; color: var(--brand-red); font-weight: bold; background: rgba(226,24,54,0.15); padding: 5px 10px; border-radius: 10px; white-space: nowrap; }
         .card-info-block { background: rgba(255,255,255,0.04); padding: 12px; border-radius: 12px; font-size: 13px; color: #ddd; line-height: 1.4; }
         .card-info-title { color: white; display: block; margin-bottom: 4px; font-size: 13px; font-weight: bold; }
@@ -73,6 +74,7 @@
         .del-btn { background: #333; color: #ff4757; border: none; border-radius: 8px; width: 35px; height: 35px; font-weight: bold; cursor: pointer; }
 
         .profile-stat { background: #1a1a1a; border-radius: 15px; padding: 15px; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; border: 1px solid rgba(255,255,255,0.05); }
+        .profile-stat-col { display: flex; flex-direction: column; align-items: flex-start; }
 
         #quizMenuContainer, #setupScreen, #quizContainer, #leaderboardContainer, #cleaningContainer, #zonesMenuContainer, #zonesHistoryContainer, #zonesInputContainer, #zonesQueueContainer, #productCategoriesContainer, #swipeViewContainer, #deliveryContainer, #profileContainer, #reviewsContainer { display: none; }
     </style>
@@ -104,21 +106,34 @@
             <h3 id="profileName" style="margin: 0 0 5px 0; font-size: 22px;">Ім'я</h3>
             <div id="profileRank" style="color: #ffcc00; font-weight: bold; font-size: 14px; margin-bottom: 20px;">Ранг</div>
 
-            <div class="profile-stat" style="flex-direction: column; align-items: flex-start; gap: 10px; border-color: var(--brand-red);">
+            <div class="profile-stat profile-stat-col" style="border-color: var(--brand-red);">
                 <div style="display: flex; justify-content: space-between; width: 100%;">
                     <span style="color: var(--text-muted); font-size: 13px;">Google Відгуки (місяць):</span>
                     <b style="font-size: 16px; color: white;"><span id="profileReviewsCount">0</span> / 15</b>
                 </div>
-                <div style="width: 100%; background: #333; height: 8px; border-radius: 4px; overflow: hidden;">
+                <div style="width: 100%; background: #333; height: 8px; border-radius: 4px; overflow: hidden; margin-top: 10px;">
                     <div id="reviewsProgressBar" style="width: 0%; height: 100%; background: #28a745; transition: width 0.3s;"></div>
                 </div>
-                <button class="menu-btn btn-secondary" style="margin: 5px 0 0 0; padding: 10px; font-size: 12px; border: 1px dashed var(--brand-red);" onclick="showScreen('reviewsContainer')">📸 Додати скріни відгуків</button>
+                <button class="menu-btn btn-secondary" style="margin: 10px 0 0 0; padding: 10px; font-size: 12px; border: 1px dashed var(--brand-red);" onclick="showScreen('reviewsContainer')">📸 Додати скріни відгуків</button>
             </div>
 
             <div class="profile-stat">
                 <span style="color: var(--text-muted); font-size: 13px;">Відпрацьовано змін:</span>
                 <b id="profileShifts" style="font-size: 16px; color: white;">0</b>
             </div>
+            <div class="profile-stat">
+                <span style="color: var(--text-muted); font-size: 13px;">Улюблена зона:</span>
+                <b id="profileFavZone" style="font-size: 16px; color: var(--brand-red);">Немає</b>
+            </div>
+            <div class="profile-stat">
+                <span style="color: var(--text-muted); font-size: 13px;">Наступні "Дивани":</span>
+                <b id="profileNextSofa" style="font-size: 14px; color: #ffcc00;">Шукаю...</b>
+            </div>
+            <div class="profile-stat">
+                <span style="color: var(--text-muted); font-size: 13px;">Доставки:</span>
+                <b id="profileDeliveries" style="font-size: 16px; color: white;">0</b>
+            </div>
+
             <div class="profile-stat">
                 <span style="color: var(--text-muted); font-size: 13px;">Всього XP:</span>
                 <b id="profileXp" style="font-size: 16px; color: white;">0</b>
@@ -182,8 +197,7 @@
         <div id="zonesQueueContainer">
             <h2 style="margin-top:0; color: white;">🛋 Черга (Дивани)</h2>
             <div class="queue-box">
-                <div style="font-size: 14px; font-weight: bold; margin-bottom: 8px; text-align: center; color: white;">🔥 Графік на вихідні дні</div>
-                <div style="font-size: 10px; color: var(--text-muted); text-align: center; margin-bottom: 10px;">Прогноз системи на основі історії черги (тільки СБ/НД)</div>
+                <div style="font-size: 14px; font-weight: bold; margin-bottom: 8px; text-align: center; color: white;">🔥 Циклічний графік (СБ/НД)</div>
                 <div id="sofaScheduleList"></div>
             </div>
             <button class="menu-btn btn-secondary" onclick="showScreen('zonesMenuContainer')">Назад</button>
@@ -299,9 +313,22 @@
         let currentIndex = 0, score = 0, mode = '', timerInterval;
         let currentSprintScore = 0, currentMainTab = 'xp', currentSubTab = 20, timeLeft = 15;
         let flatMenuArray = [], swipeCurrentIndex = 0;
-        let globalSofaQueue = {};
 
         const fixedStaffList = ["Лащук Віктор", "Пашко Ангеліна", "Цибуляк Ірина", "Павлик Марта", "Юстина Білогруд", "Олег Баб'як", "Юлія", "Кулик Дарія"];
+        
+        // НОВА ЖОРСТКА ЧЕРГА НА ДИВАНИ (ВІДЛІК)
+        const sofaCycleOrder = [
+            "Кулик Дарія", 
+            "Олег Баб'як", 
+            "Лащук Віктор", 
+            "Пашко Ангеліна", 
+            "Цибуляк Ірина", 
+            "Павлик Марта", 
+            "Юстина Білогруд", 
+            "Юлія"
+        ];
+        // Точка відліку: Субота, в яку стоїть Кулик Дарія (наприклад, 25 Квітня 2026)
+        const anchorDate = new Date(2026, 3, 25); // Місяці з 0 (3 = Квітень)
 
         function showScreen(screenId) {
             const screens = ['mainMenu', 'quizMenuContainer', 'setupScreen', 'quizContainer', 'leaderboardContainer', 'cleaningContainer', 'zonesMenuContainer', 'zonesHistoryContainer', 'zonesInputContainer', 'zonesQueueContainer', 'productCategoriesContainer', 'swipeViewContainer', 'deliveryContainer', 'profileContainer', 'reviewsContainer'];
@@ -318,6 +345,43 @@
             return "🐣 Стажерчик";
         }
 
+        // ФУНКЦІЯ ПРОГНОЗУ ДИВАНІВ ДЛЯ ОДНІЄЇ ЛЮДИНИ
+        function getNextSofaDateFor(waiterName) {
+            let startIndex = sofaCycleOrder.indexOf(waiterName);
+            if (startIndex === -1) return "Не знайдено в графіку";
+
+            let today = new Date();
+            today.setHours(0,0,0,0);
+            
+            // Йдемо по вихідних, починаючи з anchorDate, поки не знайдемо майбутню дату для цієї людини
+            let checkDate = new Date(anchorDate);
+            let currentTurnIndex = 0; // На anchorDate черга Дарії (індекс 0)
+
+            // Якщо ми зараз далеко в майбутньому від anchorDate, треба "наздогнати" час
+            while (checkDate < today) {
+                // Переходимо до наступного вихідного
+                if (checkDate.getDay() === 6) { checkDate.setDate(checkDate.getDate() + 1); } // Субота -> Неділя
+                else { checkDate.setDate(checkDate.getDate() + 6); } // Неділя -> Субота
+                
+                currentTurnIndex = (currentTurnIndex + 1) % sofaCycleOrder.length;
+            }
+
+            // Тепер ми на найближчому до сьогодні вихідному. Шукаємо чергу нашої людини.
+            for (let i = 0; i < sofaCycleOrder.length * 2; i++) { // Запобіжник від безкінечного циклу
+                if (sofaCycleOrder[currentTurnIndex] === waiterName) {
+                    let days = ['Нд', 'Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб'];
+                    let months = ['січ', 'лют', 'бер', 'квіт', 'трав', 'черв', 'лип', 'серп', 'вер', 'жовт', 'лист', 'груд'];
+                    return `${checkDate.getDate()} ${months[checkDate.getMonth()]} (${days[checkDate.getDay()]})`;
+                }
+                
+                // Крок вперед
+                if (checkDate.getDay() === 6) { checkDate.setDate(checkDate.getDate() + 1); }
+                else { checkDate.setDate(checkDate.getDate() + 6); }
+                currentTurnIndex = (currentTurnIndex + 1) % sofaCycleOrder.length;
+            }
+            return "Невідомо";
+        }
+
         async function initApp() {
             document.getElementById('userName').innerText = "Завантаження бази... ⏳";
             document.getElementById('userName').style.color = "#ffcc00";
@@ -328,7 +392,6 @@
                 let response = await fetch(API_URL).then(r => r.json());
                 if(response.menu) menuItems = response.menu;
                 if(response.leaders) allLeaders = response.leaders;
-                if(response.sofaQueue) globalSofaQueue = response.sofaQueue;
                 if(response.zoneHistory) globalHistoryRaw = response.zoneHistory;
                 if(response.stats) globalStats = response.stats;
                 if(response.reviews) globalReviews = response.reviews;
@@ -348,7 +411,6 @@
         function openProfile() {
             let me = window.myStats || {name: userData.first_name, xp: 0, total_asked: 0};
             document.getElementById('profileName').innerText = me.name;
-            document.getElementById('profileId').innerText = userData.id;
             document.getElementById('profileRank').innerText = getRankInfo(me.xp);
             document.getElementById('profileXp').innerText = me.xp;
             document.getElementById('profileTests').innerText = me.total_asked;
@@ -358,6 +420,11 @@
 
             let shiftsCount = (globalStats && globalStats[me.name]) ? globalStats[me.name].shifts : 0;
             document.getElementById('profileShifts').innerText = shiftsCount;
+            
+            let favZ = (globalStats && globalStats[me.name]) ? globalStats[me.name].favZone : "Немає";
+            document.getElementById('profileFavZone').innerText = favZ;
+
+            document.getElementById('profileNextSofa').innerText = getNextSofaDateFor(me.name);
 
             let reviewsCount = globalReviews[me.name] || 0;
             document.getElementById('profileReviewsCount').innerText = reviewsCount;
@@ -450,21 +517,38 @@
         }
 
         function openZonesQueue() {
-            let nextWeekends = []; let d = new Date();
-            while(nextWeekends.length < 8) { if(d.getDay() === 0 || d.getDay() === 6) { nextWeekends.push(new Date(d)); } d.setDate(d.getDate() + 1); }
-            let queueArr = [];
-            for (let waiter of fixedStaffList) {
-                let dateStr = globalSofaQueue[waiter] || "Не було"; let sortVal = 0;
-                if (dateStr !== "Не було") { let parts = dateStr.split('.'); if(parts.length === 3) sortVal = new Date(parts[2], parts[1]-1, parts[0]).getTime(); }
-                queueArr.push({ name: waiter, sortVal: sortVal });
+            let nextWeekends = []; 
+            let d = new Date();
+            // Знаходимо найближчі 8 вихідних днів починаючи від сьогодні
+            while(nextWeekends.length < 8) { 
+                if(d.getDay() === 0 || d.getDay() === 6) { nextWeekends.push(new Date(d)); } 
+                d.setDate(d.getDate() + 1); 
             }
-            queueArr.sort((a, b) => a.sortVal - b.sortVal);
-            let qHtml = ""; let days = ['Нд', 'Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб']; let months = ['січ', 'лют', 'бер', 'квіт', 'трав', 'черв', 'лип', 'серп', 'вер', 'жовт', 'лист', 'груд'];
-            nextWeekends.forEach((date, i) => {
-                let staffName = queueArr[i % queueArr.length].name; let dateStr = `${date.getDate()} ${months[date.getMonth()]} (${days[date.getDay()]})`;
-                qHtml += `<div class="queue-item"><span>📅 ${dateStr}</span><b style="color:white;">${staffName}</b></div>`;
+            
+            let qHtml = ""; 
+            let days = ['Нд', 'Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб']; 
+            let months = ['січ', 'лют', 'бер', 'квіт', 'трав', 'черв', 'лип', 'серп', 'вер', 'жовт', 'лист', 'груд'];
+
+            // Логіка жорсткого циклу
+            nextWeekends.forEach((targetDate) => {
+                let currentCheck = new Date(anchorDate);
+                let turnIndex = 0;
+                
+                while (currentCheck < targetDate || currentCheck.getTime() === targetDate.getTime()) {
+                    if (currentCheck.getTime() === targetDate.getTime()) {
+                        let staffName = sofaCycleOrder[turnIndex];
+                        let dateStr = `${targetDate.getDate()} ${months[targetDate.getMonth()]} (${days[targetDate.getDay()]})`;
+                        qHtml += `<div class="queue-item"><span>📅 ${dateStr}</span><b style="color:white;">${staffName}</b></div>`;
+                        break;
+                    }
+                    if (currentCheck.getDay() === 6) { currentCheck.setDate(currentCheck.getDate() + 1); }
+                    else { currentCheck.setDate(currentCheck.getDate() + 6); }
+                    turnIndex = (turnIndex + 1) % sofaCycleOrder.length;
+                }
             });
-            document.getElementById('sofaScheduleList').innerHTML = qHtml; showScreen('zonesQueueContainer');
+
+            document.getElementById('sofaScheduleList').innerHTML = qHtml; 
+            showScreen('zonesQueueContainer');
         }
 
         function openProductMenu() {
@@ -487,12 +571,14 @@
             if (swipeCurrentIndex >= flatMenuArray.length) { alert("Ти переглянув все меню!"); showScreen('productCategoriesContainer'); return; }
             const item = flatMenuArray[swipeCurrentIndex]; const card = document.getElementById('swipeCard');
             document.getElementById('currentSwipeCategory').innerText = item.category; document.getElementById('swipeProgressText').innerText = `${swipeCurrentIndex + 1} / ${flatMenuArray.length}`;
-            let notesHtml = "";
+            let peppers = "";
             if (item.spicy) {
-                notesHtml = `<div class="card-info-block" style="background: rgba(226,24,54,0.1); border: 1px solid rgba(226,24,54,0.3);"><span class="card-info-title" style="color: #ffcc00;">📌 Примітки:</span>${item.spicy}</div>`;
+                let spiceStr = String(item.spicy);
+                if (spiceStr.includes('🌶')) peppers = spiceStr; 
+                else { let num = parseInt(spiceStr); if (!isNaN(num) && num > 0) { for(let p=0; p<num; p++) peppers += "🌶️"; } else peppers = spiceStr; }
             }
             let photoHtml = item.photo ? `<div class="card-img-container"><img src="${item.photo}"></div>` : `<div class="card-img-container"><div class="card-img-placeholder">🍽</div></div>`;
-            card.innerHTML = `${photoHtml}<div class="card-body"><div class="card-title-row"><div><h2 class="card-title">${item.name}</h2></div>${item.weight ? `<div class="card-weight">${item.weight}</div>` : ''}</div>${item.desc ? `<div class="card-info-block"><span class="card-info-title">📖 Смачний опис:</span>${item.desc}</div>` : ''}${item.ingredients ? `<div class="card-info-block"><span class="card-info-title">🧀 Склад:</span>${item.ingredients}</div>` : ''}${item.allergens ? `<div class="card-allergens">⚠️ Алергени: ${item.allergens}</div>` : ''}${notesHtml}</div>`;
+            card.innerHTML = `${photoHtml}<div class="card-body"><div class="card-title-row"><div><h2 class="card-title">${item.name}</h2>${peppers ? `<div class="card-spicy">Гострота: ${peppers}</div>` : ''}</div>${item.weight ? `<div class="card-weight">${item.weight}</div>` : ''}</div>${item.desc ? `<div class="card-info-block"><span class="card-info-title">📖 Смачний опис:</span>${item.desc}</div>` : ''}${item.ingredients ? `<div class="card-info-block"><span class="card-info-title">🧀 Склад:</span>${item.ingredients}</div>` : ''}${item.allergens ? `<div class="card-allergens">⚠️ Алергени: ${item.allergens}</div>` : ''}</div>`;
             card.style.transition = 'none'; card.style.transform = 'translateX(0px) rotate(0deg)'; card.style.opacity = '1';
         }
 
@@ -515,8 +601,6 @@
             else { let card = document.getElementById('swipeCard'); card.style.transition = 'transform 0.3s ease-out'; card.style.transform = `translateX(0px) rotate(0deg)`; } currentX = 0;
         });
 
-        // ЗАМИТТЯ
-        let cleaningPhotosArray = [];
         function handleNewPhotos(event) {
             const files = Array.from(event.target.files); if (files.length === 0) return;
             if (cleaningPhotosArray.length + files.length > 10) { alert("Максимум 10 фото!"); event.target.value = ''; return; }
@@ -559,9 +643,6 @@
             } catch (e) { alert("Помилка відправки."); btn.innerText = "ЗАМИТИ ЗОНУ"; btn.style.opacity = '1'; btn.style.pointerEvents = 'auto'; }
         }
 
-        // ==========================================
-        // ВІКТОРИНИ (СИСТЕМА ЗАВАНТАЖЕННЯ НА ЛЬОТУ)
-        // ==========================================
         function openSetup(m) { mode = m; showScreen('setupScreen'); document.getElementById('setupTitle').innerText = (m === 'photo') ? "Фото-тест" : "Дистанція"; }
         
         async function prepareQuiz(count) {
@@ -604,8 +685,6 @@
             clearInterval(timerInterval); const btns = document.querySelectorAll('#optionsContainer button'); btns.forEach(b => b.classList.add('btn-disabled'));
             if (sel == corr) { score++; if(mode === 'timed') currentSprintScore += (100 + (timeLeft * 10)); document.getElementById('btn-' + sel)?.classList.add('btn-correct'); if(tg && tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('success'); } 
             else { if (sel != 0) document.getElementById('btn-' + sel)?.classList.add('btn-incorrect'); document.getElementById('btn-' + corr)?.classList.add('btn-correct'); if(tg && tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('error'); }
-            
-            // Затримка 1.5 секунди щоб побачити правильну відповідь!
             setTimeout(() => { currentIndex++; showQuestion(); }, 1500);
         }
         async function finishQuiz() {
