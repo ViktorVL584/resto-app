@@ -3,15 +3,15 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Emily Brooklyn Pizza</title>
+    <title>Emily Waiter App</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@700&family=Montserrat:wght@400;700&display=swap" rel="stylesheet">
     <style>
         :root { --brand-red: #E21836; --brand-dark: #0f0f0f; --text-main: #ffffff; --text-muted: #888888; }
-        body { font-family: 'Montserrat', sans-serif; background: radial-gradient(circle at top, #3a0d14 0%, var(--brand-dark) 80%); background-color: var(--brand-dark); color: var(--text-main); margin: 0; padding: 0; min-height: 100vh; display: flex; justify-content: center; align-items: center; overflow: hidden; }
-        .main-container { width: 95%; max-width: 360px; background: rgba(15, 15, 15, 0.7); backdrop-filter: blur(10px); border: 1px solid rgba(226, 24, 54, 0.2); border-radius: 24px; padding: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); text-align: center; box-sizing: border-box; max-height: 95vh; overflow-y: auto; }
+        body { font-family: 'Montserrat', sans-serif; background: radial-gradient(circle at top, #3a0d14 0%, var(--brand-dark) 80%); background-color: var(--brand-dark); color: var(--text-main); margin: 0; padding: 0; min-height: 100vh; overflow: hidden; }
+        .main-container { width: 95%; max-width: 360px; background: rgba(15, 15, 15, 0.7); backdrop-filter: blur(10px); border: 1px solid rgba(226, 24, 54, 0.2); border-radius: 24px; padding: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); text-align: center; box-sizing: border-box; max-height: 95vh; overflow-y: auto; margin: 2.5vh auto; }
         
-        .neon-logo { font-family: 'Caveat', cursive; font-size: 45px; color: #fff; text-shadow: 0 0 5px #fff, 0 0 10px #fff, 0 0 20px var(--brand-red), 0 0 40px var(--brand-red); margin: 0; line-height: 1; transform: rotate(-2deg); }
+        .neon-logo { font-family: 'Caveat', cursive; font-size: 45px; color: #fff; text-shadow: 0 0 5px #fff, 0 0 10px #fff, 0 0 20px var(--brand-red); margin: 0; line-height: 1; transform: rotate(-2deg); }
         .logo-sub { font-size: 10px; letter-spacing: 3px; color: var(--text-muted); text-transform: uppercase; margin-top: 5px; margin-bottom: 20px; }
         
         .grid-menu { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 15px; }
@@ -19,82 +19,43 @@
         .grid-btn i { font-size: 28px; font-style: normal; }
         .grid-btn:active { transform: scale(0.95); background: rgba(226, 24, 54, 0.2); border-color: var(--brand-red); }
 
-        .menu-btn { width: 100%; padding: 14px; margin-bottom: 10px; border-radius: 14px; font-family: 'Montserrat', sans-serif; font-size: 14px; font-weight: 700; cursor: pointer; border: none; transition: all 0.2s; outline: none; }
-        .btn-primary { background-color: var(--brand-red); color: white; box-shadow: 0 4px 15px rgba(226, 24, 54, 0.4); }
+        .menu-btn { width: 100%; padding: 14px; margin-bottom: 10px; border-radius: 14px; font-family: 'Montserrat', sans-serif; font-size: 14px; font-weight: 700; cursor: pointer; border: none; transition: 0.2s; outline: none; }
+        .btn-primary { background-color: var(--brand-red); color: white; }
         .btn-secondary { background-color: #1e1e1e; color: white; border: 1px solid #333; }
         .btn-danger { background: none; border: 1px solid var(--brand-red); color: var(--brand-red); }
-        .btn-correct { background-color: #28a745 !important; box-shadow: 0 0 15px rgba(40, 167, 69, 0.6) !important; color: white; }
-        .btn-incorrect { background-color: #dc3545 !important; box-shadow: 0 0 15px rgba(220, 53, 69, 0.6) !important; color: white; }
-        .btn-disabled { pointer-events: none; opacity: 0.8; }
-        .btn-solid { background-color: #2b2b2b; color: white; border: 1px solid #555; }
-        .btn-solid:active { background-color: #3b3b3b; }
-        
-        .checkbox-list { text-align: left; background: #1a1a1a; padding: 15px; border-radius: 15px; margin-bottom: 15px; }
-        .checkbox-label { display: flex; align-items: center; gap: 10px; margin-bottom: 12px; font-size: 13px; color: #ddd; }
-        .checkbox-label input { width: 18px; height: 18px; accent-color: var(--brand-red); }
-        
-        .tabs-main { display: flex; gap: 3px; margin-bottom: 10px; background: #111; padding: 4px; border-radius: 12px; }
-        .tab-m { flex: 1; font-size: 8px; padding: 8px 1px; border-radius: 8px; cursor: pointer; color: var(--text-muted); text-transform: uppercase; font-weight: 700; }
-        .tab-m.active { background: var(--brand-red); color: white; }
-        .tabs-sub { display: flex; justify-content: center; gap: 10px; margin-bottom: 15px; }
-        .tab-s { font-size: 11px; padding: 5px 12px; border-radius: 20px; cursor: pointer; background: #222; color: var(--text-muted); border: 1px solid #333; }
-        .tab-s.active { border-color: var(--brand-red); color: white; }
-        .leader-item { display: flex; justify-content: space-between; padding: 12px 8px; border-bottom: 1px solid #222; font-size: 12px; }
-        
+
+        /* СВАЙП КАРТКИ */
         .swipe-container { position: relative; width: 100%; height: 70vh; max-height: 580px; margin-bottom: 15px; }
-        .swipe-card { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: #1a1a1a; border-radius: 20px; border: 1px solid rgba(226, 24, 54, 0.2); box-shadow: 0 10px 20px rgba(0,0,0,0.5); display: flex; flex-direction: column; overflow: hidden; will-change: transform; }
-        .card-img-container { width: 100%; height: 45%; background: #0a0a0a; display: flex; align-items: center; justify-content: center; border-bottom: 1px solid rgba(255, 255, 255, 0.05); }
+        .swipe-card { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: #1a1a1a; border-radius: 20px; border: 1px solid rgba(226, 24, 54, 0.2); box-shadow: 0 10px 20px rgba(0,0,0,0.5); display: flex; flex-direction: column; overflow: hidden; }
+        .card-img-container { width: 100%; height: 45%; background: #0a0a0a; overflow: hidden; }
         .card-img-container img { width: 100%; height: 100%; object-fit: cover; }
-        .card-img-placeholder { font-size: 50px; color: #333; }
-        
-        .card-body { padding: 15px; text-align: left; flex: 1; overflow-y: auto; display: flex; flex-direction: column; gap: 12px; }
-        .card-title-row { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 5px; }
-        .card-title { font-size: 20px; font-weight: 700; margin: 0; color: white; line-height: 1.2; }
-        .card-weight { font-size: 12px; color: var(--brand-red); font-weight: bold; background: rgba(226,24,54,0.15); padding: 5px 10px; border-radius: 10px; white-space: nowrap; }
-        .card-info-block { background: rgba(255,255,255,0.04); padding: 12px; border-radius: 12px; font-size: 13px; color: #ddd; line-height: 1.4; }
-        .card-info-title { color: white; display: block; margin-bottom: 4px; font-size: 13px; font-weight: bold; }
-        .card-allergens { font-size: 12px; color: #E21836; font-style: italic; margin-top: auto; padding-top: 5px; }
-        .swipe-hints { display: flex; justify-content: space-between; padding: 0 10px; margin-bottom: 10px; }
-        .hint-btn { background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); color: white; border-radius: 50%; width: 45px; height: 45px; display: flex; justify-content: center; align-items: center; font-size: 20px; cursor: pointer; transition: 0.2s; }
-        .hint-btn:active { transform: scale(0.9); background: rgba(226,24,54,0.2); }
-        .category-badge { display: inline-block; background: #E21836; color: white; padding: 5px 12px; border-radius: 20px; font-size: 12px; font-weight: bold; margin-bottom: 10px; box-shadow: 0 0 10px rgba(226,24,54,0.5); }
+        .card-body { padding: 15px; text-align: left; flex: 1; overflow-y: auto; display: flex; flex-direction: column; gap: 10px; }
+        .card-title { font-size: 20px; font-weight: 700; margin: 0; color: white; }
+        .card-info-block { background: rgba(255,255,255,0.04); padding: 12px; border-radius: 12px; font-size: 13px; color: #ddd; }
+        .card-info-title { color: #ffcc00; display: block; margin-bottom: 4px; font-weight: bold; font-size: 11px; text-transform: uppercase; }
 
-        .queue-box { background: rgba(226, 24, 54, 0.1); border: 1px solid var(--brand-red); border-radius: 15px; padding: 12px; margin-bottom: 20px; text-align: left; }
-        .queue-item { display: flex; justify-content: space-between; font-size: 12px; padding: 8px 0; border-bottom: 1px dashed rgba(255,255,255,0.05); }
-        .queue-item:last-child { border-bottom: none; }
-        .history-card { background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.05); border-radius: 15px; margin-bottom: 12px; overflow: hidden; text-align: left; }
-        .history-date { background: rgba(226, 24, 54, 0.15); padding: 8px 12px; font-size: 11px; font-weight: bold; color: white; border-bottom: 1px solid rgba(255,255,255,0.05); }
-        .history-row { display: flex; justify-content: space-between; padding: 8px 12px; font-size: 12px; color: #ddd; border-bottom: 1px solid rgba(255,255,255,0.02); }
-        .history-row:last-child { border-bottom: none; }
-        .assign-row { display: flex; align-items: center; gap: 8px; margin-bottom: 10px; }
-        .staff-select { flex: 1; padding: 10px; border-radius: 8px; border: 1px solid #444; background: #111; color: white; font-family: 'Montserrat'; font-size: 12px; }
-        .zone-input { flex: 1; padding: 10px; border-radius: 8px; border: 1px solid #444; background: #111; color: white; font-family: 'Montserrat'; font-size: 12px; }
-        .del-btn { background: #333; color: #ff4757; border: none; border-radius: 8px; width: 35px; height: 35px; font-weight: bold; cursor: pointer; }
-        
-        .profile-stat { background: #1a1a1a; border-radius: 15px; padding: 15px; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; border: 1px solid rgba(255,255,255,0.05); }
-        
-        .search-bar { width: 100%; padding: 12px 15px; border-radius: 15px; border: 1px solid #444; background: #1a1a1a; color: white; font-family: 'Montserrat'; font-size: 14px; margin-bottom: 15px; box-sizing: border-box; outline: none; }
-        .search-bar:focus { border-color: var(--brand-red); }
-        .search-result-item { padding: 12px 15px; border-bottom: 1px solid #333; text-align: left; cursor: pointer; display: flex; justify-content: space-between; align-items: center; transition: 0.2s; }
-        .search-result-item:active { background: rgba(226,24,54,0.1); }
-        .search-result-item:last-child { border-bottom: none; }
-        .search-result-title { font-size: 14px; font-weight: bold; color: white; }
-        .search-result-cat { font-size: 10px; color: var(--brand-red); background: rgba(226,24,54,0.1); padding: 4px 8px; border-radius: 8px; font-weight: bold; }
+        /* ТАБЛИЦЯ ДИВАНІВ */
+        .sofa-table { width: 100%; border-collapse: collapse; font-size: 13px; margin-top: 10px; }
+        .sofa-table td { padding: 12px; border-bottom: 1px solid #333; text-align: left; }
+        .sofa-date { color: var(--brand-red); font-weight: bold; width: 40%; }
+        .sofa-name { color: white; font-weight: bold; }
 
+        /* АВАТАР */
         .avatar-box { width: 80px; height: 80px; border-radius: 50%; background: #222; display: flex; align-items: center; justify-content: center; font-size: 40px; margin: 0 auto 10px auto; border: 2px solid var(--brand-red); cursor: pointer; overflow: hidden; position: relative; }
         .avatar-box img { width: 100%; height: 100%; object-fit: cover; }
-        .avatar-loader { position: absolute; width: 100%; height: 100%; background: rgba(0,0,0,0.7); display: none; align-items: center; justify-content: center; font-size: 12px; color: white; }
+        
+        .search-bar { width: 100%; padding: 12px; border-radius: 12px; border: 1px solid #444; background: #1a1a1a; color: white; font-family: 'Montserrat'; margin-bottom: 15px; box-sizing: border-box; }
+        .search-result-item { padding: 12px; border-bottom: 1px solid #333; text-align: left; cursor: pointer; display: flex; justify-content: space-between; }
 
         #quizMenuContainer, #setupScreen, #quizContainer, #leaderboardContainer, #cleaningContainer, #zonesMenuContainer, #zonesHistoryContainer, #zonesInputContainer, #zonesQueueContainer, #productMainContainer, #productKitchenContainer, #swipeViewContainer, #deliveryContainer, #profileContainer, #reviewsContainer { display: none; }
     </style>
 </head>
 <body>
     <div class="main-container">
-        
         <div id="mainMenu">
             <div class="neon-logo">Emily</div>
             <div class="logo-sub">Brooklyn Pizza</div>
-            <h1 id="userName" style="font-size: 18px; margin:0 0 15px 0; color: #ffcc00;">Завантаження бази... ⏳</h1>
+            <h1 id="userName" style="font-size: 16px; margin-bottom: 20px; color: #ffcc00;">Завантаження...</h1>
             <div class="grid-menu">
                 <button class="grid-btn" onclick="showScreen('quizMenuContainer')"><i>📝</i>Тести</button>
                 <button class="grid-btn" onclick="showScreen('deliveryContainer')"><i>📦</i>Доставки</button>
@@ -103,117 +64,60 @@
                 <button class="grid-btn" onclick="showScreen('zonesMenuContainer')"><i>🪑</i>Зони</button>
                 <button class="grid-btn" onclick="openProfile()"><i>👤</i>Профіль</button>
             </div>
-            <button class="menu-btn btn-secondary" onclick="showLeaderboard()">🏆 Загальний Рейтинг</button>
+            <button class="menu-btn btn-secondary" onclick="showLeaderboard()">🏆 Рейтинг</button>
         </div>
 
         <div id="profileContainer">
-            <h2 style="margin-top:0; color: white;">👤 Особиста сторінка</h2>
+            <h2 style="margin:0 0 15px 0;">Профіль</h2>
             <div class="avatar-box" onclick="document.getElementById('avatarUpload').click()">
                 <div id="avatarEmoji">🍕</div>
                 <img id="avatarImage" src="" style="display:none;">
-                <div class="avatar-loader" id="avatarLoader">⏳</div>
             </div>
             <input type="file" id="avatarUpload" accept="image/*" style="display:none;" onchange="handleAvatarUpload(event)">
+            <h3 id="profileName" style="margin:0;">Ім'я</h3>
+            <div id="profileRank" style="color:#ffcc00; font-size:12px; margin-bottom:20px;">🐣 Стажерчик</div>
             
-            <h3 id="profileName" style="margin: 0 0 5px 0; font-size: 22px;">Ім'я</h3>
-            <div id="profileRank" style="color: #ffcc00; font-weight: bold; font-size: 14px; margin-bottom: 20px;">Ранг</div>
-
-            <div class="profile-stat" style="flex-direction: column; align-items: flex-start; gap: 10px; border-color: var(--brand-red);">
-                <div style="display: flex; justify-content: space-between; width: 100%;">
-                    <span style="color: var(--text-muted); font-size: 13px;">Google Відгуки (місяць):</span>
-                    <b style="font-size: 16px; color: white;"><span id="profileReviewsCount">0</span> / 15</b>
+            <div style="background:#1a1a1a; padding:15px; border-radius:15px; margin-bottom:10px; border:1px solid var(--brand-red);">
+                <div style="display:flex; justify-content:space-between; font-size:12px; margin-bottom:5px;">
+                    <span>Google Відгуки</span>
+                    <b><span id="profileReviewsCount">0</span>/15</b>
                 </div>
-                <div style="width: 100%; background: #333; height: 8px; border-radius: 4px; overflow: hidden;">
-                    <div id="reviewsProgressBar" style="width: 0%; height: 100%; background: #28a745; transition: width 0.3s;"></div>
+                <div style="width:100%; height:6px; background:#333; border-radius:3px; overflow:hidden;">
+                    <div id="reviewsProgressBar" style="width:0%; height:100%; background:#28a745;"></div>
                 </div>
-                <button class="menu-btn btn-secondary" style="margin: 5px 0 0 0; padding: 10px; font-size: 12px; border: 1px dashed var(--brand-red);" onclick="showScreen('reviewsContainer')">📸 Додати скріни відгуків</button>
+                <button class="menu-btn btn-secondary" style="margin-top:10px; padding:8px; font-size:11px;" onclick="showScreen('reviewsContainer')">📸 Додати скрін</button>
             </div>
 
-            <div class="profile-stat">
-                <span style="color: var(--text-muted); font-size: 13px;">Відпрацьовано змін:</span>
-                <b id="profileShifts" style="font-size: 16px; color: white;">0</b>
+            <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-bottom:15px;">
+                <div style="background:#1a1a1a; padding:10px; border-radius:12px; font-size:11px;">
+                    <span style="color:#888;">Змін:</span><br><b id="profileShifts">0</b>
+                </div>
+                <div style="background:#1a1a1a; padding:10px; border-radius:12px; font-size:11px;">
+                    <span style="color:#888;">Доставки:</span><br><b>0</b>
+                </div>
+                <div style="background:#1a1a1a; padding:10px; border-radius:12px; font-size:11px;">
+                    <span style="color:#888;">Всього XP:</span><br><b id="profileXp">0</b>
+                </div>
+                <div style="background:#1a1a1a; padding:10px; border-radius:12px; font-size:11px;">
+                    <span style="color:#888;">Точність:</span><br><b id="profileAccuracy">0%</b>
+                </div>
             </div>
-            <div class="profile-stat">
-                <span style="color: var(--text-muted); font-size: 13px;">Всього XP:</span>
-                <b id="profileXp" style="font-size: 16px; color: white;">0</b>
-            </div>
-            <div class="profile-stat">
-                <span style="color: var(--text-muted); font-size: 13px;">Пройдено тестів:</span>
-                <b id="profileTests" style="font-size: 16px; color: white;">0</b>
-            </div>
-            <div class="profile-stat">
-                <span style="color: var(--text-muted); font-size: 13px;">Правильних відповідей:</span>
-                <b id="profileAccuracy" style="font-size: 16px; color: #ffcc00;">0%</b>
-            </div>
-            <button class="menu-btn btn-danger" style="margin-top:15px; border:none; font-size: 12px;" onclick="showScreen('mainMenu')">Назад в меню</button>
-        </div>
-
-        <div id="reviewsContainer">
-            <h2 style="margin-top:0; color: white; font-size: 22px;">⭐️ Відгуки</h2>
-            <p style="font-size: 11px; color: var(--text-muted); margin-bottom: 15px;">Додай скріншоти нових відгуків з Google Maps</p>
-            <div style="background: rgba(255,255,255,0.03); padding: 12px; border-radius: 18px; margin: 15px 0; border: 1px solid rgba(226,24,54,0.1);">
-                <div id="reviewGallery" style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin-bottom: 12px;"></div>
-                <button class="menu-btn btn-secondary" style="margin:0; border: 1px dashed #ffcc00; font-size: 13px; color: #ffcc00;" onclick="document.getElementById('hiddenReviewInput').click()">📸 Завантажити скріни</button>
-                <input type="file" id="hiddenReviewInput" accept="image/*" multiple style="display: none;" onchange="handleReviewPhotos(event)">
-                <div id="reviewCountText" style="margin-top: 8px; font-size: 10px; color: var(--text-muted);">0 фото (макс. 10 за раз)</div>
-            </div>
-            <button class="menu-btn btn-correct" id="submitReviewsBtn" onclick="submitReviewsReport()" style="opacity: 0.4; pointer-events: none; padding: 18px;">ВІДПРАВИТИ</button>
-            <button class="menu-btn btn-danger" style="margin-top:5px; border:none; font-size: 12px;" onclick="openProfile()">Скасувати</button>
-        </div>
-
-        <div id="zonesMenuContainer">
-            <h2 style="margin-top:0; color: white;">🪑 Управління зонами</h2>
-            <p style="font-size: 11px; color: var(--text-muted); margin-bottom: 20px;">Обери потрібний розділ</p>
-            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 12px;">
-                <button class="menu-btn btn-secondary" style="margin:0; font-size:13px; padding:20px 10px;" onclick="openZonesHistory()">📜 Хронологія</button>
-                <button class="menu-btn btn-secondary" style="margin:0; font-size:13px; padding:20px 10px; border-color:var(--brand-red);" onclick="openZonesInput()">✍️ Внести зони</button>
-            </div>
-            <div style="display: flex; justify-content: center; margin-bottom: 20px;">
-                <button class="menu-btn btn-primary" style="width: 70%; padding: 18px;" onclick="openZonesQueue()">💸 Money Talk (Дивани)</button>
-            </div>
-            <button class="menu-btn btn-danger" style="border:none; font-size: 12px;" onclick="showScreen('mainMenu')">Назад в меню</button>
-        </div>
-
-        <div id="zonesHistoryContainer">
-            <h2 style="margin-top:0; color: white;">📜 Хронологія</h2>
-            <div id="historyListDisplay" style="max-height: 400px; overflow-y: auto; padding-right: 5px; margin-bottom: 15px;"></div>
-            <button class="menu-btn btn-secondary" onclick="showScreen('zonesMenuContainer')">Назад</button>
-        </div>
-
-        <div id="zonesInputContainer">
-            <h2 style="margin-top:0; color: white;">✍️ Внести зони</h2>
-            <div style="text-align: left; margin-bottom: 15px; background: rgba(255,255,255,0.02); padding: 10px; border-radius: 12px;">
-                <label style="font-size: 12px; color: var(--text-muted); font-weight: bold;">Дата зміни:</label>
-                <input type="date" id="shiftDateInput" style="width: 100%; padding: 10px; border-radius: 8px; border: 1px solid #444; background: #111; color: white; margin-top: 5px; font-family: 'Montserrat'; box-sizing: border-box;">
-            </div>
-            <div id="dynamicAssignmentsList" style="text-align: left; max-height: 250px; overflow-y: auto; padding-right: 5px; margin-bottom: 10px;"></div>
-            <button class="menu-btn btn-secondary" style="font-size: 12px; padding: 10px; border: 1px dashed #555;" onclick="addAssignmentRow()">+ Додати офіціанта</button>
-            <button class="menu-btn btn-solid" id="saveZonesBtn" style="margin-top:15px;" onclick="saveStructuredZones()">ВНЕСТИ</button>
-            <button class="menu-btn btn-danger" style="margin-top:5px; border:none; font-size: 12px;" onclick="showScreen('zonesMenuContainer')">Скасувати</button>
+            <button class="menu-btn btn-danger" onclick="showScreen('mainMenu')">Назад</button>
         </div>
 
         <div id="zonesQueueContainer">
-            <h2 style="margin-top:0; color: white;">💸 Money Talk</h2>
-            <p style="font-size: 11px; color: var(--text-muted); margin-bottom: 15px;">Точний розрахунок диванної черги</p>
-            <div class="queue-box" id="sofaScheduleList"></div>
-            <button class="menu-btn btn-secondary" onclick="showScreen('zonesMenuContainer')">Назад</button>
-        </div>
-
-        <div id="productMainContainer">
-            <h2 style="margin-top:0; color: white;">📚 Продакт</h2>
-            <p style="font-size: 11px; color: var(--text-muted); margin-bottom: 15px;">Обери розділ</p>
-            <button class="menu-btn btn-secondary" style="padding: 20px; font-size: 18px; margin-bottom: 15px; border-color: var(--brand-red);" onclick="openKitchenMenu()">🍔 Кухня</button>
-            <button class="menu-btn btn-secondary" style="padding: 20px; font-size: 18px; margin-bottom: 15px; opacity: 0.5;">🍹 Бар (В розробці)</button>
-            <button class="menu-btn btn-secondary" style="padding: 20px; font-size: 18px; margin-bottom: 15px; opacity: 0.5;">💼 Work (В розробці)</button>
-            <button class="menu-btn btn-danger" style="margin-top:10px; border:none; font-size: 12px;" onclick="showScreen('mainMenu')">Назад в меню</button>
+            <h2 style="margin:0;">💸 Money Talk</h2>
+            <p style="font-size:11px; color:#888;">Черга на дивани (22-28)</p>
+            <table class="sofa-table" id="sofaScheduleTable"></table>
+            <button class="menu-btn btn-secondary" style="margin-top:20px;" onclick="showScreen('zonesMenuContainer')">Назад</button>
         </div>
 
         <div id="productKitchenContainer">
-            <h2 style="margin-top:0; color: white;">🍔 Кухня</h2>
-            <input type="text" id="menuSearchInput" class="search-bar" placeholder="🔍 Пошук по назві або складу..." onkeyup="filterMenu()">
-            <div id="searchResults" style="display: none; background: #1a1a1a; border-radius: 12px; max-height: 350px; overflow-y: auto; margin-bottom: 15px; border: 1px solid #333;"></div>
-            <div id="dynamicCategoryList" style="display: flex; flex-direction: column; gap: 10px; max-height: 50vh; overflow-y: auto;"></div>
-            <button class="menu-btn btn-danger" style="margin-top:15px; border:none; font-size: 12px;" onclick="showScreen('productMainContainer')">Назад</button>
+            <h2 style="margin:0 0 15px 0;">🍔 Кухня</h2>
+            <input type="text" id="menuSearchInput" class="search-bar" placeholder="🔍 Назва або склад..." onkeyup="filterMenu()">
+            <div id="searchResults" style="display:none;"></div>
+            <div id="dynamicCategoryList" style="display:flex; flex-direction:column; gap:10px;"></div>
+            <button class="menu-btn btn-danger" style="margin-top:20px;" onclick="showScreen('productMainContainer')">Назад</button>
         </div>
 
         <div id="swipeViewContainer">
@@ -223,556 +127,304 @@
             </div>
             <div class="swipe-hints">
                 <button class="hint-btn" onclick="forceSwipe(-1)">⬅️</button>
-                <div style="color: var(--text-muted); font-size: 14px; font-weight: bold; display: flex; align-items: center;" id="swipeProgressText">1 / 10</div>
+                <div style="color:white; font-size:14px; font-weight:bold; display:flex; align-items:center;" id="swipeProgressText">1 / 10</div>
                 <button class="hint-btn" onclick="forceSwipe(1)">➡️</button>
             </div>
-            <button class="menu-btn btn-danger" style="margin-top:5px; border:none; font-size: 12px;" onclick="showScreen('productKitchenContainer')">Вийти з режиму</button>
+            <button class="menu-btn btn-danger" onclick="showScreen('productKitchenContainer')">Вийти</button>
         </div>
 
-        <div id="deliveryContainer">
-            <h2 style="margin-top:0;">📦 Доставки</h2>
-            <p style="color:var(--text-muted); font-size: 12px;">Модуль у розробці.</p>
-            <button class="menu-btn btn-secondary" onclick="showScreen('mainMenu')">Назад</button>
+        <div id="quizContainer">
+            <img id="questionImage" src="" style="width:100%; border-radius:15px; margin-bottom:15px; display:none; height:180px; object-fit:cover;">
+            <p id="progressText" style="color:var(--brand-red); font-size:11px; font-weight:bold;"></p>
+            <div id="questionText" style="font-weight:700; margin:15px 0; font-size:16px;"></div>
+            <div id="optionsContainer"></div>
+        </div>
+
+        <div id="zonesInputContainer">
+            <h2 style="margin:0 0 15px 0;">✍️ Внести зони</h2>
+            <input type="date" id="shiftDateInput" style="width:100%; padding:12px; border-radius:10px; background:#1a1a1a; color:white; border:1px solid #444; margin-bottom:15px;">
+            <div id="dynamicAssignmentsList"></div>
+            <button class="menu-btn btn-secondary" onclick="addAssignmentRow()">+ Офіціант</button>
+            <button class="menu-btn btn-primary" id="saveZonesBtn" onclick="saveStructuredZones()">Внести</button>
+            <button class="menu-btn btn-danger" onclick="showScreen('zonesMenuContainer')">Скасувати</button>
+        </div>
+
+        <div id="zonesHistoryContainer">
+            <h2>📜 Хронологія</h2>
+            <div id="historyListDisplay" style="max-height:450px; overflow-y:auto;"></div>
+            <button class="menu-btn btn-secondary" onclick="showScreen('zonesMenuContainer')">Назад</button>
+        </div>
+
+        <div id="productMainContainer">
+            <h2>📚 Продакт</h2>
+            <button class="menu-btn btn-secondary" style="padding:20px; border-color:var(--brand-red);" onclick="openKitchenMenu()">🍔 Кухня</button>
+            <button class="menu-btn btn-secondary" style="padding:20px; opacity:0.5;">🍹 Бар</button>
+            <button class="menu-btn btn-danger" onclick="showScreen('mainMenu')">Назад</button>
+        </div>
+        
+        <div id="zonesMenuContainer">
+            <h2>🪑 Зони</h2>
+            <button class="menu-btn btn-secondary" onclick="openZonesHistory()">📜 Хронологія</button>
+            <button class="menu-btn btn-secondary" onclick="openZonesInput()">✍️ Внести зони</button>
+            <button class="menu-btn btn-primary" onclick="openZonesQueue()">💸 Money Talk</button>
+            <button class="menu-btn btn-danger" onclick="showScreen('mainMenu')">Назад</button>
+        </div>
+
+        <div id="reviewsContainer">
+            <h2>📸 Скріни відгуків</h2>
+            <div id="reviewGallery" style="display:grid; grid-template-columns:repeat(4,1fr); gap:5px; margin-bottom:15px;"></div>
+            <button class="menu-btn btn-secondary" onclick="document.getElementById('hiddenReviewInput').click()">Додати фото</button>
+            <input type="file" id="hiddenReviewInput" accept="image/*" multiple style="display:none;" onchange="handleReviewPhotos(event)">
+            <button class="menu-btn btn-primary" id="submitReviewsBtn" onclick="submitReviewsReport()" style="opacity:0.5; pointer-events:none;">Відправити</button>
+            <button class="menu-btn btn-danger" onclick="openProfile()">Назад</button>
         </div>
 
         <div id="quizMenuContainer">
-            <h2 style="margin-top:0;">📝 Тести</h2>
+            <h2>📝 Тести</h2>
             <button class="menu-btn btn-primary" onclick="openSetup('free')">📚 Навчання</button>
             <button class="menu-btn btn-primary" onclick="openSetup('timed')">⏱ Спринт</button>
-            <button class="menu-btn btn-secondary" style="border-color: var(--brand-red); color: #ffcc00;" onclick="openSetup('photo')">📸 Фото-вікторина</button>
-            <button class="menu-btn btn-danger" style="margin-top:10px;" onclick="startAssessment()">🔥 АТЕСТАЦІЯ</button>
-            <button class="menu-btn btn-secondary" style="margin-top:20px; border:none;" onclick="showScreen('mainMenu')">Назад</button>
+            <button class="menu-btn btn-danger" onclick="startAssessment()">🔥 Атестація</button>
+            <button class="menu-btn btn-secondary" onclick="showScreen('mainMenu')">Назад</button>
         </div>
 
         <div id="setupScreen">
             <h1 id="setupTitle">Дистанція</h1>
-            <div id="distOptions">
-                <button class="menu-btn btn-secondary" onclick="prepareQuiz(20)">20 питань</button>
-                <button class="menu-btn btn-secondary" onclick="prepareQuiz(50)">50 питань</button>
-                <button class="menu-btn btn-secondary" onclick="prepareQuiz(70)">70 питань</button>
-                <button class="menu-btn btn-secondary" onclick="prepareQuiz(100)">100 питань</button>
-            </div>
+            <button class="menu-btn btn-secondary" onclick="prepareQuiz(20)">20 питань</button>
+            <button class="menu-btn btn-secondary" onclick="prepareQuiz(50)">50 питань</button>
             <button class="menu-btn btn-danger" onclick="showScreen('quizMenuContainer')">Назад</button>
-        </div>
-
-        <div id="quizContainer">
-            <img id="questionImage" src="" alt="" style="width: 100%; border-radius: 15px; margin-bottom: 15px; display: none; object-fit: cover; max-height: 180px;">
-            <p id="progressText" style="color: var(--brand-red); font-weight: bold; font-size: 11px; margin:0;"></p>
-            <div id="questionText" style="font-weight: 700; margin: 15px 0; font-size: 16px;"></div>
-            <div id="optionsContainer"></div>
-            <div id="timerDisplay" style="color: var(--brand-red); font-weight: bold; margin-top: 10px; font-size: 20px;"></div>
-        </div>
-
-        <div id="cleaningContainer">
-            <h2 style="margin-top:0; color: white; font-size: 22px;">🧴 Замиття зони</h2>
-            <div class="checkbox-list" id="zonesCheckboxes" style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
-                <label class="checkbox-label"><input type="checkbox" value="1-7"> 1-7</label>
-                <label class="checkbox-label"><input type="checkbox" value="8-14"> 8-14</label>
-                <label class="checkbox-label"><input type="checkbox" value="15-21"> 15-21</label>
-                <label class="checkbox-label"><input type="checkbox" value="22-28"> 22-28</label>
-                <label class="checkbox-label"><input type="checkbox" value="29-42"> 29-42</label>
-                <label class="checkbox-label"><input type="checkbox" value="51-56"> 51-56</label>
-                <label class="checkbox-label"><input type="checkbox" value="57-62"> 57-62</label>
-                <label class="checkbox-label"><input type="checkbox" value="63-68"> 63-68</label>
-            </div>
-            <div style="background: rgba(255,255,255,0.03); padding: 12px; border-radius: 18px; margin: 15px 0; border: 1px solid rgba(226,24,54,0.1);">
-                <div id="photoGallery" style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin-bottom: 12px;"></div>
-                <button class="menu-btn btn-secondary" style="margin:0; border: 1px dashed var(--brand-red); font-size: 13px;" onclick="document.getElementById('hiddenPhotoInput').click()">📸 Додати фото</button>
-                <input type="file" id="hiddenPhotoInput" accept="image/*" multiple style="display: none;" onchange="handleNewPhotos(event)">
-                <div id="photoCountText" style="margin-top: 8px; font-size: 10px; color: var(--text-muted);">0 / 10 (мін. 3)</div>
-            </div>
-            <button class="menu-btn btn-correct" id="submitCleaningBtn" onclick="submitCleaningReport()" style="opacity: 0.4; pointer-events: none; padding: 18px;">ЗАМИТИ ЗОНУ</button>
-            <button class="menu-btn btn-danger" style="margin-top:5px; border:none; font-size: 12px;" onclick="showScreen('mainMenu')">Скасувати</button>
-        </div>
-
-        <div id="leaderboardContainer">
-            <div class="tabs-main">
-                <div class="tab-m active" onclick="setMainTab('xp', this)">Hall of Fame</div>
-                <div class="tab-m" onclick="setMainTab('free', this)">Навчання</div>
-                <div class="tab-m" onclick="setMainTab('timed', this)">Спринт</div>
-            </div>
-            <div id="subTabs" class="tabs-sub" style="display:none;">
-                <div class="tab-s active" onclick="setSubTab(20, this)">20</div>
-                <div class="tab-s" onclick="setSubTab(50, this)">50</div>
-                <div class="tab-s" onclick="setSubTab(70, this)">70</div>
-                <div class="tab-s" onclick="setSubTab(100, this)">100</div>
-            </div>
-            <div id="leaderboardList" style="max-height: 300px; overflow-y: auto; margin-bottom: 15px;"></div>
-            <button class="menu-btn btn-primary" onclick="showScreen('mainMenu')">В меню</button>
         </div>
     </div>
 
     <script>
-        let tg;
-        let userData = {first_name: "Колега", id: "0"};
-        try {
-            if (window.Telegram && window.Telegram.WebApp) {
-                tg = window.Telegram.WebApp;
-                if (typeof tg.expand === 'function') tg.expand();
-                if (typeof tg.ready === 'function') tg.ready();
-                if (tg.initDataUnsafe && tg.initDataUnsafe.user) { userData = tg.initDataUnsafe.user; }
-            }
-        } catch (err) {}
-
+        let tg = window.Telegram.WebApp;
+        let userData = tg.initDataUnsafe?.user || {first_name: "Колега", id: "0"};
         const API_URL = "https://script.google.com/macros/s/AKfycbxwXzgTnt_i5oQgmgU7zwwkbGmKDmCPG0QqFWddh3mWSv-PvzxtRns5eF78hEZllhAy/exec";
         
-        let questions = [], allLeaders = [], menuItems = [], globalHistoryRaw = [], globalStats = {}, globalReviews = {};
-        let currentIndex = 0, score = 0, mode = '', timerInterval;
-        let currentSprintScore = 0, currentMainTab = 'xp', currentSubTab = 20, timeLeft = 15;
-        let flatMenuArray = [], swipeCurrentIndex = 0;
+        let menuItems = [], globalHistory = [], allLeaders = [], globalReviews = {}, globalStats = {};
+        let flatMenuArray = [], swipeCurrentIndex = 0, questions = [], currentIndex = 0, score = 0, mode = '';
 
-        const fixedStaffList = ["Лащук Віктор", "Пашко Ангеліна", "Цибуляк Ірина", "Павлик Марта", "Юстина Білогруд", "Олег Баб'як", "Юлія", "Кулик Дарія"];
-        
-        // МАТЕМАТИЧНА ЧЕРГА ДИВАНІВ
-        const sofaCycleOrder = ["Кулик Дарія", "Олег Баб'як", "Лащук Віктор", "Пашко Ангеліна", "Цибуляк Ірина", "Павлик Марта", "Юстина Білогруд", "Юлія"];
-        const anchorDate = new Date(2026, 3, 25); // 25.04.2026
+        const staffNames = ["Кулик Дарія", "Олег Баб'як", "Лащук Віктор", "Пашко Ангеліна", "Цибуляк Ірина", "Павлик Марта", "Юстина Білогруд", "Юлія"];
 
-        function showScreen(screenId) {
-            const screens = ['mainMenu', 'quizMenuContainer', 'setupScreen', 'quizContainer', 'leaderboardContainer', 'cleaningContainer', 'zonesMenuContainer', 'zonesHistoryContainer', 'zonesInputContainer', 'zonesQueueContainer', 'productMainContainer', 'productKitchenContainer', 'swipeViewContainer', 'deliveryContainer', 'profileContainer', 'reviewsContainer'];
-            screens.forEach(s => { let el = document.getElementById(s); if (el) el.style.display = 'none'; });
-            let target = document.getElementById(screenId);
-            if (target) target.style.display = 'block';
-        }
-
-        function getRankInfo(xp) {
-            if (xp >= 1501) return "🔥 Emily Legend";
-            if (xp >= 701) return "🕴️ Pizza Don";
-            if (xp >= 301) return "💼 Consigliere"; 
-            if (xp >= 101) return "🗽 Brooklyn Local";
-            return "🐣 Стажерчик";
+        function showScreen(id) {
+            document.querySelectorAll('.main-container > div').forEach(d => d.style.display = 'none');
+            document.getElementById(id).style.display = 'block';
         }
 
         async function initApp() {
-            document.getElementById('userName').innerText = "Завантаження бази... ⏳";
-            document.getElementById('userName').style.color = "#ffcc00";
             showScreen('mainMenu');
-            fetch(API_URL, { method: 'POST', body: JSON.stringify({ action: "registerUser", tg_id: userData.id, name: userData.first_name }) });
-
             try {
-                let response = await fetch(API_URL).then(r => r.json());
-                if(response.menu) menuItems = response.menu;
-                if(response.leaders) allLeaders = response.leaders;
-                if(response.zoneHistory) globalHistoryRaw = response.zoneHistory;
-                if(response.stats) globalStats = response.stats;
-                if(response.reviews) globalReviews = response.reviews;
+                let r = await fetch(API_URL).then(res => res.json());
+                menuItems = r.menu || [];
+                globalHistory = r.zoneHistory || [];
+                globalReviews = r.reviews || {};
+                globalStats = r.stats || {};
                 
-                let me = allLeaders.find(l => String(l.tg_id) === String(userData.id)) || {name: userData.first_name, xp: 0, total_asked: 0, avatar: ""};
-                window.myStats = me; 
+                let l = await fetch(API_URL + "?action=leaderboard").then(res => res.json());
+                allLeaders = l;
+                window.myStats = allLeaders.find(u => String(u.tg_id) === String(userData.id)) || {name: userData.first_name, xp:0, avatar:""};
                 
                 document.getElementById('userName').innerText = "Hi, " + userData.first_name + "!";
-                document.getElementById('userName').style.color = "#ffffff";
-            } catch(e) {
-                document.getElementById('userName').innerText = "Помилка бази ⚠️";
-                document.getElementById('userName').style.color = "#E21836";
-            }
+                document.getElementById('userName').style.color = "#fff";
+            } catch(e) { document.getElementById('userName').innerText = "Помилка зв'язку"; }
         }
         initApp();
 
         function openProfile() {
-            let me = window.myStats || {name: userData.first_name, xp: 0, total_asked: 0, avatar: ""};
-            
-            const emojiEl = document.getElementById('avatarEmoji');
+            let me = window.myStats;
             const imgEl = document.getElementById('avatarImage');
-            if (me.avatar && me.avatar.length > 10) {
-                imgEl.src = "data:image/jpeg;base64," + me.avatar;
-                imgEl.style.display = "block";
-                emojiEl.style.display = "none";
-            } else {
-                const randEmojis = ['🍕','🍔','🍟','🌭','🌮','🌯','🥩','🍗','🍣','🍱','🍤','🥐','🥨','🍩','🍪','☕️','🔥','😎','👨‍🍳','👩‍🍳','💸','💰','🤌'];
-                emojiEl.innerText = randEmojis[Math.floor(Math.random() * randEmojis.length)];
-                imgEl.style.display = "none";
-                emojiEl.style.display = "block";
+            const emojiEl = document.getElementById('avatarEmoji');
+            if (me.avatar) { imgEl.src = "data:image/jpeg;base64," + me.avatar; imgEl.style.display = 'block'; emojiEl.style.display = 'none'; }
+            else { 
+                const ems = ['🍕','🔥','😎','👨‍🍳','💸','🤌'];
+                emojiEl.innerText = ems[Math.floor(Math.random()*ems.length)];
+                imgEl.style.display = 'none'; emojiEl.style.display = 'block';
             }
-
             document.getElementById('profileName').innerText = me.name;
-            document.getElementById('profileRank').innerText = getRankInfo(me.xp);
             document.getElementById('profileXp').innerText = me.xp;
-            document.getElementById('profileTests').innerText = me.total_asked;
-            
-            let accuracy = me.total_asked > 0 ? Math.round((me.xp / me.total_asked) * 100) : 0;
-            document.getElementById('profileAccuracy').innerText = accuracy + "%";
-
-            let shiftsCount = (globalStats && globalStats[me.name]) ? globalStats[me.name].shifts : 0;
-            document.getElementById('profileShifts').innerText = shiftsCount;
-
-            let reviewsCount = globalReviews[me.name] || 0;
-            document.getElementById('profileReviewsCount').innerText = reviewsCount;
-            let percent = Math.min(100, (reviewsCount / 15) * 100);
-            document.getElementById('reviewsProgressBar').style.width = percent + '%';
-            
+            let revs = globalReviews[me.name] || 0;
+            document.getElementById('profileReviewsCount').innerText = revs;
+            document.getElementById('reviewsProgressBar').style.width = Math.min(100, (revs/15)*100) + '%';
+            document.getElementById('profileShifts').innerText = globalStats[me.name]?.shifts || 0;
             showScreen('profileContainer');
         }
 
-        async function handleAvatarUpload(event) {
-            const file = event.target.files[0];
-            if (!file) return;
-            const loader = document.getElementById('avatarLoader');
-            loader.style.display = "flex";
-            
-            try {
-                const base64 = await compressImage(file, 200, 0.6); 
-                await fetch(API_URL, { method: 'POST', body: JSON.stringify({ action: "saveAvatar", tg_id: userData.id, avatarBase64: base64 }) });
-                
-                window.myStats.avatar = base64;
-                document.getElementById('avatarImage').src = "data:image/jpeg;base64," + base64;
-                document.getElementById('avatarImage').style.display = "block";
-                document.getElementById('avatarEmoji').style.display = "none";
-                
-                if (tg && tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('success');
-            } catch (e) { alert("Помилка збереження фото."); }
-            
-            loader.style.display = "none";
-            event.target.value = '';
+        async function handleAvatarUpload(e) {
+            let file = e.target.files[0]; if(!file) return;
+            let base64 = await compressImage(file, 200, 0.6);
+            fetch(API_URL, {method:'POST', body: JSON.stringify({action:'saveAvatar', tg_id:userData.id, avatarBase64:base64})});
+            window.myStats.avatar = base64; openProfile();
         }
 
-        let reviewPhotosArray = [];
-        function handleReviewPhotos(event) {
-            const files = Array.from(event.target.files);
-            if (files.length === 0) return;
-            if (reviewPhotosArray.length + files.length > 10) { alert("Максимум 10 фото за один раз!"); event.target.value = ''; return; }
-            files.forEach(file => reviewPhotosArray.push(file)); event.target.value = ''; renderReviewGallery(); updateReviewBtnState();
-        }
-        function removeReviewPhoto(index) { reviewPhotosArray.splice(index, 1); renderReviewGallery(); updateReviewBtnState(); }
-        function renderReviewGallery() {
-            const gallery = document.getElementById('reviewGallery'); if (!gallery) return;
-            gallery.innerHTML = reviewPhotosArray.map((file, i) => `
-                <div style="position: relative; aspect-ratio: 1/1; border-radius: 8px; overflow: hidden; border: 1px solid rgba(255,255,255,0.1);">
-                    <img src="${URL.createObjectURL(file)}" style="width:100%; height:100%; object-fit:cover;">
-                    <div onclick="removeReviewPhoto(${i})" style="position:absolute; top:2px; right:2px; background:var(--brand-red); color:white; border-radius:50%; width:18px; height:18px; font-size:10px; display:flex; align-items:center; justify-content:center; cursor:pointer;">✕</div>
-                </div>
+        function openKitchenMenu() {
+            let cats = [...new Set(menuItems.map(i => i.category))];
+            document.getElementById('dynamicCategoryList').innerHTML = cats.map(c => `
+                <button class="menu-btn btn-secondary" style="display:flex; justify-content:space-between;" onclick="startSwipe('${c}')">
+                    <span>🍽 ${c}</span><span>➔</span>
+                </button>
             `).join('');
-            document.getElementById('reviewCountText').innerText = `${reviewPhotosArray.length} фото (макс. 10 за раз)`;
-        }
-        function updateReviewBtnState() {
-            const btn = document.getElementById('submitReviewsBtn');
-            if (reviewPhotosArray.length > 0) { btn.style.opacity = '1'; btn.style.pointerEvents = 'auto'; } 
-            else { btn.style.opacity = '0.4'; btn.style.pointerEvents = 'none'; }
+            showScreen('productKitchenContainer');
         }
 
-        async function submitReviewsReport() {
-            const btn = document.getElementById('submitReviewsBtn'); btn.innerText = "ВІДПРАВКА..."; btn.style.opacity = '0.5'; btn.style.pointerEvents = 'none';
-            let photoBase64Array = [];
-            try {
-                for (let file of reviewPhotosArray) { const base64 = await compressImage(file, 800, 0.6); photoBase64Array.push({ mimeType: 'image/jpeg', data: base64 }); }
-                let response = await fetch(API_URL, { method: 'POST', body: JSON.stringify({ action: "submitReviews", name: userData.first_name, photos: photoBase64Array })}).then(r=>r.json());
-                
-                if (response.success) {
-                    if (tg && tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('success'); 
-                    alert("Відгуки відправлено! 🚀");
-                    if (!globalReviews[userData.first_name]) globalReviews[userData.first_name] = 0; 
-                    globalReviews[userData.first_name] += reviewPhotosArray.length;
-                    reviewPhotosArray = []; renderReviewGallery(); updateReviewBtnState(); openProfile(); 
-                } else {
-                    alert("Помилка Телеграм: Бот не доданий до групи відгуків або не має прав!");
+        function startSwipe(cat) {
+            flatMenuArray = menuItems;
+            swipeCurrentIndex = flatMenuArray.findIndex(i => i.category === cat);
+            renderSwipe(); showScreen('swipeViewContainer');
+        }
+
+        function renderSwipe() {
+            let item = flatMenuArray[swipeCurrentIndex];
+            let catItems = flatMenuArray.filter(i => i.category === item.category);
+            let relIdx = catItems.findIndex(i => i.name === item.name) + 1;
+            
+            document.getElementById('currentSwipeCategory').innerText = item.category;
+            document.getElementById('swipeProgressText').innerText = relIdx + " / " + catItems.length;
+            
+            document.getElementById('swipeCard').innerHTML = `
+                <div class="card-img-container">${item.photo ? `<img src="${item.photo}">` : '<div style="font-size:50px; padding:40px;">🍽</div>'}</div>
+                <div class="card-body">
+                    <div style="display:flex; justify-content:space-between; align-items:center;">
+                        <h2 class="card-title">${item.name}</h2>
+                        <span style="font-size:12px; color:var(--brand-red); font-weight:bold;">${item.weight}</span>
+                    </div>
+                    <div class="card-info-block"><span class="card-info-title">🧀 Склад</span>${item.ingredients}</div>
+                    <div class="card-info-block"><span class="card-info-title">📖 Опис</span>${item.desc}</div>
+                    ${item.allergens ? `<div style="font-size:11px; color:#ff4444; font-style:italic;">⚠️ ${item.allergens}</div>` : ''}
+                </div>
+            `;
+        }
+
+        function forceSwipe(dir) {
+            swipeCurrentIndex += dir;
+            if(swipeCurrentIndex < 0) swipeCurrentIndex = 0;
+            if(swipeCurrentIndex >= flatMenuArray.length) swipeCurrentIndex = flatMenuArray.length - 1;
+            renderSwipe();
+        }
+
+        function openZonesQueue() {
+            let html = "";
+            let start = new Date(2026, 3, 25);
+            let now = new Date(); now.setHours(0,0,0,0);
+            let count = 0;
+            let d = new Date(start);
+            let cycleIdx = 0;
+
+            while(count < 16) {
+                if(d.getDay() === 6 || d.getDay() === 0) {
+                    if(d >= now) {
+                        html += `<tr><td class="sofa-date">${d.getDate().toString().padStart(2,'0')}.${(d.getMonth()+1).toString().padStart(2,'0')}</td><td class="sofa-name">${staffNames[cycleIdx % staffNames.length]}</td></tr>`;
+                        count++;
+                    }
+                    cycleIdx++;
                 }
-                btn.innerText = "ВІДПРАВИТИ"; btn.style.opacity = '1'; btn.style.pointerEvents = 'auto';
-            } catch (e) { alert("Помилка відправки."); btn.innerText = "ВІДПРАВИТИ"; btn.style.opacity = '1'; btn.style.pointerEvents = 'auto'; }
+                d.setDate(d.getDate()+1);
+            }
+            document.getElementById('sofaScheduleTable').innerHTML = html;
+            showScreen('zonesQueueContainer');
         }
 
         function openZonesHistory() {
-            let grouped = {};
-            globalHistoryRaw.forEach(item => { if(!grouped[item.date]) grouped[item.date] = []; grouped[item.date].push(item); });
-            let hHtml = "";
-            let dates = Object.keys(grouped).sort((a,b) => {
-                let pa = a.split('.'), pb = b.split('.'); return new Date(pb[2], pb[1]-1, pb[0]) - new Date(pa[2], pa[1]-1, pa[0]);
-            });
-            if (dates.length === 0) hHtml = "<p style='color:#777; font-size:12px;'>Хронологія пуста</p>";
-            else {
-                dates.forEach(d => {
-                    hHtml += `<div class="history-card"><div class="history-date">📅 ${d}</div>`;
-                    grouped[d].forEach(row => { hHtml += `<div class="history-row"><span>${row.name}</span> <b style="color:var(--brand-red);">${row.zone}</b></div>`; });
-                    hHtml += `</div>`;
+            let h = "";
+            let dates = [...new Set(globalHistory.map(i => i.date))].reverse();
+            dates.forEach(d => {
+                h += `<div class="history-card"><div class="history-date">📅 ${d}</div>`;
+                globalHistory.filter(i => i.date === d).forEach(r => {
+                    h += `<div class="history-row"><span>${r.name}</span><b>${r.zone}</b></div>`;
                 });
-            }
-            document.getElementById('historyListDisplay').innerHTML = hHtml; showScreen('zonesHistoryContainer');
-        }
-
-        function openZonesInput() {
-            document.getElementById('shiftDateInput').valueAsDate = new Date();
-            document.getElementById('dynamicAssignmentsList').innerHTML = ""; addAssignmentRow(); addAssignmentRow(); showScreen('zonesInputContainer');
+                h += `</div>`;
+            });
+            document.getElementById('historyListDisplay').innerHTML = h || "Пусто";
+            showScreen('zonesHistoryContainer');
         }
 
         function addAssignmentRow() {
-            let staffOptions = "<option value='' disabled selected>Оберіть ім'я</option>";
-            fixedStaffList.forEach(name => { staffOptions += `<option value="${name}">${name}</option>`; });
-            let div = document.createElement('div'); div.className = 'assign-row';
-            div.innerHTML = `<select class="staff-select">${staffOptions}</select><input type="text" class="zone-input" placeholder="Напр: 22-28"><button class="del-btn" onclick="this.parentElement.remove()">✕</button>`;
+            let div = document.createElement('div');
+            div.style.display = 'flex'; div.style.gap = '5px'; div.style.marginBottom = '10px';
+            div.innerHTML = `
+                <select style="flex:1; padding:10px; border-radius:8px; background:#222; color:white;">${staffNames.map(n => `<option>${n}</option>`).join('')}</select>
+                <input type="text" placeholder="Зона" style="width:80px; padding:10px; border-radius:8px; background:#222; color:white; border:1px solid #444;">
+                <button onclick="this.parentElement.remove()" style="background:none; border:none; color:red;">✕</button>
+            `;
             document.getElementById('dynamicAssignmentsList').appendChild(div);
         }
 
         async function saveStructuredZones() {
-            const btn = document.getElementById('saveZonesBtn'); const dateVal = document.getElementById('shiftDateInput').value;
-            if(!dateVal) return alert("Обери дату!");
-            let assignments = []; let rows = document.querySelectorAll('.assign-row');
-            rows.forEach(r => { let name = r.querySelector('.staff-select').value; let zone = r.querySelector('.zone-input').value.trim(); if(name && zone) assignments.push({name: name, zone: zone}); });
-            if(assignments.length === 0) return alert("Додай хоча б одну зону!");
-            btn.innerText = "ЗБЕРЕЖЕННЯ..."; btn.style.opacity = '0.5'; btn.style.pointerEvents = 'none';
-            try {
-                await fetch(API_URL, { method: 'POST', body: JSON.stringify({ action: "saveStructuredZones", date: dateVal, assignments: assignments })});
-                if (tg && tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('success'); alert("Зони успішно внесено!");
-                let parts = dateVal.split('-'); let fDate = `${parts[2]}.${parts[1]}.${parts[0]}`;
-                assignments.forEach(a => { globalHistoryRaw.unshift({date: fDate, name: a.name, zone: a.zone}); }); showScreen('zonesMenuContainer');
-            } catch (e) { alert("Помилка збереження."); }
-            btn.innerText = "ВНЕСТИ"; btn.style.opacity = '1'; btn.style.pointerEvents = 'auto';
+            let date = document.getElementById('shiftDateInput').value; if(!date) return alert("Дата!");
+            let assigns = [];
+            document.querySelectorAll('#dynamicAssignmentsList > div').forEach(row => {
+                assigns.push({name: row.querySelector('select').value, zone: row.querySelector('input').value});
+            });
+            await fetch(API_URL, {method:'POST', body: JSON.stringify({action:'saveStructuredZones', date:date, assignments:assigns})});
+            alert("Збережено!"); initApp();
         }
 
-        function openZonesQueue() {
-            let nextWeekends = []; 
-            let d = new Date();
-            d.setHours(0,0,0,0);
-            
-            while(nextWeekends.length < 8) { 
-                if(d.getDay() === 0 || d.getDay() === 6) { nextWeekends.push(new Date(d)); } 
-                d.setDate(d.getDate() + 1); 
-            }
-            
-            let qHtml = ""; 
-            let days = ['Нд', 'Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб']; 
-            let months = ['січ', 'лют', 'бер', 'квіт', 'трав', 'черв', 'лип', 'серп', 'вер', 'жовт', 'лист', 'груд'];
+        // --- ВІДГУКИ ---
+        let reviewPhotos = [];
+        function handleReviewPhotos(e) {
+            reviewPhotos = Array.from(e.target.files);
+            document.getElementById('reviewGallery').innerHTML = reviewPhotos.map(f => `<img src="${URL.createObjectURL(f)}" style="width:100%; aspect-ratio:1; object-fit:cover; border-radius:5px;">`).join('');
+            let btn = document.getElementById('submitReviewsBtn');
+            btn.style.opacity = '1'; btn.style.pointerEvents = 'auto';
+        }
 
-            nextWeekends.forEach((targetDate) => {
-                let currentCheck = new Date(anchorDate);
-                let turnIndex = 0;
-                
-                while (currentCheck <= targetDate) {
-                    if (currentCheck.getTime() === targetDate.getTime()) {
-                        let staffName = sofaCycleOrder[turnIndex];
-                        let dateStr = `${targetDate.getDate()} ${months[targetDate.getMonth()]} (${days[targetDate.getDay()]})`;
-                        qHtml += `<div class="queue-item"><span>📅 ${dateStr}</span><b style="color:white;">${staffName}</b></div>`;
-                        break;
+        async function submitReviewsReport() {
+            let btn = document.getElementById('submitReviewsBtn'); btn.innerText = "⏳";
+            let photos = [];
+            for(let f of reviewPhotos) { photos.push({mimeType:'image/jpeg', data: await compressImage(f, 800, 0.6)}); }
+            await fetch(API_URL, {method:'POST', body: JSON.stringify({action:'submitReviews', name:window.myStats.name, photos:photos})});
+            alert("Відправлено!"); location.reload();
+        }
+
+        function compressImage(file, max, qual) {
+            return new Promise(res => {
+                let reader = new FileReader(); reader.readAsDataURL(file);
+                reader.onload = e => {
+                    let img = new Image(); img.src = e.target.result;
+                    img.onload = () => {
+                        let w = img.width, h = img.height;
+                        if(w > max) { h *= max/w; w = max; }
+                        let canvas = document.createElement('canvas'); canvas.width = w; canvas.height = h;
+                        canvas.getContext('2d').drawImage(img, 0, 0, w, h);
+                        res(canvas.toDataURL('image/jpeg', qual).split(',')[1]);
                     }
-                    if (currentCheck.getDay() === 6) { currentCheck.setDate(currentCheck.getDate() + 1); }
-                    else { currentCheck.setDate(currentCheck.getDate() + 6); }
-                    turnIndex = (turnIndex + 1) % sofaCycleOrder.length;
                 }
             });
-
-            document.getElementById('sofaScheduleList').innerHTML = qHtml; 
-            showScreen('zonesQueueContainer');
         }
-
-        function openKitchenMenu() {
-            if (menuItems.length === 0) { alert("База продуктів завантажується..."); return; }
-            document.getElementById('menuSearchInput').value = "";
-            document.getElementById('searchResults').style.display = "none";
-            document.getElementById('dynamicCategoryList').style.display = "flex";
-
-            let categories = [...new Set(menuItems.map(item => item.category))]; 
-            let html = "";
-            categories.forEach(cat => { 
-                let count = menuItems.filter(i => i.category === cat).length; 
-                html += `<button class="menu-btn btn-secondary" style="display: flex; align-items: center; justify-content: space-between; padding: 16px; text-align: left;" onclick="startSwipeMode('${cat}')"><span style="font-size: 16px; font-weight: bold;">🍽 ${cat} <span style="font-size: 12px; color: var(--text-muted); font-weight: normal;">(${count})</span></span><span style="color: var(--brand-red); font-size: 14px;">➔</span></button>`; 
-            });
-            document.getElementById('dynamicCategoryList').innerHTML = html; 
-            showScreen('productKitchenContainer');
-        }
-
-        function filterMenu() {
-            let query = document.getElementById('menuSearchInput').value.toLowerCase().trim();
-            let resDiv = document.getElementById('searchResults');
-            let catDiv = document.getElementById('dynamicCategoryList');
-
-            if(query.length < 1) {
-                resDiv.style.display = "none";
-                catDiv.style.display = "flex";
-                return;
-            }
-
-            resDiv.style.display = "block";
-            catDiv.style.display = "none";
-
-            let matches = menuItems.filter(i => 
-                i.name.toLowerCase().includes(query) || 
-                (i.ingredients && i.ingredients.toLowerCase().includes(query))
-            );
-            
-            if(matches.length === 0) {
-                resDiv.innerHTML = `<div style="padding:15px; color:#777; text-align:center;">Нічого не знайдено 😔</div>`;
-                return;
-            }
-
-            let html = "";
-            matches.forEach((item) => {
-                html += `<div class="search-result-item" onclick="openSpecificItem('${item.name.replace(/'/g, "\\'")}')">
-                            <span class="search-result-title">${item.name}</span>
-                            <span class="search-result-cat">${item.category}</span>
-                         </div>`;
-            });
-            resDiv.innerHTML = html;
-        }
-
-        function openSpecificItem(itemName) {
-            flatMenuArray = menuItems; // Використовуємо все меню для суцільного свайпу
-            swipeCurrentIndex = flatMenuArray.findIndex(i => i.name === itemName); 
-            if (swipeCurrentIndex === -1) swipeCurrentIndex = 0;
-            renderSwipeCard(); 
-            showScreen('swipeViewContainer');
-        }
-
-        function startSwipeMode(startCategory) {
-            flatMenuArray = menuItems; // Суцільне меню
-            let firstIndex = flatMenuArray.findIndex(a => a.category === startCategory);
-            swipeCurrentIndex = firstIndex !== -1 ? firstIndex : 0; 
-            renderSwipeCard(); 
-            showScreen('swipeViewContainer');
-        }
-
-        function renderSwipeCard() {
-            if (swipeCurrentIndex < 0) swipeCurrentIndex = 0;
-            if (swipeCurrentIndex >= flatMenuArray.length) swipeCurrentIndex = flatMenuArray.length - 1;
-            
-            const item = flatMenuArray[swipeCurrentIndex]; 
-            const card = document.getElementById('swipeCard');
-            
-            document.getElementById('currentSwipeCategory').innerText = item.category; 
-            
-            // Рахуємо індекс відносно поточної категорії
-            const categoryItems = flatMenuArray.filter(i => i.category === item.category);
-            const relativeIndex = categoryItems.findIndex(i => i.name === item.name) + 1;
-            document.getElementById('swipeProgressText').innerText = `${relativeIndex} / ${categoryItems.length}`;
-            
-            let peppers = "";
-            if (item.spicy) {
-                let spiceStr = String(item.spicy);
-                if (spiceStr.includes('🌶')) peppers = spiceStr; 
-                else { let num = parseInt(spiceStr); if (!isNaN(num) && num > 0) { for(let p=0; p<num; p++) peppers += "🌶️"; } else peppers = spiceStr; }
-            }
-
-            let photoHtml = item.photo ? `<div class="card-img-container" style="padding:0;"><img src="${item.photo}" style="border-radius: 20px 20px 0 0;"></div>` : `<div class="card-img-container"><div class="card-img-placeholder">🍽</div></div>`;
-            
-            card.innerHTML = `${photoHtml}<div class="card-body"><div class="card-title-row"><div><h2 class="card-title">${item.name}</h2>${peppers ? `<div class="card-spicy">Гострота: ${peppers}</div>` : ''}</div>${item.weight ? `<div class="card-weight">${item.weight}</div>` : ''}</div>${item.desc ? `<div class="card-info-block"><span class="card-info-title">📖 Смачний опис:</span>${item.desc}</div>` : ''}${item.ingredients ? `<div class="card-info-block"><span class="card-info-title">🧀 Склад:</span>${item.ingredients}</div>` : ''}${item.allergens ? `<div class="card-allergens">⚠️ Алергени: ${item.allergens}</div>` : ''}</div>`;
-            card.style.transition = 'none'; card.style.transform = 'translateX(0px)'; card.style.opacity = '1';
-        }
-
-        function forceSwipe(direction) {
-            const card = document.getElementById('swipeCard'); 
-            card.style.transition = 'transform 0.3s ease-out, opacity 0.3s';
-            if (direction === 1) { 
-                if (swipeCurrentIndex >= flatMenuArray.length - 1) return;
-                card.style.transform = `translateX(-120vw)`; card.style.opacity = '0'; 
-                setTimeout(() => { swipeCurrentIndex++; renderSwipeCard(); }, 300); 
-            } else { 
-                if (swipeCurrentIndex <= 0) return; 
-                card.style.transform = `translateX(120vw)`; card.style.opacity = '0'; 
-                setTimeout(() => { swipeCurrentIndex--; renderSwipeCard(); }, 300); 
-            }
-        }
-
-        const swipeContainer = document.getElementById('swipeContainer'); let startX = 0, startY = 0, currentX = 0, isDragging = false;
-        swipeContainer.addEventListener('touchstart', (e) => { startX = e.touches[0].clientX; startY = e.touches[0].clientY; isDragging = true; document.getElementById('swipeCard').style.transition = 'none'; });
-        swipeContainer.addEventListener('touchmove', (e) => {
-            if (!isDragging) return; let deltaX = e.touches[0].clientX - startX, deltaY = e.touches[0].clientY - startY;
-            if (Math.abs(deltaY) > Math.abs(deltaX) && Math.abs(deltaX) < 30) { isDragging = false; document.getElementById('swipeCard').style.transform = `translateX(0px)`; return; }
-            currentX = deltaX; document.getElementById('swipeCard').style.transform = `translateX(${currentX}px)`;
-        });
-        swipeContainer.addEventListener('touchend', (e) => {
-            if (!isDragging) return; isDragging = false;
-            if (currentX > 80) forceSwipe(-1); else if (currentX < -80) forceSwipe(1);
-            else { let card = document.getElementById('swipeCard'); card.style.transition = 'transform 0.3s ease-out'; card.style.transform = `translateX(0px)`; } currentX = 0;
-        });
-
-        let cleaningPhotosArray = [];
-        function handleNewPhotos(event) {
-            const files = Array.from(event.target.files); if (files.length === 0) return;
-            if (cleaningPhotosArray.length + files.length > 10) { alert("Максимум 10 фото!"); event.target.value = ''; return; }
-            files.forEach(file => cleaningPhotosArray.push(file)); event.target.value = ''; renderPhotoGallery(); updateCleaningBtnState();
-        }
-        function removePhoto(index) { cleaningPhotosArray.splice(index, 1); renderPhotoGallery(); updateCleaningBtnState(); }
-        function renderPhotoGallery() {
-            const gallery = document.getElementById('photoGallery'); if (!gallery) return;
-            gallery.innerHTML = cleaningPhotosArray.map((file, i) => `<div style="position: relative; aspect-ratio: 1/1; border-radius: 8px; overflow: hidden; border: 1px solid rgba(255,255,255,0.1);"><img src="${URL.createObjectURL(file)}" style="width:100%; height:100%; object-fit:cover;"><div onclick="removePhoto(${i})" style="position:absolute; top:2px; right:2px; background:var(--brand-red); color:white; border-radius:50%; width:18px; height:18px; font-size:10px; display:flex; align-items:center; justify-content:center;">✕</div></div>`).join('');
-            document.getElementById('photoCountText').innerText = `${cleaningPhotosArray.length} / 10 (мін. 3)`;
-        }
-        function updateCleaningBtnState() {
-            const checkedBoxes = document.querySelectorAll('#zonesCheckboxes input:checked'); const btn = document.getElementById('submitCleaningBtn');
-            if (cleaningPhotosArray.length >= 3 && checkedBoxes.length > 0) { btn.style.opacity = '1'; btn.style.pointerEvents = 'auto'; } else { btn.style.opacity = '0.4'; btn.style.pointerEvents = 'none'; }
-        }
-        document.getElementById('zonesCheckboxes').addEventListener('change', updateCleaningBtnState);
-
-        function compressImage(file, maxWidth = 1024, quality = 0.7) {
-            return new Promise((resolve, reject) => {
-                const reader = new FileReader(); reader.readAsDataURL(file);
-                reader.onload = event => {
-                    const img = new Image(); img.src = event.target.result;
-                    img.onload = () => {
-                        let w = img.width, h = img.height; if (w > maxWidth) { h = Math.round((h * maxWidth) / w); w = maxWidth; }
-                        const cvs = document.createElement('canvas'); cvs.width = w; cvs.height = h;
-                        const ctx = cvs.getContext('2d'); ctx.drawImage(img, 0, 0, w, h); resolve(cvs.toDataURL('image/jpeg', quality).split(',')[1]);
-                    };
-                };
-            });
-        }
-
-        async function submitCleaningReport() {
-            const btn = document.getElementById('submitCleaningBtn'); btn.innerText = "ВІДПРАВКА..."; btn.style.opacity = '0.5'; btn.style.pointerEvents = 'none';
-            const zones = Array.from(document.querySelectorAll('#zonesCheckboxes input:checked')).map(cb => cb.value); let photoBase64Array = [];
-            try {
-                for (let file of cleaningPhotosArray) { const base64 = await compressImage(file, 800, 0.6); photoBase64Array.push({ mimeType: 'image/jpeg', data: base64 }); }
-                await fetch(API_URL, { method: 'POST', body: JSON.stringify({ action: "cleaningReport", name: userData.first_name, zones: zones, photos: photoBase64Array })});
-                if (tg && tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('success'); alert("Замито! 🚀");
-                document.querySelectorAll('#zonesCheckboxes input:checked').forEach(cb => cb.checked = false); cleaningPhotosArray = []; renderPhotoGallery(); updateCleaningBtnState(); showScreen('mainMenu'); btn.innerText = "ЗАМИТИ ЗОНУ"; 
-            } catch (e) { alert("Помилка відправки."); btn.innerText = "ЗАМИТИ ЗОНУ"; btn.style.opacity = '1'; btn.style.pointerEvents = 'auto'; }
-        }
-
-        function openSetup(m) { mode = m; showScreen('setupScreen'); document.getElementById('setupTitle').innerText = (m === 'photo') ? "Фото-тест" : "Дистанція"; }
         
-        async function prepareQuiz(count) {
-            showScreen('quizContainer'); 
-            document.getElementById('questionText').innerText = "Завантаження питань з бази... ⏳";
-            document.getElementById('optionsContainer').innerHTML = "";
-            try {
-                let data = await fetch(API_URL + "?action=getQuestions").then(r => r.json());
-                let fetchedQ = data.questions || [];
-                if (mode === 'photo') { fetchedQ = fetchedQ.filter(q => q.photo && q.photo.length > 5); }
-                fetchedQ = fetchedQ.sort(() => Math.random() - 0.5).slice(0, count);
-                if(fetchedQ.length === 0) { alert("Питань немає в базі!"); showScreen('mainMenu'); return; }
-                questions = fetchedQ; startQuiz();
-            } catch (e) { alert("Помилка завантаження бази."); showScreen('mainMenu'); }
+        // Пошук
+        function filterMenu() {
+            let q = document.getElementById('menuSearchInput').value.toLowerCase();
+            let res = document.getElementById('searchResults');
+            if(q.length < 1) { res.style.display = 'none'; return; }
+            let matches = menuItems.filter(i => i.name.toLowerCase().includes(q) || i.ingredients.toLowerCase().includes(q)).slice(0, 5);
+            res.innerHTML = matches.map(m => `<div class="search-result-item" onclick="startSwipeAt('${m.name}')"><b>${m.name}</b><small>${m.category}</small></div>`).join('');
+            res.style.display = 'block';
+        }
+        function startSwipeAt(name) {
+            flatMenuArray = menuItems;
+            swipeCurrentIndex = flatMenuArray.findIndex(i => i.name === name);
+            renderSwipe(); showScreen('swipeViewContainer');
         }
 
-        async function startAssessment() {
-            if(!confirm("Це офіційна атестація!")) return; 
-            mode = 'exam'; showScreen('quizContainer');
-            document.getElementById('questionText').innerText = "Завантаження атестації... ⏳";
-            document.getElementById('optionsContainer').innerHTML = "";
-            try {
-                let data = await fetch(API_URL + "?action=getQuestions").then(r => r.json());
-                questions = (data.questions || []).sort(() => Math.random() - 0.5);
-                if(questions.length === 0) { alert("База пуста."); showScreen('mainMenu'); return; }
-                startQuiz();
-            } catch(e) { alert("Помилка бази."); showScreen('mainMenu'); }
+        // ТЕСТИ
+        function openSetup(m) { mode = m; showScreen('setupScreen'); }
+        async function prepareQuiz(num) {
+            let data = await fetch(API_URL + "?action=getQuestions").then(res => res.json());
+            questions = data.questions.sort(() => 0.5 - Math.random()).slice(0, num);
+            currentIndex = 0; score = 0; showQuestion(); showScreen('quizContainer');
         }
-
-        function startQuiz() { currentIndex = 0; score = 0; currentSprintScore = 0; showQuestion(); }
         function showQuestion() {
-            clearInterval(timerInterval); if (currentIndex >= questions.length) { finishQuiz(); return; }
-            let q = questions[currentIndex]; document.getElementById('progressText').innerText = (currentIndex + 1) + " / " + questions.length;
-            document.getElementById('questionText').innerText = q.question; const imgEl = document.getElementById('questionImage');
-            if (q.photo && q.photo.length > 5) { imgEl.src = q.photo; imgEl.style.display = "block"; } else { imgEl.style.display = "none"; }
-            let html = ""; q.options.forEach((opt, i) => { html += `<button id="btn-${i+1}" class="menu-btn btn-secondary" onclick="checkAnswer(${i+1}, '${q.correct_answer}')">${opt}</button>`; }); document.getElementById('optionsContainer').innerHTML = html;
-            if (mode === 'timed') { timeLeft = 15; document.getElementById('timerDisplay').innerText = "⏱ " + timeLeft; timerInterval = setInterval(() => { timeLeft--; document.getElementById('timerDisplay').innerText = "⏱ " + timeLeft; if (timeLeft <= 0) checkAnswer(0, q.correct_answer); }, 1000); }
+            if(currentIndex >= questions.length) { alert("Кінець! Правильно: " + score); showScreen('mainMenu'); return; }
+            let q = questions[currentIndex];
+            document.getElementById('progressText').innerText = (currentIndex+1) + " / " + questions.length;
+            document.getElementById('questionText').innerText = q.question;
+            document.getElementById('optionsContainer').innerHTML = q.options.map((o, i) => `
+                <button class="menu-btn btn-secondary" onclick="checkAnswer(${i+1}, ${q.correct_answer}, this)">${o}</button>
+            `).join('');
         }
-        function checkAnswer(sel, corr) {
-            clearInterval(timerInterval); const btns = document.querySelectorAll('#optionsContainer button'); btns.forEach(b => b.classList.add('btn-disabled'));
-            if (String(sel) === String(corr)) { score++; if(mode === 'timed') currentSprintScore += (100 + (timeLeft * 10)); document.getElementById('btn-' + sel)?.classList.add('btn-correct'); if(tg && tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('success'); } 
-            else { if (sel != 0) document.getElementById('btn-' + sel)?.classList.add('btn-incorrect'); document.getElementById('btn-' + corr)?.classList.add('btn-correct'); if(tg && tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('error'); }
-            setTimeout(() => { currentIndex++; showQuestion(); }, 1500);
-        }
-        async function finishQuiz() {
-            let percent = Math.round((score / questions.length) * 100); document.getElementById('progressText').innerText = "Saving progress...";
-            try { await fetch(API_URL, { method: 'POST', body: JSON.stringify({ tg_id: userData.id, name: userData.first_name, score: percent, sprint_score: currentSprintScore, mode: mode, asked_count: questions.length, correct_count: score }) }); } catch(e) {}
-            let resultText = (mode === 'timed') ? `🔥 Sprint Score: ${currentSprintScore}` : `Finished! ${percent}%`;
-            document.getElementById('questionText').innerHTML = `${resultText}<br><small>+${score} XP</small>`; document.getElementById('optionsContainer').innerHTML = `<button class="menu-btn btn-primary" onclick="showScreen('mainMenu')">В меню</button>`; document.getElementById('questionImage').style.display = 'none'; document.getElementById('timerDisplay').innerText = "";
-        }
-        function showLeaderboard() { showScreen('leaderboardContainer'); renderLeaders(); }
-        function setMainTab(tab, el) { currentMainTab = tab; document.querySelectorAll('.tab-m').forEach(t => t.classList.remove('active')); el.classList.add('active'); let sub = document.getElementById('subTabs'); if (sub) sub.style.display = (tab === 'free' || tab === 'timed') ? 'flex' : 'none'; renderLeaders(); }
-        function setSubTab(val, el) { currentSubTab = val; document.querySelectorAll('.tab-s').forEach(t => t.classList.remove('active')); el.classList.add('active'); renderLeaders(); }
-        function renderLeaders() {
-            let list = [...allLeaders], html = "";
-            if (currentMainTab === 'xp') { list.sort((a,b) => b.xp - a.xp); html = list.map((l, i) => `<div class="leader-item"><span>${i+1}. ${l.name}</span><b>${l.xp} XP</b></div>`).join(''); } 
-            else if (currentMainTab === 'free') { let key = 't' + currentSubTab; list = list.filter(l => l[key] > 0).sort((a,b) => b[key] - a[key]); html = list.map((l, i) => `<div class="leader-item"><span>${i+1}. ${l.name}</span><b>${l[key]}%</b></div>`).join(''); } 
-            else if (currentMainTab === 'timed') { let key = 's' + currentSubTab; list = list.filter(l => l[key] > 0).sort((a,b) => b[key] - a[key]); html = list.map((l, i) => `<div class="leader-item"><span>${i+1}. ${l.name}</span><b>${l[key]} pts</b></div>`).join(''); } 
-            let board = document.getElementById('leaderboardList'); if(board) board.innerHTML = html || "<p style='font-size:12px; color:#555;'>No records yet</p>";
+        function checkAnswer(ans, corr, btn) {
+            if(ans == corr) { score++; btn.style.background = '#28a745'; }
+            else { btn.style.background = '#dc3545'; }
+            setTimeout(() => { currentIndex++; showQuestion(); }, 1200);
         }
     </script>
 </body>
