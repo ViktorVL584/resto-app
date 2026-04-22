@@ -14,13 +14,28 @@
         .logo-sub { font-size: 10px; letter-spacing: 3px; color: var(--text-muted); text-transform: uppercase; margin-top: 5px; margin-bottom: 20px; }
         .user-rank { font-size: 12px; color: #ffcc00; font-weight: 700; text-transform: uppercase; margin-top: 10px; text-shadow: 0 0 5px rgba(255, 204, 0, 0.5); }
         .user-stats { font-size: 11px; color: var(--text-muted); margin-bottom: 20px; }
+        
+        /* НОВА СІТКА 2х2 ДЛЯ ГОЛОВНОГО МЕНЮ */
+        .grid-menu { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 15px; }
+        .grid-btn { background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 16px; padding: 15px 5px; color: white; font-family: 'Montserrat', sans-serif; font-size: 12px; font-weight: 700; cursor: pointer; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px; transition: 0.2s; }
+        .grid-btn i { font-size: 28px; font-style: normal; }
+        .grid-btn:active { transform: scale(0.95); background: rgba(226, 24, 54, 0.2); border-color: var(--brand-red); }
+
         #questionImage { width: 100%; border-radius: 15px; margin-bottom: 15px; border: 1px solid rgba(226, 24, 54, 0.3); display: none; object-fit: cover; max-height: 180px; box-shadow: 0 0 10px rgba(226, 24, 54, 0.2); }
         .menu-btn { width: 100%; padding: 14px; margin-bottom: 10px; border-radius: 14px; font-family: 'Montserrat', sans-serif; font-size: 14px; font-weight: 700; cursor: pointer; border: none; transition: all 0.2s; outline: none; }
         .btn-primary { background-color: var(--brand-red); color: white; box-shadow: 0 4px 15px rgba(226, 24, 54, 0.4); }
         .btn-secondary { background-color: #1e1e1e; color: white; border: 1px solid #333; }
-        .btn-correct { background-color: #28a745 !important; box-shadow: 0 0 15px rgba(40, 167, 69, 0.6) !important; }
-        .btn-incorrect { background-color: #dc3545 !important; box-shadow: 0 0 15px rgba(220, 53, 69, 0.6) !important; }
+        .btn-danger { background: none; border: 1px solid var(--brand-red); color: var(--brand-red); }
+        .btn-correct { background-color: #28a745 !important; box-shadow: 0 0 15px rgba(40, 167, 69, 0.6) !important; color: white; }
+        .btn-incorrect { background-color: #dc3545 !important; box-shadow: 0 0 15px rgba(220, 53, 69, 0.6) !important; color: white; }
         .btn-disabled { pointer-events: none; opacity: 0.8; }
+        
+        /* СТИЛІ ДЛЯ ГЕНЕРАЛКИ */
+        .checkbox-list { text-align: left; background: #1a1a1a; padding: 15px; border-radius: 15px; margin-bottom: 15px; }
+        .checkbox-label { display: flex; align-items: center; gap: 10px; margin-bottom: 12px; font-size: 13px; color: #ddd; }
+        .checkbox-label input { width: 18px; height: 18px; accent-color: var(--brand-red); }
+        .checkbox-label:last-child { margin-bottom: 0; }
+        
         .tabs-main { display: flex; gap: 3px; margin-bottom: 10px; background: #111; padding: 4px; border-radius: 12px; }
         .tab-m { flex: 1; font-size: 8px; padding: 8px 1px; border-radius: 8px; cursor: pointer; color: var(--text-muted); text-transform: uppercase; font-weight: 700; }
         .tab-m.active { background: var(--brand-red); color: white; }
@@ -28,23 +43,80 @@
         .tab-s { font-size: 11px; padding: 5px 12px; border-radius: 20px; cursor: pointer; background: #222; color: var(--text-muted); border: 1px solid #333; }
         .tab-s.active { border-color: var(--brand-red); color: white; }
         .leader-item { display: flex; justify-content: space-between; padding: 12px 8px; border-bottom: 1px solid #222; font-size: 12px; }
-        #quizContainer, #setupScreen, #leaderboardContainer { display: none; }
+        
+        /* Сховати всі екрани крім головного */
+        #quizMenuContainer, #setupScreen, #quizContainer, #leaderboardContainer, #cleaningContainer, #deliveryContainer, #productContainer { display: none; }
     </style>
 </head>
 <body>
     <div class="main-container">
+        
         <div id="mainMenu">
             <div class="neon-logo">Emily</div>
             <div class="logo-sub">Brooklyn Pizza</div>
             <h1 id="userName" style="font-size: 18px; margin:0;">Welcome!</h1>
             <div id="rankDisplay" class="user-rank">...</div>
             <div id="statsDisplay" class="user-stats">XP: 0 (з 0 питань)</div>
+            
+            <div class="grid-menu">
+                <button class="grid-btn" onclick="showScreen('quizMenuContainer')"><i>📝</i>Тести</button>
+                <button class="grid-btn" onclick="showScreen('deliveryContainer')"><i>📦</i>Доставки</button>
+                <button class="grid-btn" onclick="showScreen('cleaningContainer')"><i>🧴</i>Замиття</button>
+                <button class="grid-btn" onclick="showScreen('productContainer')"><i>📚</i>Продакт</button>
+            </div>
+            
+            <button class="menu-btn btn-secondary" onclick="showLeaderboard()">🏆 Рейтинги</button>
+        </div>
+
+        <div id="quizMenuContainer">
+            <h2 style="margin-top:0;">📝 Тести</h2>
             <button class="menu-btn btn-primary" onclick="openSetup('free')">📚 Навчання</button>
             <button class="menu-btn btn-primary" onclick="openSetup('timed')">⏱ Спринт</button>
-            <button class="menu-btn btn-secondary" onclick="showLeaderboard()">🏆 Рейтинги</button>
             <button class="menu-btn btn-secondary" style="border-color: var(--brand-red); color: #ffcc00;" onclick="openSetup('photo')">📸 Фото-вікторина</button>
-            <button class="menu-btn btn-danger" style="margin-top:10px; border: 1px solid var(--brand-red); background:none; color: var(--brand-red);" onclick="startAssessment()">🔥 АТЕСТАЦІЯ</button>
+            <button class="menu-btn btn-danger" style="margin-top:10px;" onclick="startAssessment()">🔥 АТЕСТАЦІЯ</button>
+            <button class="menu-btn btn-secondary" style="margin-top:20px; border:none;" onclick="showScreen('mainMenu')">Назад</button>
         </div>
+
+        <div id="cleaningContainer">
+            <h2 style="margin-top:0; color: white;">🧴 Замиття зони</h2>
+            <p style="font-size: 12px; color: var(--text-muted); margin-bottom: 15px;">Відміть, що ти замивав, і додай фотозвіт</p>
+            
+            <div class="checkbox-list" id="zonesCheckboxes">
+                <label class="checkbox-label"><input type="checkbox" value="Столи 1-7"> Столи 1-7</label>
+                <label class="checkbox-label"><input type="checkbox" value="Столи 8-14"> Столи 8-14</label>
+                <label class="checkbox-label"><input type="checkbox" value="Столи 15-21 (Центр)"> Столи 15-21 (Центр)</label>
+                <label class="checkbox-label"><input type="checkbox" value="Столи 22-28 (Бар)"> Столи 22-28 (Бар)</label>
+                <label class="checkbox-label"><input type="checkbox" value="Столи 29-42 (Великий зал)"> Столи 29-42 (Великий зал)</label>
+                <label class="checkbox-label"><input type="checkbox" value="Балкони (ЛБ / ЦБ / ПБ)"> Балкони (ЛБ / ЦБ / ПБ)</label>
+                <label class="checkbox-label"><input type="checkbox" value="Видача"> Видача</label>
+                <label class="checkbox-label"><input type="checkbox" value="Стейшен 15-21"> Стейшен 15-21</label>
+                <label class="checkbox-label"><input type="checkbox" value="Стейшен 29-42"> Стейшен 29-42</label>
+            </div>
+
+            <div style="background: #1a1a1a; padding: 15px; border-radius: 15px; margin-bottom: 15px;">
+                <label for="cleaningPhotos" style="display: block; padding: 12px; background: rgba(255,255,255,0.1); border: 1px dashed var(--brand-red); color: white; border-radius: 10px; cursor: pointer; font-weight: bold;">
+                    📸 Обрати фото (від 3 до 10)
+                </label>
+                <input type="file" id="cleaningPhotos" multiple accept="image/*" style="display: none;" onchange="updatePhotoCount()">
+                <div id="photoCountText" style="margin-top: 10px; font-size: 12px; color: var(--text-muted);">Вибрано фото: 0</div>
+            </div>
+
+            <button class="menu-btn btn-correct" id="submitCleaningBtn" onclick="submitCleaningReport()" style="opacity: 0.5; pointer-events: none;">ЗАМИТИ ЗОНУ</button>
+            <button class="menu-btn btn-danger" style="margin-top:5px; border:none;" onclick="showScreen('mainMenu')">Назад</button>
+        </div>
+
+        <div id="deliveryContainer">
+            <h2 style="margin-top:0;">📦 Доставки</h2>
+            <p style="color:var(--text-muted); font-size: 12px;">Модуль у розробці...</p>
+            <button class="menu-btn btn-secondary" onclick="showScreen('mainMenu')">Назад</button>
+        </div>
+
+        <div id="productContainer">
+            <h2 style="margin-top:0;">📚 Продакт</h2>
+            <p style="color:var(--text-muted); font-size: 12px;">Модуль у розробці...</p>
+            <button class="menu-btn btn-secondary" onclick="showScreen('mainMenu')">Назад</button>
+        </div>
+
         <div id="setupScreen">
             <h1 id="setupTitle">Дистанція</h1>
             <div id="distOptions">
@@ -53,8 +125,9 @@
                 <button class="menu-btn btn-secondary" onclick="prepareQuiz(70)">70 питань</button>
                 <button class="menu-btn btn-secondary" onclick="prepareQuiz(100)">100 питань</button>
             </div>
-            <button class="menu-btn btn-danger" style="background:none; border: 1px solid var(--brand-red); color:var(--brand-red);" onclick="location.reload()">Назад</button>
+            <button class="menu-btn btn-danger" onclick="showScreen('quizMenuContainer')">Назад</button>
         </div>
+
         <div id="quizContainer">
             <img id="questionImage" src="" alt="">
             <p id="progressText" style="color: var(--brand-red); font-weight: bold; font-size: 11px; margin:0;"></p>
@@ -62,6 +135,7 @@
             <div id="optionsContainer"></div>
             <div id="timerDisplay" style="color: var(--brand-red); font-weight: bold; margin-top: 10px; font-size: 20px;"></div>
         </div>
+
         <div id="leaderboardContainer">
             <div class="tabs-main">
                 <div class="tab-m active" onclick="setMainTab('xp', this)">Hall of Fame</div>
@@ -76,17 +150,108 @@
                 <div class="tab-s" onclick="setSubTab(100, this)">100</div>
             </div>
             <div id="leaderboardList" style="max-height: 300px; overflow-y: auto; margin-bottom: 15px;"></div>
-            <button class="menu-btn btn-primary" onclick="location.reload()">В меню</button>
+            <button class="menu-btn btn-primary" onclick="showScreen('mainMenu')">В меню</button>
         </div>
     </div>
+
     <script>
         let tg = window.Telegram.WebApp;
         tg.expand(); tg.ready();
+        
+        // Твій поточний API URL
         const API_URL = "https://script.google.com/macros/s/AKfycbxwXzgTnt_i5oQgmgU7zwwkbGmKDmCPG0QqFWddh3mWSv-PvzxtRns5eF78hEZllhAy/exec";
+        
         let userData = tg.initDataUnsafe?.user || {first_name: "Колега", id: "0"};
         let questions = [], currentIndex = 0, score = 0, mode = '', timerInterval, allLeaders = [];
         let currentSprintScore = 0, currentMainTab = 'xp', currentSubTab = 20, timeLeft = 15;
 
+        // ФУНКЦІЯ ПЕРЕМИКАННЯ ЕКРАНІВ
+        function showScreen(screenId) {
+            const screens = ['mainMenu', 'quizMenuContainer', 'setupScreen', 'quizContainer', 'leaderboardContainer', 'cleaningContainer', 'deliveryContainer', 'productContainer'];
+            screens.forEach(s => document.getElementById(s).style.display = 'none');
+            document.getElementById(screenId).style.display = 'block';
+        }
+
+        // --- ЛОГІКА МОДУЛЯ ЗАМИТТЯ ---
+        function updatePhotoCount() {
+            const fileInput = document.getElementById('cleaningPhotos');
+            const countText = document.getElementById('photoCountText');
+            const submitBtn = document.getElementById('submitCleaningBtn');
+            const filesCount = fileInput.files.length;
+            
+            countText.innerText = `Вибрано фото: ${filesCount}`;
+            countText.style.color = (filesCount >= 3 && filesCount <= 10) ? '#28a745' : 'var(--brand-red)';
+
+            // Перевірка: чи вибрані зони та чи правильна кількість фото
+            const checkedZones = document.querySelectorAll('#zonesCheckboxes input:checked').length;
+            if (filesCount >= 3 && filesCount <= 10 && checkedZones > 0) {
+                submitBtn.style.opacity = '1';
+                submitBtn.style.pointerEvents = 'auto';
+            } else {
+                submitBtn.style.opacity = '0.5';
+                submitBtn.style.pointerEvents = 'none';
+            }
+        }
+
+        // Слідкуємо за кліками по чекбоксах, щоб вмикати/вимикати кнопку
+        document.getElementById('zonesCheckboxes').addEventListener('change', updatePhotoCount);
+
+        async function submitCleaningReport() {
+            const checkedInputs = document.querySelectorAll('#zonesCheckboxes input:checked');
+            const zones = Array.from(checkedInputs).map(cb => cb.value);
+            const fileInput = document.getElementById('cleaningPhotos');
+            const files = fileInput.files;
+
+            const submitBtn = document.getElementById('submitCleaningBtn');
+            submitBtn.innerText = "ВІДПРАВКА...";
+            submitBtn.style.opacity = '0.5';
+            submitBtn.style.pointerEvents = 'none';
+
+            // Конвертуємо фото у Base64 (оскільки Apps Script не приймає звичайний FormData напряму)
+            let photoBase64Array = [];
+            for (let i = 0; i < files.length; i++) {
+                let reader = new FileReader();
+                let filePromise = new Promise((resolve) => {
+                    reader.onload = (e) => {
+                        let base64 = e.target.result.split(',')[1]; // Відкидаємо data:image/jpeg;base64,
+                        resolve({ name: files[i].name, mimeType: files[i].type, data: base64 });
+                    };
+                });
+                reader.readAsDataURL(files[i]);
+                photoBase64Array.push(await filePromise);
+            }
+
+            const payload = {
+                action: "cleaningReport",
+                tg_id: userData.id,
+                name: userData.first_name,
+                zones: zones,
+                photos: photoBase64Array
+            };
+
+            try {
+                // Відправляємо на Apps Script
+                await fetch(API_URL, {
+                    method: 'POST',
+                    body: JSON.stringify(payload)
+                });
+                tg.HapticFeedback.notificationOccurred('success');
+                alert("Звіт відправлено! Дякую за чистоту 🧽");
+                
+                // Очищаємо форму
+                checkedInputs.forEach(cb => cb.checked = false);
+                fileInput.value = "";
+                updatePhotoCount();
+                showScreen('mainMenu');
+                submitBtn.innerText = "ЗАМИТИ ЗОНУ";
+            } catch (error) {
+                alert("Помилка відправки. Спробуй ще раз.");
+                submitBtn.innerText = "ЗАМИТИ ЗОНУ";
+                updatePhotoCount();
+            }
+        }
+
+        // --- ІСНУЮЧА ЛОГІКА ВІКТОРИН ---
         function getRankInfo(xp) {
             if (xp >= 1501) return "🔥 Emily Legend";
             if (xp >= 701) return "🕴️ Pizza Don";
@@ -94,8 +259,10 @@
             if (xp >= 101) return "🗽 Brooklyn Local";
             return "🐣 Стажерчик";
         }
+
         async function initApp() {
             document.getElementById('userName').innerText = "Hi, " + userData.first_name + "!";
+            showScreen('mainMenu');
             try {
                 allLeaders = await fetch(API_URL + "?action=leaderboard").then(r => r.json());
                 let me = allLeaders.find(l => String(l.tg_id) === String(userData.id)) || {xp: 0, total_asked: 0};
@@ -104,15 +271,15 @@
             } catch(e) {}
         }
         initApp();
+
         function openSetup(m) { 
             mode = m; 
-            document.getElementById('mainMenu').style.display = 'none'; 
-            document.getElementById('setupScreen').style.display = 'block'; 
+            showScreen('setupScreen');
             document.getElementById('setupTitle').innerText = (m === 'photo') ? "Фото-тест" : "Дистанція";
         }
+
         async function prepareQuiz(count) {
-            document.getElementById('setupScreen').style.display = 'none';
-            document.getElementById('quizContainer').style.display = 'block';
+            showScreen('quizContainer');
             document.getElementById('questionText').innerText = "Завантаження...";
             let data = await fetch(API_URL).then(r => r.json());
             if (mode === 'photo') {
@@ -121,19 +288,21 @@
                 questions = data.questions;
             }
             questions = questions.sort(() => Math.random() - 0.5).slice(0, count);
-            if(questions.length === 0) { alert("Питань немає!"); location.reload(); return; }
+            if(questions.length === 0) { alert("Питань немає!"); showScreen('mainMenu'); return; }
             startQuiz();
         }
+
         async function startAssessment() {
             if(!confirm("Це офіційна атестація!")) return;
             mode = 'exam';
-            document.getElementById('mainMenu').style.display = 'none';
-            document.getElementById('quizContainer').style.display = 'block';
+            showScreen('quizContainer');
             let data = await fetch(API_URL).then(r => r.json());
             questions = data.questions.sort(() => Math.random() - 0.5);
             startQuiz();
         }
+
         function startQuiz() { currentIndex = 0; score = 0; currentSprintScore = 0; showQuestion(); }
+
         function showQuestion() {
             clearInterval(timerInterval);
             if (currentIndex >= questions.length) { finishQuiz(); return; }
@@ -155,6 +324,7 @@
                 }, 1000);
             }
         }
+
         function checkAnswer(sel, corr) {
             clearInterval(timerInterval);
             const btns = document.querySelectorAll('#optionsContainer button');
@@ -171,6 +341,7 @@
             }
             setTimeout(() => { currentIndex++; showQuestion(); }, 750);
         }
+
         async function finishQuiz() {
             let percent = Math.round((score / questions.length) * 100);
             document.getElementById('progressText').innerText = "Saving progress...";
@@ -181,15 +352,16 @@
             })});
             let resultText = (mode === 'timed') ? `🔥 Sprint Score: ${currentSprintScore}` : `Finished! ${percent}%`;
             document.getElementById('questionText').innerHTML = `${resultText}<br><small>+${score} XP to Hall of Fame</small>`;
-            document.getElementById('optionsContainer').innerHTML = `<button class="menu-btn btn-primary" onclick="location.reload()">To Menu</button>`;
+            document.getElementById('optionsContainer').innerHTML = `<button class="menu-btn btn-primary" onclick="showScreen('mainMenu')">В меню</button>`;
             document.getElementById('questionImage').style.display = 'none';
             document.getElementById('timerDisplay').innerText = "";
         }
+
         function showLeaderboard() {
-            document.getElementById('mainMenu').style.display = 'none';
-            document.getElementById('leaderboardContainer').style.display = 'block';
+            showScreen('leaderboardContainer');
             renderLeaders();
         }
+
         function setMainTab(tab, el) {
             currentMainTab = tab;
             document.querySelectorAll('.tab-m').forEach(t => t.classList.remove('active'));
@@ -197,12 +369,14 @@
             document.getElementById('subTabs').style.display = (tab === 'free' || tab === 'timed') ? 'flex' : 'none';
             renderLeaders();
         }
+
         function setSubTab(val, el) {
             currentSubTab = val;
             document.querySelectorAll('.tab-s').forEach(t => t.classList.remove('active'));
             el.classList.add('active');
             renderLeaders();
         }
+
         function renderLeaders() {
             let list = [...allLeaders];
             let html = "";
@@ -210,11 +384,11 @@
                 list.sort((a,b) => b.xp - a.xp);
                 html = list.map((l, i) => `<div class="leader-item"><span>${i+1}. ${l.name}</span><b>${l.xp} XP</b></div>`).join('');
             } else if (currentMainTab === 'free') {
-                let key = 't' + currentSubTab; // t20, t50, t70, t100
+                let key = 't' + currentSubTab;
                 list = list.filter(l => l[key] > 0).sort((a,b) => b[key] - a[key]);
                 html = list.map((l, i) => `<div class="leader-item"><span>${i+1}. ${l.name}</span><b>${l[key]}%</b></div>`).join('');
             } else if (currentMainTab === 'timed') {
-                let key = 's' + currentSubTab; // s20, s50, s70, s100
+                let key = 's' + currentSubTab;
                 list = list.filter(l => l[key] > 0).sort((a,b) => b[key] - a[key]);
                 html = list.map((l, i) => `<div class="leader-item"><span>${i+1}. ${l.name}</span><b>${l[key]} pts</b></div>`).join('');
             } else if (currentMainTab === 'photo') {
