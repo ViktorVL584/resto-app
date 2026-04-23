@@ -24,8 +24,10 @@
         .btn-primary { background-color: var(--brand-red); color: white; }
         .btn-secondary { background-color: #1e1e1e; color: white; border: 1px solid #333; }
         .btn-danger { background: none; border: 1px solid var(--brand-red); color: var(--brand-red); }
-        .btn-correct { background-color: #28a745 !important; color: white; box-shadow: 0 0 10px #28a745; }
-        .btn-incorrect { background-color: #dc3545 !important; color: white; }
+        
+        /* КОЛЬОРИ ДЛЯ ТЕСТІВ */
+        .btn-correct { background-color: #28a745 !important; color: white !important; box-shadow: 0 0 15px rgba(40, 167, 69, 0.6) !important; border: 1px solid #28a745 !important; }
+        .btn-incorrect { background-color: #dc3545 !important; color: white !important; box-shadow: 0 0 15px rgba(220, 53, 69, 0.6) !important; border: 1px solid #dc3545 !important; }
         .btn-disabled { pointer-events: none; opacity: 0.8; }
 
         .swipe-card { background: #1a1a1a; border-radius: 20px; border: 1px solid rgba(226, 24, 54, 0.2); overflow: hidden; text-align: left; height: 70vh; display: flex; flex-direction: column; }
@@ -511,8 +513,8 @@
             else { imgEl.style.display = "none"; }
 
             let html = "";
-            q.options.forEach((opt) => {
-                html += `<button class="menu-btn btn-secondary" data-correct="${q.correct_answer}" onclick="checkAnswer(this)">${opt}</button>`;
+            q.options.forEach((opt, i) => {
+                html += `<button id="btn-opt-${i+1}" class="menu-btn btn-secondary" onclick="checkAnswer(${i+1}, parseInt('${q.correct_answer}'), this)">${opt}</button>`;
             });
             document.getElementById('optionsContainer').innerHTML = html;
 
@@ -524,31 +526,28 @@
                 timerInterval = setInterval(() => {
                     timeLeft--;
                     document.getElementById('timerDisplay').innerText = "⏱ " + timeLeft;
-                    if (timeLeft <= 0) { checkAnswer(null); }
+                    if (timeLeft <= 0) { checkAnswer(0, parseInt(q.correct_answer), null); }
                 }, 1000);
             }
         }
 
-        function checkAnswer(btn) {
+        function checkAnswer(ansIndex, corrIndex, btn) {
             clearInterval(timerInterval);
             let buttons = document.querySelectorAll('#optionsContainer button');
             buttons.forEach(b => b.classList.add('btn-disabled'));
 
-            let ansText = btn ? btn.innerText.trim() : "timeout";
-            let corrText = buttons.length > 0 ? buttons[0].getAttribute('data-correct').trim() : "";
-            
-            let correctBtn = Array.from(buttons).find(b => b.innerText.trim() === corrText);
+            let correctBtn = document.getElementById('btn-opt-' + corrIndex);
 
-            if (ansText === corrText) {
+            if (ansIndex === corrIndex) {
                 score++;
                 if(btn) btn.classList.add('btn-correct');
                 if(window.tg && tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('success');
             } else {
-                if(btn && ansText !== "timeout") btn.classList.add('btn-incorrect');
+                if(btn && ansIndex !== 0) btn.classList.add('btn-incorrect');
                 if(correctBtn) correctBtn.classList.add('btn-correct');
                 if(window.tg && tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('error');
             }
-            setTimeout(() => { currentIndex++; showQuestion(); }, 1000); // 1 СЕКУНДА
+            setTimeout(() => { currentIndex++; showQuestion(); }, 1500); // 1.5 сек затримка щоб побачити правильну відповідь
         }
 
         async function finishQuiz() {
@@ -587,7 +586,7 @@
             }
         }
 
-        // === ДОСТАВКИ ТА ІНШЕ ===
+        // === ДОСТАВКИ ===
         let deliveryPhotosArray = [];
         function handleDeliveryPhotos(e) {
             Array.from(e.target.files).forEach(f => deliveryPhotosArray.push(f));
@@ -607,6 +606,7 @@
             alert("Записано!"); document.getElementById('deliveryReceiptInput').value = ""; deliveryPhotosArray = []; document.getElementById('deliveryGallery').innerHTML = ""; initApp();
         }
 
+        // ВІДГУКИ
         let reviewPhotos = [];
         function handleReviewPhotos(e) {
             Array.from(e.target.files).forEach(f => reviewPhotos.push(f));
@@ -620,6 +620,7 @@
             alert("Відправлено!"); reviewPhotos = []; document.getElementById('reviewGallery').innerHTML = ""; initApp();
         }
 
+        // ЗАМИТТЯ
         let cleaningPhotosArray = [];
         function handleNewPhotos(event) {
             Array.from(event.target.files).forEach(file => cleaningPhotosArray.push(file)); event.target.value = ''; 
