@@ -36,19 +36,19 @@
         .card-info-block { background: rgba(255,255,255,0.04); padding: 10px; border-radius: 10px; font-size: 12px; color: #ddd; }
         .card-info-title { color: #ffcc00; font-weight: bold; font-size: 10px; text-transform: uppercase; margin-bottom: 4px; display: block; }
 
-        .sofa-table { width: 100%; border-collapse: collapse; font-size: 13px; margin-top: 10px; }
-        .sofa-table th { color: var(--text-muted); font-size: 10px; padding: 10px; }
-        .sofa-table td { padding: 12px; text-align: center; border-bottom: 1px solid #222; }
-        .sofa-date { color: var(--brand-red); font-weight: bold; }
+        .sofa-table { width: 100%; border-collapse: collapse; font-size: 14px; margin-top: 10px; border-radius:12px; overflow:hidden; }
+        .sofa-table th { color: var(--text-muted); font-size: 11px; padding: 10px; background: rgba(0,0,0,0.4); text-transform: uppercase; }
+        .sofa-table td { padding: 12px; text-align: center; width: 50%; }
+        .sofa-date { color: var(--brand-red); font-weight: bold; font-size: 12px; }
+        .sofa-name { color: white; font-weight: bold; font-size: 13px; border-bottom: 1px solid rgba(255,255,255,0.05); }
 
         .avatar-box { width: 80px; height: 80px; border-radius: 50%; background: #222; margin: 0 auto 10px auto; border: 2px solid var(--brand-red); cursor: pointer; overflow: hidden; display: flex; align-items: center; justify-content: center; font-size: 40px; }
         .avatar-box img { width: 100%; height: 100%; object-fit: cover; }
         
-        .tabs-main { display: flex; gap: 3px; margin-bottom: 10px; background: #111; padding: 4px; border-radius: 12px; }
-        .tab-m { flex: 1; font-size: 10px; padding: 8px 1px; border-radius: 8px; cursor: pointer; color: var(--text-muted); text-transform: uppercase; font-weight: 700; }
-        .tab-m.active { background: var(--brand-red); color: white; }
+        .search-bar { width: 100%; padding: 12px; border-radius: 12px; border: 1px solid #444; background: #1a1a1a; color: white; font-family: 'Montserrat'; margin-bottom: 15px; box-sizing: border-box; }
+        .search-result-item { padding: 12px; border-bottom: 1px solid #333; text-align: left; cursor: pointer; display: flex; justify-content: space-between; }
 
-        #quizMenuContainer, #duelLobbyContainer, #setupScreen, #quizContainer, #leaderboardContainer, #cleaningContainer, #zonesMenuContainer, #zonesHistoryContainer, #zonesInputContainer, #zonesQueueContainer, #productMainContainer, #productKitchenContainer, #swipeViewContainer, #deliveryContainer, #profileContainer, #reviewsContainer { display: none; }
+        #quizMenuContainer, #duelsMenuContainer, #duelLobbyContainer, #setupScreen, #quizContainer, #leaderboardContainer, #cleaningContainer, #zonesMenuContainer, #zonesHistoryContainer, #zonesInputContainer, #zonesQueueContainer, #productMainContainer, #productKitchenContainer, #swipeViewContainer, #deliveryContainer, #profileContainer, #reviewsContainer { display: none; }
     </style>
 </head>
 <body>
@@ -117,7 +117,7 @@
         </div>
 
         <div id="zonesQueueContainer">
-            <h2 style="margin:0; color:var(--brand-red);">💸 Money Talk</h2>
+            <h2 style="margin:0; color:var(--brand-red);">🛋 Дивани (22-28)</h2>
             <table class="sofa-table" id="sofaScheduleTable"></table>
             <button class="menu-btn btn-secondary" style="margin-top:20px;" onclick="showScreen('zonesMenuContainer')">Назад</button>
         </div>
@@ -137,19 +137,53 @@
             <button class="menu-btn btn-secondary" onclick="showScreen('zonesMenuContainer')">Назад</button>
         </div>
 
+        <div id="productMainContainer">
+            <h2>📚 Продакт</h2>
+            <button class="menu-btn btn-secondary" style="padding:20px; font-size:18px; border-color:var(--brand-red);" onclick="openKitchenMenu()">🍔 Кухня</button>
+            <button class="menu-btn btn-secondary" style="padding:20px; font-size:18px; opacity:0.5;">🍹 Бар (Скоро)</button>
+            <button class="menu-btn btn-secondary" style="padding:20px; font-size:18px; opacity:0.5;" onclick="alert('Модуль в розробці')">💼 Сервіс (Work)</button>
+            <button class="menu-btn btn-danger" style="margin-top:10px;" onclick="showScreen('mainMenu')">Назад</button>
+        </div>
+
+        <div id="productKitchenContainer">
+            <h2>🍔 Кухня</h2>
+            <input type="text" id="menuSearchInput" class="search-bar" style="width:100%; padding:12px; background:#1a1a1a; color:white; border:1px solid #444; border-radius:10px; margin-bottom:10px; box-sizing:border-box;" placeholder="🔍 Пошук..." onkeyup="filterMenu()">
+            <div id="searchResults" style="display:none; background:#1a1a1a; border-radius:10px; margin-bottom:10px; border:1px solid #333;"></div>
+            <div id="dynamicCategoryList" style="display:flex; flex-direction:column; gap:8px;"></div>
+            <button class="menu-btn btn-danger" style="margin-top:10px;" onclick="showScreen('productMainContainer')">Назад</button>
+        </div>
+
+        <div id="swipeViewContainer">
+            <div id="currentSwipeCategory" style="background:var(--brand-red); display:inline-block; padding:4px 12px; border-radius:20px; font-size:12px; font-weight:bold; margin-bottom:10px;"></div>
+            <div class="swipe-card" id="swipeCard"></div>
+            <div style="display:flex; justify-content:space-between; padding:10px;">
+                <button class="menu-btn btn-secondary" style="width:45px; border-radius:50%;" onclick="forceSwipe(-1)">⬅️</button>
+                <div id="swipeProgressText" style="display:flex; align-items:center; font-weight:bold;"></div>
+                <button class="menu-btn btn-secondary" style="width:45px; border-radius:50%;" onclick="forceSwipe(1)">➡️</button>
+            </div>
+            <button class="menu-btn btn-danger" onclick="showScreen('productKitchenContainer')">Вийти</button>
+        </div>
+
         <div id="quizMenuContainer">
             <h2>📝 Тести</h2>
             <button class="menu-btn btn-primary" onclick="openSetup('free')">📚 Навчання</button>
             <button class="menu-btn btn-primary" onclick="openSetup('timed')">⏱ Спринт</button>
             <button class="menu-btn btn-correct" style="padding:18px; font-size:18px; margin:10px 0; font-weight:bold;" onclick="openDuelsMenu()">⚔️ 1v1</button>
             <button class="menu-btn btn-danger" onclick="startAssessment()">🔥 Атестація</button>
-            <button class="menu-btn btn-secondary" onclick="showScreen('mainMenu')">Назад</button>
+            <button class="menu-btn btn-secondary" style="margin-top:10px;" onclick="showScreen('mainMenu')">Назад</button>
         </div>
 
         <div id="setupScreen">
             <h1>Дистанція</h1>
             <button class="menu-btn btn-secondary" onclick="prepareQuiz(15)">15 питань</button>
             <button class="menu-btn btn-secondary" onclick="prepareQuiz(25)">25 питань</button>
+            <button class="menu-btn btn-danger" style="margin-top:20px;" onclick="showScreen('quizMenuContainer')">Назад</button>
+        </div>
+
+        <div id="duelsMenuContainer">
+            <h2 style="color:#ffcc00;">⚔️ 1v1</h2>
+            <button class="menu-btn btn-correct" style="padding:15px; margin-bottom:10px;" onclick="createDuelLobby()">Створити Лоббі (QR)</button>
+            <button class="menu-btn btn-secondary" style="border-color:#ffcc00; padding:15px; margin-bottom:20px;" onclick="scanToJoinDuel()">📷 Сканувати QR суперника</button>
             <button class="menu-btn btn-danger" onclick="showScreen('quizMenuContainer')">Назад</button>
         </div>
 
@@ -170,37 +204,10 @@
 
         <div id="quizContainer">
             <div id="timerDisplay" style="color:var(--brand-red); font-weight:bold; font-size:24px; margin-bottom:10px; display:none;">⏱ 15</div>
-            <img id="questionImage" style="width:100%; border-radius:15px; display:none; height:180px; object-fit:cover;">
+            <img id="questionImage" style="width:100%; border-radius:15px; display:none; height:180px; object-fit:cover; margin-bottom:15px;">
             <p id="progressText" style="color:var(--brand-red); font-size:11px; font-weight:bold; margin-top:0;"></p>
             <div id="questionText" style="font-weight:700; margin:15px 0; font-size:16px;"></div>
             <div id="optionsContainer"></div>
-        </div>
-
-        <div id="productMainContainer">
-            <h2>📚 Продакт</h2>
-            <button class="menu-btn btn-secondary" style="padding:20px; font-size:18px; border-color:var(--brand-red);" onclick="openKitchenMenu()">🍔 Кухня</button>
-            <button class="menu-btn btn-secondary" style="padding:20px; font-size:18px; opacity:0.5;">🍹 Бар (Скоро)</button>
-            <button class="menu-btn btn-secondary" style="padding:20px; font-size:18px; opacity:0.5;" onclick="alert('Модуль в розробці')">💼 Сервіс (Work)</button>
-            <button class="menu-btn btn-danger" style="margin-top:10px;" onclick="showScreen('mainMenu')">Назад</button>
-        </div>
-
-        <div id="productKitchenContainer">
-            <h2>🍔 Кухня</h2>
-            <input type="text" id="menuSearchInput" style="width:100%; padding:12px; background:#1a1a1a; color:white; border:1px solid #444; border-radius:10px; margin-bottom:10px; box-sizing:border-box;" placeholder="🔍 Пошук..." onkeyup="filterMenu()">
-            <div id="searchResults" style="display:none; background:#1a1a1a; border-radius:10px; margin-bottom:10px; border:1px solid #333;"></div>
-            <div id="dynamicCategoryList" style="display:flex; flex-direction:column; gap:8px;"></div>
-            <button class="menu-btn btn-danger" style="margin-top:10px;" onclick="showScreen('productMainContainer')">Назад</button>
-        </div>
-
-        <div id="swipeViewContainer">
-            <div id="currentSwipeCategory" style="background:var(--brand-red); display:inline-block; padding:4px 12px; border-radius:20px; font-size:12px; font-weight:bold; margin-bottom:10px;"></div>
-            <div class="swipe-card" id="swipeCard"></div>
-            <div style="display:flex; justify-content:space-between; padding:10px;">
-                <button class="menu-btn btn-secondary" style="width:45px; border-radius:50%;" onclick="forceSwipe(-1)">⬅️</button>
-                <div id="swipeProgressText" style="display:flex; align-items:center; font-weight:bold;"></div>
-                <button class="menu-btn btn-secondary" style="width:45px; border-radius:50%;" onclick="forceSwipe(1)">➡️</button>
-            </div>
-            <button class="menu-btn btn-danger" onclick="showScreen('productKitchenContainer')">Вийти</button>
         </div>
 
         <div id="deliveryContainer">
@@ -239,12 +246,8 @@
 
         <div id="leaderboardContainer">
             <h2>🏆 Рейтинг</h2>
-            <div class="tabs-main">
-                <div class="tab-m active" onclick="setMainTab('xp', this)">XP Топ</div>
-                <div class="tab-m" onclick="setMainTab('delivery', this)">Hall of Delivery</div>
-            </div>
             <div id="leaderboardList" style="max-height:400px; overflow-y:auto;"></div>
-            <button class="menu-btn btn-danger" style="margin-top:10px;" onclick="showScreen('mainMenu')">Назад</button>
+            <button class="menu-btn btn-danger" style="margin-top:15px;" onclick="showScreen('mainMenu')">Назад</button>
         </div>
     </div>
 
@@ -253,11 +256,9 @@
         let userData = tg.initDataUnsafe?.user || {first_name: "Колега", id: "0"};
         const API_URL = "https://script.google.com/macros/s/AKfycbxwXzgTnt_i5oQgmgU7zwwkbGmKDmCPG0QqFWddh3mWSv-PvzxtRns5eF78hEZllhAy/exec";
         
-        let menuItems = [], globalHistory = [], allLeaders = [], globalReviews = {}, globalStats = {};
-        let globalDeliveriesTotal = {}, globalDeliveriesMonthly = {};
+        let menuItems = [], globalHistory = [], allLeaders = [], globalReviews = {}, globalStats = {}, globalDeliveriesTotal = {};
         let flatMenuArray = [], swipeCurrentIndex = 0, questions = [], currentIndex = 0, score = 0, mode = '';
         let currentDuelId = null, duelInterval = null, timerInterval = null, timeLeft = 15;
-        let currentMainTab = 'xp';
 
         const staffNames = ["Пашко Ангеліна", "Кулик Дарія", "Олег Баб'як", "Лащук Віктор", "Цибуляк Ірина", "Павлик Марта", "Юстина Білогруд", "Юлія"];
         const sofaOrder = ["Кулик Дарія", "Олег Баб'як", "Лащук Віктор", "Пашко Ангеліна", "Цибуляк Ірина", "Павлик Марта", "Юстина Білогруд", "Юлія"];
@@ -275,8 +276,6 @@
                 menuItems = r.menu || []; globalHistory = r.zoneHistory || [];
                 globalReviews = r.reviews || {}; globalStats = r.stats || {};
                 globalDeliveriesTotal = r.deliveriesTotal || {};
-                globalDeliveriesMonthly = r.deliveriesMonthly || {};
-                
                 let l = await fetch(API_URL + "?action=leaderboard").then(res => res.json());
                 allLeaders = l;
                 window.myStats = allLeaders.find(u => String(u.tg_id) === String(userData.id)) || {name: userData.first_name, xp:0, avatar:""};
@@ -413,7 +412,9 @@
             let catI = flatMenuArray.filter(i => i.category === item.category);
             document.getElementById('swipeProgressText').innerText = (catI.findIndex(i => i.name === item.name) + 1) + " / " + catI.length;
             
-            document.getElementById('swipeCard').innerHTML = `<div class="card-img-container">${item.photo ? `<img src="${item.photo}">` : '<div style="font-size:50px; display:flex; align-items:center; justify-content:center; height:100%;">🍽</div>'}</div><div class="card-body"><div style="display:flex; justify-content:space-between; align-items:flex-start;"><h2 class="card-title">${item.name} ${item.spicy || ''}</h2><span style="font-size:12px; color:var(--brand-red); font-weight:bold; background:rgba(226,24,54,0.15); padding:3px 8px; border-radius:8px;">${item.weight}</span></div><div class="card-info-block"><span class="card-info-title">🧀 Склад</span>${item.ingredients}</div>${item.desc ? `<div class="card-info-block"><span class="card-info-title">📖 Опис</span>${item.desc}</div>` : ''}${item.allergens ? `<div style="font-size:11px; color:#E21836; font-style:italic;">⚠️ ${item.allergens}</div>` : ''}</div>`;
+            let peps = item.spicy ? `<span style="color:#ff4444;">${item.spicy}</span>` : '';
+            
+            document.getElementById('swipeCard').innerHTML = `<div class="card-img-container">${item.photo ? `<img src="${item.photo}">` : '<div style="font-size:50px; display:flex; align-items:center; justify-content:center; height:100%;">🍽</div>'}</div><div class="card-body"><div style="display:flex; justify-content:space-between; align-items:flex-start;"><h2 class="card-title">${item.name} ${peps}</h2><span style="font-size:12px; color:var(--brand-red); font-weight:bold; background:rgba(226,24,54,0.15); padding:3px 8px; border-radius:8px;">${item.weight}</span></div><div class="card-info-block"><span class="card-info-title">🧀 Склад</span>${item.ingredients}</div>${item.desc ? `<div class="card-info-block"><span class="card-info-title">📖 Опис</span>${item.desc}</div>` : ''}${item.allergens ? `<div style="font-size:11px; color:#E21836; font-style:italic;">⚠️ ${item.allergens}</div>` : ''}</div>`;
             const card = document.getElementById('swipeCard');
             card.style.transition = 'none'; card.style.transform = 'translateX(0px)'; card.style.opacity = '1';
         }
@@ -431,62 +432,72 @@
         }
 
         // === 1v1 ===
-        function openDuelsMenu() {
-            fetch(API_URL).then(r=>r.json()).then(r => {
-                let ads = r.duels || [];
-                let other = ads.filter(d => d.p1_name !== userData.first_name);
-                document.getElementById('activeDuelsList').innerHTML = other.length > 0 ? other.map(d => `<div style="background:#1a1a1a; border:1px solid var(--brand-red); padding:12px; border-radius:12px; margin-bottom:10px; display:flex; justify-content:space-between; align-items:center;"><span>Суперник: <b>${d.p1_name}</b></span><button class="menu-btn btn-primary" style="width:auto; margin:0; padding:5px 15px;" onclick="joinDuel('${d.id}')">Прийняти</button></div>`).join('') : "<p style='font-size:12px; color:#888;'>Викликів немає.</p>";
-                showScreen('duelsMenuContainer');
-            });
-        }
+        function openDuelsMenu() { showScreen('duelsMenuContainer'); }
+        
         async function createDuelLobby() {
             showScreen('duelLobbyContainer'); document.getElementById('duelCreatorView').style.display='block'; document.getElementById('duelJoinerView').style.display='none';
             document.getElementById('qrcode').innerHTML = ""; document.getElementById('startDuelBtn').style.display='none';
+            document.getElementById('duelStatusText').innerText = "Очікування суперника...";
             let data = await fetch(API_URL + "?action=getQuestions").then(r=>r.json());
             questions = data.questions.sort(()=>0.5-Math.random()).slice(0,15);
             currentDuelId = "DUEL_" + new Date().getTime();
             await fetch(API_URL, {method:'POST', body: JSON.stringify({action:'createDuel', duel_id: currentDuelId, name:userData.first_name, questions:questions})});
-            new QRCode(document.getElementById("qrcode"), { text: currentDuelId, width: 150, height: 150 });
+            new QRCode(document.getElementById("qrcode"), { text: currentDuelId, width: 150, height: 150, colorDark: "#000000", colorLight: "#ffffff" });
             duelInterval = setInterval(pollDuel, 3000);
         }
+        
         function scanToJoinDuel() {
             if (tg.showScanQrPopup) { tg.showScanQrPopup({text:"QR батлу"}, (t) => { if(t.startsWith("DUEL_")) { tg.closeScanQrPopup(); joinDuel(t); } return true; }); }
             else { let id = prompt("Введи ID батлу:"); if(id) joinDuel(id); }
         }
+        
         async function joinDuel(id) {
             currentDuelId = id; showScreen('duelLobbyContainer'); document.getElementById('duelCreatorView').style.display='none'; document.getElementById('duelJoinerView').style.display='block';
             await fetch(API_URL, {method:'POST', body: JSON.stringify({action:'joinDuel', duel_id: id, name:userData.first_name})});
             duelInterval = setInterval(pollDuel, 3000);
         }
+        
         async function triggerStartDuel() { await fetch(API_URL, {method:'POST', body: JSON.stringify({action:'startDuel', duel_id: currentDuelId})}); }
+        
         async function pollDuel() {
             let res = await fetch(API_URL + "?action=checkDuel&duel_id=" + currentDuelId).then(r=>r.json());
             if (res.status === 'ready' && document.getElementById('duelCreatorView').style.display==='block') { document.getElementById('duelStatusText').innerHTML = "Суперник: <b>"+res.p2+"</b>"; document.getElementById('startDuelBtn').style.display='block'; }
             if (res.status === 'playing') { clearInterval(duelInterval); questions = JSON.parse(res.questions); mode='duel'; startSyncPlay(); }
         }
+        
         function startSyncPlay() {
-            showScreen('quizContainer'); document.getElementById('questionText').innerHTML = "<h1 id='syncCD'>3</h1>";
+            showScreen('quizContainer'); document.getElementById('questionImage').style.display = 'none';
+            document.getElementById('questionText').innerHTML = "<h1 id='syncCD'>3</h1>";
+            document.getElementById('optionsContainer').innerHTML = "";
             let c=3; let i = setInterval(() => { c--; if(c>0) document.getElementById('syncCD').innerText=c; else { clearInterval(i); currentIndex=0; score=0; showQuestion(); } }, 1000);
         }
+        
         function cancelDuel() { clearInterval(duelInterval); showScreen('quizMenuContainer'); }
 
         // === ТЕСТИ ТА СПРИНТ ===
         function openSetup(m) { mode = m; showScreen('setupScreen'); }
+        
         async function prepareQuiz(num) {
             showScreen('quizContainer'); document.getElementById('questionText').innerText = "⏳..."; document.getElementById('timerDisplay').style.display = 'none';
+            document.getElementById('questionImage').style.display = 'none';
             let data = await fetch(API_URL + "?action=getQuestions").then(res => res.json());
             questions = data.questions.sort(() => 0.5 - Math.random()).slice(0, num);
             currentIndex = 0; score = 0; showQuestion();
         }
+
         function showQuestion() {
             if(currentIndex >= questions.length) { finishQuiz(); return; }
             let q = questions[currentIndex];
             document.getElementById('progressText').innerText = (currentIndex+1) + " / " + questions.length;
             document.getElementById('questionText').innerText = q.question;
             
+            let imgEl = document.getElementById('questionImage');
+            if (q.photo && q.photo.trim() !== "") { imgEl.src = q.photo; imgEl.style.display = "block"; } 
+            else { imgEl.style.display = "none"; }
+
             let html = "";
-            q.options.forEach((opt, i) => {
-                html += `<button class="menu-btn btn-secondary" onclick="checkAnswer('${opt}', '${q.correct_answer}', this)">${opt}</button>`;
+            q.options.forEach((opt) => {
+                html += `<button class="menu-btn btn-secondary" data-correct="${q.correct_answer}" onclick="checkAnswer(this)">${opt}</button>`;
             });
             document.getElementById('optionsContainer').innerHTML = html;
 
@@ -498,56 +509,70 @@
                 timerInterval = setInterval(() => {
                     timeLeft--;
                     document.getElementById('timerDisplay').innerText = "⏱ " + timeLeft;
-                    if (timeLeft <= 0) { checkAnswer('timeout', q.correct_answer, null); }
+                    if (timeLeft <= 0) { checkAnswer(null); }
                 }, 1000);
             }
         }
 
-        function checkAnswer(ansText, corrText, btn) {
+        function checkAnswer(btn) {
             clearInterval(timerInterval);
             let buttons = document.querySelectorAll('#optionsContainer button');
             buttons.forEach(b => b.classList.add('btn-disabled'));
 
-            let correctBtn = Array.from(buttons).find(b => b.innerText === corrText);
+            let ansText = btn ? btn.innerText.trim() : "timeout";
+            let corrText = buttons.length > 0 ? buttons[0].getAttribute('data-correct').trim() : "";
+            
+            let correctBtn = Array.from(buttons).find(b => b.innerText.trim() === corrText);
 
             if (ansText === corrText) {
                 score++;
                 if(btn) btn.classList.add('btn-correct');
-                tg.HapticFeedback?.notificationOccurred('success');
+                if(window.tg && tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('success');
             } else {
-                if(btn) btn.classList.add('btn-incorrect');
+                if(btn && ansText !== "timeout") btn.classList.add('btn-incorrect');
                 if(correctBtn) correctBtn.classList.add('btn-correct');
-                tg.HapticFeedback?.notificationOccurred('error');
+                if(window.tg && tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('error');
             }
-            setTimeout(() => { currentIndex++; showQuestion(); }, 1000); // 1 СЕКУНДА ЗАТРИМКА
+            setTimeout(() => { currentIndex++; showQuestion(); }, 1000); // 1 СЕКУНДА
         }
 
         async function finishQuiz() {
             document.getElementById('progressText').innerText = "Saving...";
             document.getElementById('timerDisplay').style.display = 'none';
+            document.getElementById('questionImage').style.display = 'none';
+
             if (mode === 'duel') {
                 document.getElementById('questionText').innerText = "Чекаємо суперника...";
-                document.getElementById('optionsContainer').innerHTML = "⏳";
+                document.getElementById('optionsContainer').innerHTML = "<div style='font-size:50px; text-align:center;'>⏳</div>";
+                
                 await fetch(API_URL, {method:'POST', body: JSON.stringify({action:'submitDuelScore', duel_id:currentDuelId, name:userData.first_name, score:score})});
+                
                 let i = setInterval(async () => {
                     let res = await fetch(API_URL + "?action=checkDuel&duel_id=" + currentDuelId).then(r=>r.json());
                     if(res.status === 'finished') {
                         clearInterval(i);
-                        let myS = (res.p1===userData.first_name) ? res.p1_score : res.p2_score;
-                        let otS = (res.p1===userData.first_name) ? res.p2_score : res.p1_score;
-                        document.getElementById('questionText').innerHTML = (myS > otS ? "🏆 ТИ ВИГРАВ!" : (myS < otS ? "💀 ТИ ПРОГРАВ" : "🤝 НІЧИЯ")) + `<br><br>Твій бал: ${myS}<br>Суперник: ${otS}`;
+                        let myS = (res.p1 === userData.first_name) ? parseInt(res.p1_score) : parseInt(res.p2_score);
+                        let otS = (res.p1 === userData.first_name) ? parseInt(res.p2_score) : parseInt(res.p1_score);
+                        let theirName = (res.p1 === userData.first_name) ? res.p2 : res.p1;
+                        
+                        let msg = "";
+                        if(myS > otS) msg = "🔥 ТИ ВИГРАВ! (+20 XP)";
+                        else if(myS < otS) msg = "💀 ТИ ПРОГРАВ (-20 XP)";
+                        else msg = "🤝 НІЧИЯ! (0 XP)";
+                        
+                        document.getElementById('questionText').innerHTML = `<span style='color:white; font-size:24px;'>${msg}</span><br><br>Твій бал: <b style='color:var(--brand-red);'>${myS}/15</b><br>Суперник (${theirName}): <b>${otS}/15</b>`;
                         document.getElementById('optionsContainer').innerHTML = `<button class="menu-btn btn-primary" onclick="initApp()">В меню</button>`;
                     }
                 }, 3000);
             } else {
-                let p = Math.round((score/questions.length)*100);
-                await fetch(API_URL, {method:'POST', body: JSON.stringify({tg_id:userData.id, name:userData.first_name, score:p, sprint_score:score*10, mode:mode, asked_count:questions.length, correct_count:score})});
-                document.getElementById('questionText').innerText = "Готово! Бал: " + score;
+                let percent = Math.round((score/questions.length)*100);
+                await fetch(API_URL, {method:'POST', body: JSON.stringify({tg_id:userData.id, name:userData.first_name, score:percent, sprint_score:score*10, mode:mode, asked_count:questions.length, correct_count:score})});
+                document.getElementById('questionText').innerHTML = `Готово! Твій результат: ${score}/${questions.length}`;
                 document.getElementById('optionsContainer').innerHTML = `<button class="menu-btn btn-primary" onclick="initApp()">В меню</button>`;
             }
         }
 
-        // === ДОСТАВКИ ТА ІНШЕ ===
+        // === ДОСТАВКИ ===
         let deliveryPhotosArray = [];
         function handleDeliveryPhotos(e) {
             Array.from(e.target.files).forEach(f => deliveryPhotosArray.push(f));
@@ -567,6 +592,7 @@
             alert("Записано!"); document.getElementById('deliveryReceiptInput').value = ""; deliveryPhotosArray = []; document.getElementById('deliveryGallery').innerHTML = ""; initApp();
         }
 
+        // ВІДГУКИ
         let reviewPhotos = [];
         function handleReviewPhotos(e) {
             Array.from(e.target.files).forEach(f => reviewPhotos.push(f));
@@ -580,6 +606,7 @@
             alert("Відправлено!"); reviewPhotos = []; document.getElementById('reviewGallery').innerHTML = ""; initApp();
         }
 
+        // ЗАМИТТЯ
         let cleaningPhotosArray = [];
         function handleNewPhotos(event) {
             Array.from(event.target.files).forEach(file => cleaningPhotosArray.push(file)); event.target.value = ''; 
@@ -598,27 +625,11 @@
             const zones = Array.from(document.querySelectorAll('#zonesCheckboxes input:checked')).map(cb => cb.value); 
             let photoBase64Array = []; for (let file of cleaningPhotosArray) { photoBase64Array.push({ mimeType: 'image/jpeg', data: await compressImage(file, 800, 0.6) }); }
             await fetch(API_URL, { method: 'POST', body: JSON.stringify({ action: "cleaningReport", name: userData.first_name, zones: zones, photos: photoBase64Array })});
-            alert("Замито!"); cleaningPhotosArray = []; document.getElementById('photoGallery').innerHTML = ""; initApp();
-        }
-
-        // РЕЙТИНГИ
-        function setMainTab(tab, el) { 
-            currentMainTab = tab; 
-            document.querySelectorAll('.tab-m').forEach(t => t.classList.remove('active')); 
-            el.classList.add('active'); 
-            showLeaderboard(); 
+            alert("Замито!"); cleaningPhotosArray = []; document.getElementById('photoGallery').innerHTML = ""; document.querySelectorAll('#zonesCheckboxes input:checked').forEach(cb=>cb.checked=false); initApp();
         }
 
         function showLeaderboard() {
-            let html = "";
-            if (currentMainTab === 'xp') {
-                html = allLeaders.sort((a,b)=>b.xp-a.xp).map((l,i) => `<div style="display:flex; justify-content:space-between; padding:12px; border-bottom:1px solid #222;"><span>${i+1}. ${l.name}</span><b style="color:var(--brand-red);">${l.xp} XP</b></div>`).join('');
-            } else if (currentMainTab === 'delivery') {
-                let list = Object.keys(globalDeliveriesMonthly).map(name => ({name: name, count: globalDeliveriesMonthly[name]}));
-                list.sort((a,b) => b.count - a.count);
-                html = list.map((l, i) => `<div style="display:flex; justify-content:space-between; padding:12px; border-bottom:1px solid #222;"><span>${i+1}. ${l.name}</span><b style="color:var(--brand-red);">${l.count} дост.</b></div>`).join('');
-            }
-            document.getElementById('leaderboardList').innerHTML = html || "<p style='text-align:center; color:#777; margin-top:20px;'>Тут поки пусто</p>";
+            document.getElementById('leaderboardList').innerHTML = allLeaders.sort((a,b)=>b.xp-a.xp).map((l,i) => `<div style="display:flex; justify-content:space-between; padding:12px; border-bottom:1px solid #222;"><span>${i+1}. ${l.name}</span><b style="color:var(--brand-red);">${l.xp} XP</b></div>`).join('');
             showScreen('leaderboardContainer');
         }
 
