@@ -43,6 +43,10 @@
 
         .avatar-box { width: 80px; height: 80px; border-radius: 50%; background: #222; margin: 0 auto 10px auto; border: 2px solid var(--brand-red); cursor: pointer; overflow: hidden; display: flex; align-items: center; justify-content: center; font-size: 40px; }
         .avatar-box img { width: 100%; height: 100%; object-fit: cover; }
+        
+        .tabs-main { display: flex; gap: 3px; margin-bottom: 10px; background: #111; padding: 4px; border-radius: 12px; }
+        .tab-m { flex: 1; font-size: 10px; padding: 8px 1px; border-radius: 8px; cursor: pointer; color: var(--text-muted); text-transform: uppercase; font-weight: 700; }
+        .tab-m.active { background: var(--brand-red); color: white; }
 
         #quizMenuContainer, #duelLobbyContainer, #setupScreen, #quizContainer, #leaderboardContainer, #cleaningContainer, #zonesMenuContainer, #zonesHistoryContainer, #zonesInputContainer, #zonesQueueContainer, #productMainContainer, #productKitchenContainer, #swipeViewContainer, #deliveryContainer, #profileContainer, #reviewsContainer { display: none; }
     </style>
@@ -124,7 +128,7 @@
             <div id="dynamicAssignmentsList"></div>
             <button class="menu-btn btn-secondary" onclick="addAssignmentRow()">+ Офіціант</button>
             <button class="menu-btn btn-primary" id="saveZonesBtn" onclick="saveStructuredZones()">Внести</button>
-            <button class="menu-btn btn-danger" onclick="showScreen('zonesMenuContainer')">Скасувати</button>
+            <button class="menu-btn btn-danger" style="margin-top:10px;" onclick="showScreen('zonesMenuContainer')">Скасувати</button>
         </div>
 
         <div id="zonesHistoryContainer">
@@ -137,7 +141,7 @@
             <h2>📝 Тести</h2>
             <button class="menu-btn btn-primary" onclick="openSetup('free')">📚 Навчання</button>
             <button class="menu-btn btn-primary" onclick="openSetup('timed')">⏱ Спринт</button>
-            <button class="menu-btn btn-correct" style="padding:18px; font-size:16px; margin:10px 0;" onclick="openDuelsMenu()">⚔️ 1v1</button>
+            <button class="menu-btn btn-correct" style="padding:18px; font-size:18px; margin:10px 0; font-weight:bold;" onclick="openDuelsMenu()">⚔️ 1v1</button>
             <button class="menu-btn btn-danger" onclick="startAssessment()">🔥 Атестація</button>
             <button class="menu-btn btn-secondary" onclick="showScreen('mainMenu')">Назад</button>
         </div>
@@ -165,8 +169,9 @@
         </div>
 
         <div id="quizContainer">
+            <div id="timerDisplay" style="color:var(--brand-red); font-weight:bold; font-size:24px; margin-bottom:10px; display:none;">⏱ 15</div>
             <img id="questionImage" style="width:100%; border-radius:15px; display:none; height:180px; object-fit:cover;">
-            <p id="progressText" style="color:var(--brand-red); font-size:11px; font-weight:bold;"></p>
+            <p id="progressText" style="color:var(--brand-red); font-size:11px; font-weight:bold; margin-top:0;"></p>
             <div id="questionText" style="font-weight:700; margin:15px 0; font-size:16px;"></div>
             <div id="optionsContainer"></div>
         </div>
@@ -175,13 +180,13 @@
             <h2>📚 Продакт</h2>
             <button class="menu-btn btn-secondary" style="padding:20px; font-size:18px; border-color:var(--brand-red);" onclick="openKitchenMenu()">🍔 Кухня</button>
             <button class="menu-btn btn-secondary" style="padding:20px; font-size:18px; opacity:0.5;">🍹 Бар (Скоро)</button>
-            <button class="menu-btn btn-secondary" style="padding:20px; font-size:18px; opacity:0.5;">💼 Сервіс (Work)</button>
-            <button class="menu-btn btn-danger" onclick="showScreen('mainMenu')">Назад</button>
+            <button class="menu-btn btn-secondary" style="padding:20px; font-size:18px; opacity:0.5;" onclick="alert('Модуль в розробці')">💼 Сервіс (Work)</button>
+            <button class="menu-btn btn-danger" style="margin-top:10px;" onclick="showScreen('mainMenu')">Назад</button>
         </div>
 
         <div id="productKitchenContainer">
             <h2>🍔 Кухня</h2>
-            <input type="text" id="menuSearchInput" class="search-bar" style="width:100%; padding:12px; background:#1a1a1a; color:white; border:1px solid #444; border-radius:10px; margin-bottom:10px; box-sizing:border-box;" placeholder="🔍 Пошук..." onkeyup="filterMenu()">
+            <input type="text" id="menuSearchInput" style="width:100%; padding:12px; background:#1a1a1a; color:white; border:1px solid #444; border-radius:10px; margin-bottom:10px; box-sizing:border-box;" placeholder="🔍 Пошук..." onkeyup="filterMenu()">
             <div id="searchResults" style="display:none; background:#1a1a1a; border-radius:10px; margin-bottom:10px; border:1px solid #333;"></div>
             <div id="dynamicCategoryList" style="display:flex; flex-direction:column; gap:8px;"></div>
             <button class="menu-btn btn-danger" style="margin-top:10px;" onclick="showScreen('productMainContainer')">Назад</button>
@@ -234,6 +239,10 @@
 
         <div id="leaderboardContainer">
             <h2>🏆 Рейтинг</h2>
+            <div class="tabs-main">
+                <div class="tab-m active" onclick="setMainTab('xp', this)">XP Топ</div>
+                <div class="tab-m" onclick="setMainTab('delivery', this)">Hall of Delivery</div>
+            </div>
             <div id="leaderboardList" style="max-height:400px; overflow-y:auto;"></div>
             <button class="menu-btn btn-danger" style="margin-top:10px;" onclick="showScreen('mainMenu')">Назад</button>
         </div>
@@ -244,9 +253,11 @@
         let userData = tg.initDataUnsafe?.user || {first_name: "Колега", id: "0"};
         const API_URL = "https://script.google.com/macros/s/AKfycbxwXzgTnt_i5oQgmgU7zwwkbGmKDmCPG0QqFWddh3mWSv-PvzxtRns5eF78hEZllhAy/exec";
         
-        let menuItems = [], globalHistory = [], allLeaders = [], globalReviews = {}, globalStats = {}, globalDeliveries = {};
+        let menuItems = [], globalHistory = [], allLeaders = [], globalReviews = {}, globalStats = {};
+        let globalDeliveriesTotal = {}, globalDeliveriesMonthly = {};
         let flatMenuArray = [], swipeCurrentIndex = 0, questions = [], currentIndex = 0, score = 0, mode = '';
-        let currentDuelId = null, duelInterval = null;
+        let currentDuelId = null, duelInterval = null, timerInterval = null, timeLeft = 15;
+        let currentMainTab = 'xp';
 
         const staffNames = ["Пашко Ангеліна", "Кулик Дарія", "Олег Баб'як", "Лащук Віктор", "Цибуляк Ірина", "Павлик Марта", "Юстина Білогруд", "Юлія"];
         const sofaOrder = ["Кулик Дарія", "Олег Баб'як", "Лащук Віктор", "Пашко Ангеліна", "Цибуляк Ірина", "Павлик Марта", "Юстина Білогруд", "Юлія"];
@@ -263,7 +274,9 @@
                 let r = await fetch(API_URL).then(res => res.json());
                 menuItems = r.menu || []; globalHistory = r.zoneHistory || [];
                 globalReviews = r.reviews || {}; globalStats = r.stats || {};
-                globalDeliveries = r.deliveries || {};
+                globalDeliveriesTotal = r.deliveriesTotal || {};
+                globalDeliveriesMonthly = r.deliveriesMonthly || {};
+                
                 let l = await fetch(API_URL + "?action=leaderboard").then(res => res.json());
                 allLeaders = l;
                 window.myStats = allLeaders.find(u => String(u.tg_id) === String(userData.id)) || {name: userData.first_name, xp:0, avatar:""};
@@ -295,7 +308,8 @@
             document.getElementById('profileReviewsCount').innerText = revs;
             document.getElementById('reviewsProgressBar').style.width = Math.min(100, (revs/15)*100) + '%';
             document.getElementById('profileShifts').innerText = globalStats[me.name]?.shifts || 0;
-            document.getElementById('profileDeliveries').innerText = globalDeliveries[me.name] || 0;
+            document.getElementById('profileDeliveries').innerText = globalDeliveriesTotal[me.name] || 0;
+            
             let ldr = allLeaders.find(u => String(u.tg_id) === String(userData.id));
             let acc = ldr?.total_asked > 0 ? Math.round((ldr.xp / ldr.total_asked) * 100) : 0;
             document.getElementById('profileAccuracy').innerText = acc + "%";
@@ -309,8 +323,9 @@
             window.myStats.avatar = base64; openProfile();
         }
 
+        // === ЗОНИ ТА ДИВАНИ ===
         function openZonesQueue() {
-            let html = "<tr><th>СУБОТА</th><th>НЕДІЛЯ</th></tr>";
+            let html = "<tr><th>Субота</th><th>Неділя</th></tr>";
             let d = new Date(anchorDate); let cycle = 0;
             for(let w=0; w<4; w++) {
                 let sD = ("0"+d.getDate()).slice(-2) + "." + ("0"+(d.getMonth()+1)).slice(-2);
@@ -325,7 +340,7 @@
 
         function openZonesHistory() {
             let h = "";
-            let dates = [...new Set(globalHistory.map(i => i.date))].reverse();
+            let dates = [...new Set(globalHistory.map(i => i.date))];
             dates.forEach(d => {
                 h += `<div style="background:#1a1a1a; margin-bottom:10px; border-radius:12px; overflow:hidden;"><div style="background:rgba(226,24,54,0.2); padding:8px 12px; font-size:11px; font-weight:bold;">📅 ${d}</div>`;
                 globalHistory.filter(i => i.date === d).forEach(r => {
@@ -333,7 +348,13 @@
                 });
                 h += `</div>`;
             });
-            document.getElementById('historyListDisplay').innerHTML = h || "Пусто"; showScreen('zonesHistoryContainer');
+            document.getElementById('historyListDisplay').innerHTML = h || "<p style='color:#777;text-align:center;'>Пусто</p>"; showScreen('zonesHistoryContainer');
+        }
+
+        function openZonesInput() {
+            document.getElementById('shiftDateInput').valueAsDate = new Date();
+            document.getElementById('dynamicAssignmentsList').innerHTML = ""; addAssignmentRow(); addAssignmentRow(); 
+            showScreen('zonesInputContainer');
         }
 
         function addAssignmentRow() {
@@ -344,29 +365,72 @@
 
         async function saveStructuredZones() {
             let btn = document.getElementById('saveZonesBtn'); let date = document.getElementById('shiftDateInput').value; if(!date) return alert("Дата!");
-            let assigns = []; document.querySelectorAll('#dynamicAssignmentsList > div').forEach(row => { assigns.push({name: row.querySelector('select').value, zone: row.querySelector('input').value}); });
+            let assigns = []; document.querySelectorAll('#dynamicAssignmentsList > div').forEach(row => { 
+                let n = row.querySelector('select').value; let z = row.querySelector('input').value.trim();
+                if(n && z) assigns.push({name: n, zone: z}); 
+            });
             if(assigns.length===0) return alert("Пусто!");
-            btn.innerText = "ЗБЕРЕЖЕННЯ..."; btn.style.pointerEvents = 'none';
-            await fetch(API_URL, {method:'POST', body: JSON.stringify({action:'saveStructuredZones', date:date, assignments:assigns})});
-            alert("Збережено!"); btn.innerText = "Внести"; btn.style.pointerEvents = 'auto'; showScreen('zonesMenuContainer'); initApp();
+            
+            btn.innerText = "ЗБЕРЕЖЕННЯ..."; btn.style.pointerEvents = 'none'; btn.style.opacity = '0.5';
+            try {
+                let res = await fetch(API_URL, {method:'POST', body: JSON.stringify({action:'saveStructuredZones', date:date, assignments:assigns})}).then(r=>r.json());
+                if(res.success) { alert("Збережено!"); showScreen('zonesMenuContainer'); initApp(); }
+            } catch(e) { alert("Помилка з'єднання"); }
+            btn.innerText = "Внести"; btn.style.pointerEvents = 'auto'; btn.style.opacity = '1';
         }
 
+        // === ПРОДАКТ (СУЦІЛЬНИЙ СВАЙП) ===
         function openKitchenMenu() {
             let cats = [...new Set(menuItems.map(i => i.category))];
-            document.getElementById('dynamicCategoryList').innerHTML = cats.map(c => `<button class="menu-btn btn-secondary" style="display:flex; justify-content:space-between; padding:16px;" onclick="startSwipe('${c}')"><span>🍽 ${c}</span><span style="color:var(--brand-red);">➔</span></button>`).join('');
+            document.getElementById('dynamicCategoryList').innerHTML = cats.map(c => `<button class="menu-btn btn-secondary" style="display:flex; justify-content:space-between; padding:16px;" onclick="startSwipe('${c}')"><span style="font-weight:bold;">🍽 ${c}</span><span style="color:var(--brand-red);">➔</span></button>`).join('');
             showScreen('productKitchenContainer');
         }
 
-        function startSwipe(cat) { flatMenuArray = menuItems; swipeCurrentIndex = flatMenuArray.findIndex(i => i.category === cat); renderSwipe(); showScreen('swipeViewContainer'); }
+        function filterMenu() {
+            let q = document.getElementById('menuSearchInput').value.toLowerCase();
+            let res = document.getElementById('searchResults');
+            if(q.length < 1) { res.style.display = 'none'; return; }
+            let matches = menuItems.filter(i => i.name.toLowerCase().includes(q) || i.ingredients.toLowerCase().includes(q)).slice(0, 7);
+            res.innerHTML = matches.map(m => `<div style="padding:12px; border-bottom:1px solid #333; cursor:pointer;" onclick="startSwipeAt('${m.name.replace(/'/g, "\\'")}')"><b>${m.name}</b> <small style="color:var(--brand-red);">${m.category}</small></div>`).join('');
+            res.style.display = 'block';
+        }
+
+        function startSwipeAt(name) {
+            flatMenuArray = menuItems; swipeCurrentIndex = flatMenuArray.findIndex(i => i.name === name);
+            renderSwipe(); showScreen('swipeViewContainer');
+        }
+
+        function startSwipe(cat) { 
+            flatMenuArray = menuItems; swipeCurrentIndex = flatMenuArray.findIndex(i => i.category === cat); 
+            renderSwipe(); showScreen('swipeViewContainer'); 
+        }
+
         function renderSwipe() {
+            if(swipeCurrentIndex < 0) swipeCurrentIndex = 0;
+            if(swipeCurrentIndex >= flatMenuArray.length) swipeCurrentIndex = flatMenuArray.length - 1;
+            
             let item = flatMenuArray[swipeCurrentIndex]; document.getElementById('currentSwipeCategory').innerText = item.category;
             let catI = flatMenuArray.filter(i => i.category === item.category);
             document.getElementById('swipeProgressText').innerText = (catI.findIndex(i => i.name === item.name) + 1) + " / " + catI.length;
-            document.getElementById('swipeCard').innerHTML = `<div class="card-img-container">${item.photo ? `<img src="${item.photo}">` : '<div style="font-size:50px; display:flex; align-items:center; justify-content:center; height:100%;">🍽</div>'}</div><div class="card-body"><div style="display:flex; justify-content:space-between; align-items:flex-start;"><h2 class="card-title">${item.name} ${item.spicy || ''}</h2><span style="font-size:12px; color:var(--brand-red); font-weight:bold; background:rgba(226,24,54,0.15); padding:3px 8px; border-radius:8px;">${item.weight}</span></div><div class="card-info-block"><span class="card-info-title">🧀 Склад</span>${item.ingredients}</div><div class="card-info-block"><span class="card-info-title">📖 Опис</span>${item.desc}</div>${item.allergens ? `<div style="font-size:11px; color:#E21836; font-style:italic;">⚠️ ${item.allergens}</div>` : ''}</div>`;
+            
+            document.getElementById('swipeCard').innerHTML = `<div class="card-img-container">${item.photo ? `<img src="${item.photo}">` : '<div style="font-size:50px; display:flex; align-items:center; justify-content:center; height:100%;">🍽</div>'}</div><div class="card-body"><div style="display:flex; justify-content:space-between; align-items:flex-start;"><h2 class="card-title">${item.name} ${item.spicy || ''}</h2><span style="font-size:12px; color:var(--brand-red); font-weight:bold; background:rgba(226,24,54,0.15); padding:3px 8px; border-radius:8px;">${item.weight}</span></div><div class="card-info-block"><span class="card-info-title">🧀 Склад</span>${item.ingredients}</div>${item.desc ? `<div class="card-info-block"><span class="card-info-title">📖 Опис</span>${item.desc}</div>` : ''}${item.allergens ? `<div style="font-size:11px; color:#E21836; font-style:italic;">⚠️ ${item.allergens}</div>` : ''}</div>`;
+            const card = document.getElementById('swipeCard');
+            card.style.transition = 'none'; card.style.transform = 'translateX(0px)'; card.style.opacity = '1';
         }
-        function forceSwipe(dir) { swipeCurrentIndex += dir; if(swipeCurrentIndex < 0) swipeCurrentIndex = 0; if(swipeCurrentIndex >= flatMenuArray.length) swipeCurrentIndex = flatMenuArray.length - 1; renderSwipe(); }
+        function forceSwipe(dir) {
+            const card = document.getElementById('swipeCard'); card.style.transition = 'transform 0.3s ease-out, opacity 0.3s';
+            if (dir === 1) { 
+                if (swipeCurrentIndex >= flatMenuArray.length - 1) return;
+                card.style.transform = `translateX(-120vw)`; card.style.opacity = '0'; 
+                setTimeout(() => { swipeCurrentIndex++; renderSwipe(); }, 300); 
+            } else { 
+                if (swipeCurrentIndex <= 0) return; 
+                card.style.transform = `translateX(120vw)`; card.style.opacity = '0'; 
+                setTimeout(() => { swipeCurrentIndex--; renderSwipe(); }, 300); 
+            }
+        }
 
-        // 1v1
+        // === 1v1 ===
         function openDuelsMenu() {
             fetch(API_URL).then(r=>r.json()).then(r => {
                 let ads = r.duels || [];
@@ -406,10 +470,10 @@
         }
         function cancelDuel() { clearInterval(duelInterval); showScreen('quizMenuContainer'); }
 
-        // ТЕСТИ
+        // === ТЕСТИ ТА СПРИНТ ===
         function openSetup(m) { mode = m; showScreen('setupScreen'); }
         async function prepareQuiz(num) {
-            showScreen('quizContainer'); document.getElementById('questionText').innerText = "⏳...";
+            showScreen('quizContainer'); document.getElementById('questionText').innerText = "⏳..."; document.getElementById('timerDisplay').style.display = 'none';
             let data = await fetch(API_URL + "?action=getQuestions").then(res => res.json());
             questions = data.questions.sort(() => 0.5 - Math.random()).slice(0, num);
             currentIndex = 0; score = 0; showQuestion();
@@ -419,16 +483,48 @@
             let q = questions[currentIndex];
             document.getElementById('progressText').innerText = (currentIndex+1) + " / " + questions.length;
             document.getElementById('questionText').innerText = q.question;
-            document.getElementById('optionsContainer').innerHTML = q.options.map((o, i) => `<button class="menu-btn btn-secondary" onclick="checkAnswer(${i+1}, '${q.correct_answer}', this)">${o}</button>`).join('');
+            
+            let html = "";
+            q.options.forEach((opt, i) => {
+                html += `<button class="menu-btn btn-secondary" onclick="checkAnswer('${opt}', '${q.correct_answer}', this)">${opt}</button>`;
+            });
+            document.getElementById('optionsContainer').innerHTML = html;
+
+            if (mode === 'timed') {
+                timeLeft = 15;
+                document.getElementById('timerDisplay').innerText = "⏱ " + timeLeft;
+                document.getElementById('timerDisplay').style.display = "block";
+                clearInterval(timerInterval);
+                timerInterval = setInterval(() => {
+                    timeLeft--;
+                    document.getElementById('timerDisplay').innerText = "⏱ " + timeLeft;
+                    if (timeLeft <= 0) { checkAnswer('timeout', q.correct_answer, null); }
+                }, 1000);
+            }
         }
-        function checkAnswer(ans, corr, btn) {
-            document.querySelectorAll('#optionsContainer button').forEach(b => b.classList.add('btn-disabled'));
-            if(String(ans) === String(corr)) { score++; btn.classList.add('btn-correct'); tg.HapticFeedback?.notificationOccurred('success'); }
-            else { btn.classList.add('btn-incorrect'); tg.HapticFeedback?.notificationOccurred('error'); }
-            setTimeout(() => { currentIndex++; showQuestion(); }, 1500);
+
+        function checkAnswer(ansText, corrText, btn) {
+            clearInterval(timerInterval);
+            let buttons = document.querySelectorAll('#optionsContainer button');
+            buttons.forEach(b => b.classList.add('btn-disabled'));
+
+            let correctBtn = Array.from(buttons).find(b => b.innerText === corrText);
+
+            if (ansText === corrText) {
+                score++;
+                if(btn) btn.classList.add('btn-correct');
+                tg.HapticFeedback?.notificationOccurred('success');
+            } else {
+                if(btn) btn.classList.add('btn-incorrect');
+                if(correctBtn) correctBtn.classList.add('btn-correct');
+                tg.HapticFeedback?.notificationOccurred('error');
+            }
+            setTimeout(() => { currentIndex++; showQuestion(); }, 1000); // 1 СЕКУНДА ЗАТРИМКА
         }
+
         async function finishQuiz() {
             document.getElementById('progressText').innerText = "Saving...";
+            document.getElementById('timerDisplay').style.display = 'none';
             if (mode === 'duel') {
                 document.getElementById('questionText').innerText = "Чекаємо суперника...";
                 document.getElementById('optionsContainer').innerHTML = "⏳";
@@ -451,26 +547,79 @@
             }
         }
 
-        // ДОПОМІЖНЕ
+        // === ДОСТАВКИ ТА ІНШЕ ===
+        let deliveryPhotosArray = [];
+        function handleDeliveryPhotos(e) {
+            Array.from(e.target.files).forEach(f => deliveryPhotosArray.push(f));
+            document.getElementById('deliveryGallery').innerHTML = deliveryPhotosArray.map((file, i) => `<div style="position:relative;"><img src="${URL.createObjectURL(file)}" style="width:100%; aspect-ratio:1; object-fit:cover; border-radius:5px;"><div onclick="deliveryPhotosArray.splice(${i},1); handleDeliveryPhotos({target:{files:[]}})" style="position:absolute; top:2px; right:2px; background:var(--brand-red); color:white; width:15px; height:15px; font-size:10px; display:flex; align-items:center; justify-content:center; border-radius:50%;">✕</div></div>`).join('');
+            updateDeliveryBtnState();
+        }
         function updateDeliveryBtnState() {
             let t = document.getElementById('deliveryReceiptInput').value.trim();
             document.getElementById('submitDeliveryBtn').style.opacity = (deliveryPhotosArray.length >= 1 && t.length > 0) ? '1' : '0.4';
             document.getElementById('submitDeliveryBtn').style.pointerEvents = (deliveryPhotosArray.length >= 1 && t.length > 0) ? 'auto' : 'none';
         }
-
-        let deliveryPhotosArray = [];
-        function handleDeliveryPhotos(e) {
-            Array.from(e.target.files).forEach(f => deliveryPhotosArray.push(f));
-            document.getElementById('deliveryGallery').innerHTML = deliveryPhotosArray.map(f => `<img src="${URL.createObjectURL(f)}" style="width:100%; aspect-ratio:1; object-fit:cover; border-radius:5px;">`).join('');
-            updateDeliveryBtnState();
-        }
-
         async function submitDeliveryReport() {
-            let btn = document.getElementById('submitDeliveryBtn'); btn.innerText = "⏳";
+            let btn = document.getElementById('submitDeliveryBtn'); btn.innerText = "⏳"; btn.style.pointerEvents = 'none';
             let r = document.getElementById('deliveryReceiptInput').value;
             let ps = []; for(let f of deliveryPhotosArray) { ps.push({mimeType:'image/jpeg', data: await compressImage(f, 800, 0.6)}); }
             await fetch(API_URL, {method:'POST', body: JSON.stringify({action:'deliveryReport', name:userData.first_name, receipt:r, photos:ps})});
-            alert("Записано!"); initApp();
+            alert("Записано!"); document.getElementById('deliveryReceiptInput').value = ""; deliveryPhotosArray = []; document.getElementById('deliveryGallery').innerHTML = ""; initApp();
+        }
+
+        let reviewPhotos = [];
+        function handleReviewPhotos(e) {
+            Array.from(e.target.files).forEach(f => reviewPhotos.push(f));
+            document.getElementById('reviewGallery').innerHTML = reviewPhotos.map((f, i) => `<div style="position:relative;"><img src="${URL.createObjectURL(f)}" style="width:100%; aspect-ratio:1; object-fit:cover; border-radius:5px;"><div onclick="reviewPhotos.splice(${i},1); handleReviewPhotos({target:{files:[]}})" style="position:absolute; top:2px; right:2px; background:var(--brand-red); color:white; width:15px; height:15px; font-size:10px; display:flex; align-items:center; justify-content:center; border-radius:50%;">✕</div></div>`).join('');
+            document.getElementById('submitReviewsBtn').style.opacity = '1'; document.getElementById('submitReviewsBtn').style.pointerEvents = 'auto';
+        }
+        async function submitReviewsReport() {
+            let btn = document.getElementById('submitReviewsBtn'); btn.innerText = "⏳";
+            let photos = []; for(let f of reviewPhotos) { photos.push({mimeType:'image/jpeg', data: await compressImage(f, 800, 0.6)}); }
+            await fetch(API_URL, {method:'POST', body: JSON.stringify({action:'submitReviews', name:userData.first_name, photos:photos})});
+            alert("Відправлено!"); reviewPhotos = []; document.getElementById('reviewGallery').innerHTML = ""; initApp();
+        }
+
+        let cleaningPhotosArray = [];
+        function handleNewPhotos(event) {
+            Array.from(event.target.files).forEach(file => cleaningPhotosArray.push(file)); event.target.value = ''; 
+            document.getElementById('photoGallery').innerHTML = cleaningPhotosArray.map((file, i) => `<div style="position:relative;"><img src="${URL.createObjectURL(file)}" style="width:100%; aspect-ratio:1; object-fit:cover; border-radius:5px;"><div onclick="cleaningPhotosArray.splice(${i},1); handleNewPhotos({target:{files:[]}})" style="position:absolute; top:2px; right:2px; background:red; color:white; width:15px; height:15px; font-size:10px; display:flex; align-items:center; justify-content:center; border-radius:50%;">✕</div></div>`).join('');
+            updateCleaningBtnState();
+        }
+        function updateCleaningBtnState() {
+            const cbs = document.querySelectorAll('#zonesCheckboxes input:checked');
+            const btn = document.getElementById('submitCleaningBtn');
+            if (cleaningPhotosArray.length >= 3 && cbs.length > 0) { btn.style.opacity = '1'; btn.style.pointerEvents = 'auto'; } else { btn.style.opacity = '0.4'; btn.style.pointerEvents = 'none'; }
+        }
+        document.getElementById('zonesCheckboxes').addEventListener('change', updateCleaningBtnState);
+
+        async function submitCleaningReport() {
+            const btn = document.getElementById('submitCleaningBtn'); btn.innerText = "⏳";
+            const zones = Array.from(document.querySelectorAll('#zonesCheckboxes input:checked')).map(cb => cb.value); 
+            let photoBase64Array = []; for (let file of cleaningPhotosArray) { photoBase64Array.push({ mimeType: 'image/jpeg', data: await compressImage(file, 800, 0.6) }); }
+            await fetch(API_URL, { method: 'POST', body: JSON.stringify({ action: "cleaningReport", name: userData.first_name, zones: zones, photos: photoBase64Array })});
+            alert("Замито!"); cleaningPhotosArray = []; document.getElementById('photoGallery').innerHTML = ""; initApp();
+        }
+
+        // РЕЙТИНГИ
+        function setMainTab(tab, el) { 
+            currentMainTab = tab; 
+            document.querySelectorAll('.tab-m').forEach(t => t.classList.remove('active')); 
+            el.classList.add('active'); 
+            showLeaderboard(); 
+        }
+
+        function showLeaderboard() {
+            let html = "";
+            if (currentMainTab === 'xp') {
+                html = allLeaders.sort((a,b)=>b.xp-a.xp).map((l,i) => `<div style="display:flex; justify-content:space-between; padding:12px; border-bottom:1px solid #222;"><span>${i+1}. ${l.name}</span><b style="color:var(--brand-red);">${l.xp} XP</b></div>`).join('');
+            } else if (currentMainTab === 'delivery') {
+                let list = Object.keys(globalDeliveriesMonthly).map(name => ({name: name, count: globalDeliveriesMonthly[name]}));
+                list.sort((a,b) => b.count - a.count);
+                html = list.map((l, i) => `<div style="display:flex; justify-content:space-between; padding:12px; border-bottom:1px solid #222;"><span>${i+1}. ${l.name}</span><b style="color:var(--brand-red);">${l.count} дост.</b></div>`).join('');
+            }
+            document.getElementById('leaderboardList').innerHTML = html || "<p style='text-align:center; color:#777; margin-top:20px;'>Тут поки пусто</p>";
+            showScreen('leaderboardContainer');
         }
 
         function compressImage(file, max, qual) {
@@ -487,11 +636,6 @@
                     }
                 }
             });
-        }
-        
-        function showLeaderboard() {
-            document.getElementById('leaderboardList').innerHTML = allLeaders.sort((a,b)=>b.xp-a.xp).map((l,i) => `<div style="display:flex; justify-content:space-between; padding:12px; border-bottom:1px solid #222;"><span>${i+1}. ${l.name}</span><b style="color:var(--brand-red);">${l.xp} XP</b></div>`).join('');
-            showScreen('leaderboardContainer');
         }
     </script>
 </body>
