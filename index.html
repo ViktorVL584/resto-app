@@ -24,7 +24,7 @@
         .btn-primary { background-color: var(--brand-red); color: white; }
         .btn-secondary { background-color: #1e1e1e; color: white; border: 1px solid #333; }
         .btn-danger { background: none; border: 1px solid var(--brand-red); color: var(--brand-red); }
-        .btn-correct { background-color: #28a745 !important; color: white; }
+        .btn-correct { background-color: #28a745 !important; color: white; box-shadow: 0 0 10px #28a745; }
         .btn-incorrect { background-color: #dc3545 !important; color: white; }
         .btn-disabled { pointer-events: none; opacity: 0.8; }
 
@@ -37,18 +37,18 @@
         .card-info-title { color: #ffcc00; font-weight: bold; font-size: 10px; text-transform: uppercase; margin-bottom: 4px; display: block; }
 
         .sofa-table { width: 100%; border-collapse: collapse; font-size: 14px; margin-top: 10px; border-radius:12px; overflow:hidden; }
-        .sofa-table th { color: var(--text-muted); font-size: 11px; padding: 10px; background: rgba(0,0,0,0.4); text-transform: uppercase; }
-        .sofa-table td { padding: 12px; text-align: center; width: 50%; }
-        .sofa-date { color: var(--brand-red); font-weight: bold; font-size: 12px; }
-        .sofa-name { color: white; font-weight: bold; font-size: 13px; border-bottom: 1px solid rgba(255,255,255,0.05); }
+        .sofa-table th { background: rgba(226, 24, 54, 0.2); color: white; font-size: 12px; padding: 12px; text-align: center; border-bottom: 1px solid #333; }
+        .sofa-table td { padding: 12px; text-align: center; width: 50%; color: white; font-weight: bold; border-bottom: 1px solid #222; }
+        .sofa-table td:first-child, .sofa-table th:first-child { border-right: 1px solid rgba(255,255,255,0.1); }
 
         .avatar-box { width: 80px; height: 80px; border-radius: 50%; background: #222; margin: 0 auto 10px auto; border: 2px solid var(--brand-red); cursor: pointer; overflow: hidden; display: flex; align-items: center; justify-content: center; font-size: 40px; }
         .avatar-box img { width: 100%; height: 100%; object-fit: cover; }
         
-        .search-bar { width: 100%; padding: 12px; border-radius: 12px; border: 1px solid #444; background: #1a1a1a; color: white; font-family: 'Montserrat'; margin-bottom: 15px; box-sizing: border-box; }
+        .search-bar { width: 100%; padding: 12px; border-radius: 12px; border: 1px solid #444; background: #1a1a1a; color: white; font-family: 'Montserrat'; margin-bottom: 15px; box-sizing: border-box; outline:none; }
+        .search-bar:focus { border-color: var(--brand-red); }
         .search-result-item { padding: 12px; border-bottom: 1px solid #333; text-align: left; cursor: pointer; display: flex; justify-content: space-between; }
 
-        #quizMenuContainer, #duelsMenuContainer, #duelLobbyContainer, #setupScreen, #quizContainer, #leaderboardContainer, #cleaningContainer, #zonesMenuContainer, #zonesHistoryContainer, #zonesInputContainer, #zonesQueueContainer, #productMainContainer, #productKitchenContainer, #swipeViewContainer, #deliveryContainer, #profileContainer, #reviewsContainer { display: none; }
+        #quizMenuContainer, #duelLobbyContainer, #setupScreen, #quizContainer, #leaderboardContainer, #cleaningContainer, #zonesMenuContainer, #zonesHistoryContainer, #zonesInputContainer, #zonesQueueContainer, #productMainContainer, #productKitchenContainer, #swipeViewContainer, #deliveryContainer, #profileContainer, #reviewsContainer { display: none; }
     </style>
 </head>
 <body>
@@ -127,14 +127,15 @@
             <input type="date" id="shiftDateInput" style="width:100%; padding:12px; border-radius:10px; background:#1a1a1a; color:white; border:1px solid #444; margin-bottom:15px;">
             <div id="dynamicAssignmentsList"></div>
             <button class="menu-btn btn-secondary" onclick="addAssignmentRow()">+ Офіціант</button>
-            <button class="menu-btn btn-primary" id="saveZonesBtn" onclick="saveStructuredZones()">Внести</button>
+            <button class="menu-btn btn-primary" id="saveZonesBtn" style="margin-top:15px;" onclick="saveStructuredZones()">Внести</button>
             <button class="menu-btn btn-danger" style="margin-top:10px;" onclick="showScreen('zonesMenuContainer')">Скасувати</button>
         </div>
 
         <div id="zonesHistoryContainer">
             <h2>📜 Хронологія</h2>
-            <div id="historyListDisplay" style="max-height:450px; overflow-y:auto; text-align:left;"></div>
-            <button class="menu-btn btn-secondary" onclick="showScreen('zonesMenuContainer')">Назад</button>
+            <input type="text" id="historySearchInput" class="search-bar" placeholder="🔍 Пошук по даті або імені..." onkeyup="filterHistory()">
+            <div id="historyListDisplay" style="max-height:400px; overflow-y:auto; text-align:left;"></div>
+            <button class="menu-btn btn-secondary" style="margin-top:15px;" onclick="showScreen('zonesMenuContainer')">Назад</button>
         </div>
 
         <div id="productMainContainer">
@@ -147,7 +148,7 @@
 
         <div id="productKitchenContainer">
             <h2>🍔 Кухня</h2>
-            <input type="text" id="menuSearchInput" class="search-bar" style="width:100%; padding:12px; background:#1a1a1a; color:white; border:1px solid #444; border-radius:10px; margin-bottom:10px; box-sizing:border-box;" placeholder="🔍 Пошук..." onkeyup="filterMenu()">
+            <input type="text" id="menuSearchInput" class="search-bar" placeholder="🔍 Пошук..." onkeyup="filterMenu()">
             <div id="searchResults" style="display:none; background:#1a1a1a; border-radius:10px; margin-bottom:10px; border:1px solid #333;"></div>
             <div id="dynamicCategoryList" style="display:flex; flex-direction:column; gap:8px;"></div>
             <button class="menu-btn btn-danger" style="margin-top:10px;" onclick="showScreen('productMainContainer')">Назад</button>
@@ -212,7 +213,7 @@
 
         <div id="deliveryContainer">
             <h2>📦 Доставки</h2>
-            <input type="text" id="deliveryReceiptInput" style="width:100%; padding:12px; background:#1a1a1a; color:white; border:1px solid #444; border-radius:10px; margin-bottom:10px; box-sizing:border-box;" placeholder="🧾 Номер чеку" oninput="updateDeliveryBtnState()">
+            <input type="text" id="deliveryReceiptInput" class="search-bar" placeholder="🧾 Номер чеку" oninput="updateDeliveryBtnState()">
             <div id="deliveryGallery" style="display:grid; grid-template-columns:repeat(4,1fr); gap:5px; margin-bottom:10px;"></div>
             <button class="menu-btn btn-secondary" onclick="document.getElementById('hiddenDeliveryInput').click()">📸 Фото</button>
             <input type="file" id="hiddenDeliveryInput" accept="image/*" multiple style="display:none;" onchange="handleDeliveryPhotos(event)">
@@ -324,30 +325,49 @@
 
         // === ЗОНИ ТА ДИВАНИ ===
         function openZonesQueue() {
-            let html = "<tr><th>Субота</th><th>Неділя</th></tr>";
+            let html = "";
             let d = new Date(anchorDate); let cycle = 0;
             for(let w=0; w<4; w++) {
                 let sD = ("0"+d.getDate()).slice(-2) + "." + ("0"+(d.getMonth()+1)).slice(-2);
                 let sun = new Date(d); sun.setDate(sun.getDate()+1);
                 let sunD = ("0"+sun.getDate()).slice(-2) + "." + ("0"+(sun.getMonth()+1)).slice(-2);
-                html += `<tr style="background:rgba(255,255,255,0.05);"><td class="sofa-date">${sD}</td><td class="sofa-date">${sunD}</td></tr>`;
-                html += `<tr><td class="sofa-name">${sofaOrder[cycle % 8]}</td><td class="sofa-name">${sofaOrder[(cycle+1) % 8]}</td></tr>`;
+                html += `<tr><th>СУБОТА ${sD}</th><th>НЕДІЛЯ ${sunD}</th></tr>`;
+                html += `<tr><td>${sofaOrder[cycle % 8]}</td><td>${sofaOrder[(cycle+1) % 8]}</td></tr>`;
                 d.setDate(d.getDate()+7); cycle+=2;
             }
             document.getElementById('sofaScheduleTable').innerHTML = html; showScreen('zonesQueueContainer');
         }
 
         function openZonesHistory() {
+            document.getElementById('historySearchInput').value = '';
+            renderHistory('');
+            showScreen('zonesHistoryContainer');
+        }
+
+        function filterHistory() {
+            let q = document.getElementById('historySearchInput').value.toLowerCase().trim();
+            renderHistory(q);
+        }
+
+        function renderHistory(query) {
             let h = "";
-            let dates = [...new Set(globalHistory.map(i => i.date))];
+            let filtered = globalHistory;
+            if (query) {
+                filtered = globalHistory.filter(i => 
+                    i.date.toLowerCase().includes(query) || 
+                    i.name.toLowerCase().includes(query) || 
+                    i.zone.toLowerCase().includes(query)
+                );
+            }
+            let dates = [...new Set(filtered.map(i => i.date))];
             dates.forEach(d => {
                 h += `<div style="background:#1a1a1a; margin-bottom:10px; border-radius:12px; overflow:hidden;"><div style="background:rgba(226,24,54,0.2); padding:8px 12px; font-size:11px; font-weight:bold;">📅 ${d}</div>`;
-                globalHistory.filter(i => i.date === d).forEach(r => {
+                filtered.filter(i => i.date === d).forEach(r => {
                     h += `<div style="display:flex; justify-content:space-between; padding:8px 12px; font-size:12px; border-bottom:1px solid #333;"><span>${r.name}</span><b style="color:var(--brand-red);">${r.zone}</b></div>`;
                 });
                 h += `</div>`;
             });
-            document.getElementById('historyListDisplay').innerHTML = h || "<p style='color:#777;text-align:center;'>Пусто</p>"; showScreen('zonesHistoryContainer');
+            document.getElementById('historyListDisplay').innerHTML = h || "<p style='color:#777;text-align:center;margin-top:20px;'>Нічого не знайдено</p>";
         }
 
         function openZonesInput() {
@@ -378,7 +398,7 @@
             btn.innerText = "Внести"; btn.style.pointerEvents = 'auto'; btn.style.opacity = '1';
         }
 
-        // === ПРОДАКТ (СУЦІЛЬНИЙ СВАЙП) ===
+        // === ПРОДАКТ ===
         function openKitchenMenu() {
             let cats = [...new Set(menuItems.map(i => i.category))];
             document.getElementById('dynamicCategoryList').innerHTML = cats.map(c => `<button class="menu-btn btn-secondary" style="display:flex; justify-content:space-between; padding:16px;" onclick="startSwipe('${c}')"><span style="font-weight:bold;">🍽 ${c}</span><span style="color:var(--brand-red);">➔</span></button>`).join('');
@@ -432,8 +452,9 @@
         }
 
         // === 1v1 ===
-        function openDuelsMenu() { showScreen('duelsMenuContainer'); }
-        
+        function openDuelsMenu() {
+            showScreen('duelsMenuContainer');
+        }
         async function createDuelLobby() {
             showScreen('duelLobbyContainer'); document.getElementById('duelCreatorView').style.display='block'; document.getElementById('duelJoinerView').style.display='none';
             document.getElementById('qrcode').innerHTML = ""; document.getElementById('startDuelBtn').style.display='none';
@@ -445,33 +466,27 @@
             new QRCode(document.getElementById("qrcode"), { text: currentDuelId, width: 150, height: 150, colorDark: "#000000", colorLight: "#ffffff" });
             duelInterval = setInterval(pollDuel, 3000);
         }
-        
         function scanToJoinDuel() {
             if (tg.showScanQrPopup) { tg.showScanQrPopup({text:"QR батлу"}, (t) => { if(t.startsWith("DUEL_")) { tg.closeScanQrPopup(); joinDuel(t); } return true; }); }
             else { let id = prompt("Введи ID батлу:"); if(id) joinDuel(id); }
         }
-        
         async function joinDuel(id) {
             currentDuelId = id; showScreen('duelLobbyContainer'); document.getElementById('duelCreatorView').style.display='none'; document.getElementById('duelJoinerView').style.display='block';
             await fetch(API_URL, {method:'POST', body: JSON.stringify({action:'joinDuel', duel_id: id, name:userData.first_name})});
             duelInterval = setInterval(pollDuel, 3000);
         }
-        
         async function triggerStartDuel() { await fetch(API_URL, {method:'POST', body: JSON.stringify({action:'startDuel', duel_id: currentDuelId})}); }
-        
         async function pollDuel() {
             let res = await fetch(API_URL + "?action=checkDuel&duel_id=" + currentDuelId).then(r=>r.json());
             if (res.status === 'ready' && document.getElementById('duelCreatorView').style.display==='block') { document.getElementById('duelStatusText').innerHTML = "Суперник: <b>"+res.p2+"</b>"; document.getElementById('startDuelBtn').style.display='block'; }
             if (res.status === 'playing') { clearInterval(duelInterval); questions = JSON.parse(res.questions); mode='duel'; startSyncPlay(); }
         }
-        
         function startSyncPlay() {
             showScreen('quizContainer'); document.getElementById('questionImage').style.display = 'none';
             document.getElementById('questionText').innerHTML = "<h1 id='syncCD'>3</h1>";
             document.getElementById('optionsContainer').innerHTML = "";
             let c=3; let i = setInterval(() => { c--; if(c>0) document.getElementById('syncCD').innerText=c; else { clearInterval(i); currentIndex=0; score=0; showQuestion(); } }, 1000);
         }
-        
         function cancelDuel() { clearInterval(duelInterval); showScreen('quizMenuContainer'); }
 
         // === ТЕСТИ ТА СПРИНТ ===
@@ -572,7 +587,7 @@
             }
         }
 
-        // === ДОСТАВКИ ===
+        // === ДОСТАВКИ ТА ІНШЕ ===
         let deliveryPhotosArray = [];
         function handleDeliveryPhotos(e) {
             Array.from(e.target.files).forEach(f => deliveryPhotosArray.push(f));
@@ -592,7 +607,6 @@
             alert("Записано!"); document.getElementById('deliveryReceiptInput').value = ""; deliveryPhotosArray = []; document.getElementById('deliveryGallery').innerHTML = ""; initApp();
         }
 
-        // ВІДГУКИ
         let reviewPhotos = [];
         function handleReviewPhotos(e) {
             Array.from(e.target.files).forEach(f => reviewPhotos.push(f));
@@ -606,7 +620,6 @@
             alert("Відправлено!"); reviewPhotos = []; document.getElementById('reviewGallery').innerHTML = ""; initApp();
         }
 
-        // ЗАМИТТЯ
         let cleaningPhotosArray = [];
         function handleNewPhotos(event) {
             Array.from(event.target.files).forEach(file => cleaningPhotosArray.push(file)); event.target.value = ''; 
